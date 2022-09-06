@@ -1,9 +1,10 @@
 import React from 'react'
+import NavbarComp from '../components/NavbarComp'
 
 function Home() {
   return (
     <div>
-      Home Page
+      <NavbarComp />
     </div>
   )
 }
