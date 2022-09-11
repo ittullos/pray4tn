@@ -8,6 +8,7 @@ gem 'mysql2'
 gem 'pry-byebug'
 gem "sinatra-contrib",require: false
 gem 'json'
+gem 'dotenv'
 
 group :test do
   gem 'sinatra-sequel'
