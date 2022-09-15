@@ -1,0 +1,10 @@
+source 'https://rubygems.org'
+
+gem 'rack'
+gem 'sinatra'
+# gem 'sequel'
+# gem 'mysql2'
+# gem "sinatra-contrib",require: false
+# gem 'json'
+# gem 'dotenv'
+# gem 'sinatra-sequel'

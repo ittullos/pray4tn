@@ -1,3 +1,3 @@
 require "./config/environment"
 
-run Pray4TN
+run App

@@ -9,9 +9,14 @@ gem 'pry-byebug'
 gem "sinatra-contrib",require: false
 gem 'json'
 gem 'dotenv'
+gem 'sinatra-sequel'
+
+
+# group :development do
+
+# end
 
 group :test do
-  gem 'sinatra-sequel'
   gem 'rspec-sequel'
   gem 'rake'
   gem 'rack-test'
