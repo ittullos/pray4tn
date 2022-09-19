@@ -3,7 +3,7 @@ require 'dotenv'
 
 Dotenv.load
 
-ENV['RACK_ENV'] ||= "development"
+ENV['RACK_ENV'] ||= "dev"
 require 'bundler/setup'
 Bundler.require(:default, ENV['RACK_ENV'])
 
