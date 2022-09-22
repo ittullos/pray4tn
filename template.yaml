@@ -18,6 +18,26 @@ Resources:
         IndexDocument: index.html
       BucketName: wpt.bap.tn.react-app
 
+  MyDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        DefaultCacheBehavior:
+          ViewerProtocolPolicy: allow-all
+          TargetOriginId: wpt.bap.tn.react-app.s3-website-us-east-1.amazonaws.com
+          DefaultTTL: 0
+          MinTTL: 0
+          MaxTTL: 0
+          ForwardedValues:
+            QueryString: false
+        Origins:
+          - DomainName: wpt.bap.tn.react-app.s3-website-us-east-1.amazonaws.com
+            Id: wpt.bap.tn.react-app.s3-website-us-east-1.amazonaws.com
+            CustomOriginConfig:
+              OriginProtocolPolicy: match-viewer
+        Enabled: "true"
+        DefaultRootObject: index.html
+
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -35,6 +55,8 @@ Resources:
                 - !Ref ReactApp
                 - /*
       Bucket: !Ref ReactApp
+
+
 
 
   HelloWorldFunction:
