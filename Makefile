@@ -9,3 +9,9 @@ build-react:
 
 build-aws: 
 	sam build
+
+list-stacks:
+	aws cloudformation list-stacks
+
+nuke-stack:
+	aws cloudformation delete-stack --stack-name sam-app

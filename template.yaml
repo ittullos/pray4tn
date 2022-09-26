@@ -9,6 +9,20 @@ Globals:
     Timeout: 3
 
 Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: app/
+      Handler: lambda.handler
+      Runtime: ruby2.7
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
 
   ReactApp: 
     Type: AWS::S3::Bucket
@@ -17,26 +31,6 @@ Resources:
       WebsiteConfiguration: 
         IndexDocument: index.html
       BucketName: wpt.bap.tn.react-app
-
-  MyDistribution:
-    Type: "AWS::CloudFront::Distribution"
-    Properties:
-      DistributionConfig:
-        DefaultCacheBehavior:
-          ViewerProtocolPolicy: allow-all
-          TargetOriginId: wpt.bap.tn.react-app.s3-website-us-east-1.amazonaws.com
-          DefaultTTL: 0
-          MinTTL: 0
-          MaxTTL: 0
-          ForwardedValues:
-            QueryString: false
-        Origins:
-          - DomainName: wpt.bap.tn.react-app.s3-website-us-east-1.amazonaws.com
-            Id: wpt.bap.tn.react-app.s3-website-us-east-1.amazonaws.com
-            CustomOriginConfig:
-              OriginProtocolPolicy: match-viewer
-        Enabled: "true"
-        DefaultRootObject: index.html
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -56,29 +50,71 @@ Resources:
                 - /*
       Bucket: !Ref ReactApp
 
-
-
-
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  Pray4TNapi:
+    Type: AWS::Serverless::Api
     Properties:
-      CodeUri: app/
-      Handler: lambda.handler
-      Runtime: ruby2.7
-      Architectures:
-        - x86_64
-      Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /hello
-            Method: get
+      Name: Pray4TNapi
+      StageName: Prod
+      DefinitionBody:
+        swagger: '2.0'
+        basePath: '/hello'
+        paths:
+          /hello/{proxy+}:
+            x-amazon-apigateway-any-method:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri:
+                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HelloWorldFunction.Arn}/invocations'
+                passthroughBehavior: "when_no_match"
+                httpMethod: POST
+                type: "aws_proxy"
+          /hello/{proxy+}:
+            x-amazon-apigateway-any-method:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri:
+                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HelloWorldFunction.Arn}/invocations'
+                passthroughBehavior: "when_no_match"
+                httpMethod: GET
+                type: "aws_proxy"
+
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: 'Pray4TN OA'
+
+  MyDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        DefaultCacheBehavior:
+          ViewerProtocolPolicy: allow-all
+          TargetOriginId: Pray4TN-react-app
+          DefaultTTL: 0
+          MinTTL: 0
+          MaxTTL: 0
+          ForwardedValues:
+            QueryString: false
+        Origins:
+        - Id: Pray4TN-react-app
+          DomainName: wpt.bap.tn.react-app.s3.us-east-1.amazonaws.com
+          S3OriginConfig:
+            OriginAccessIdentity:
+              Fn::Sub: 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
+        - Id: Pray4TN-API
+          DomainName: !Sub '${Pray4TNapi}.execute-api.${AWS::Region}.amazonaws.com'
+          CustomOriginConfig:
+            OriginProtocolPolicy: match-viewer
+            HTTPPort: '80'
+            HTTPSPort: '443'
+        Enabled: "true"
+        DefaultRootObject: index.html
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-
 
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
