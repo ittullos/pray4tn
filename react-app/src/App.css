@@ -2,3 +2,11 @@
 .right-aligned {
   justify-content: flex-end;
 }
+
+/* Buttons */
+
+.center-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
