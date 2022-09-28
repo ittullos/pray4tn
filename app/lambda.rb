@@ -5,6 +5,7 @@ require 'json'
 require 'rack'
 require 'base64'
 require 'app'
+require "sinatra/cors"
 
 # Global object that responds to the call method. Stay outside of the handler
 # to take advantage of container reuse
@@ -12,7 +13,24 @@ $app ||= Sinatra::Application
 
 ENV['RACK_ENV'] ||= 'production'
 
+set :allow_origin, "*"
+set :allow_methods, "GET,DELETE,PATCH,OPTIONS"
+set :allow_headers, "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since"
+set :expose_headers, "location,link"
+
 def handler(event:, context:)
+
+  # set :allow_origin, "*"
+  # set :allow_methods, "GET,DELETE,PATCH,OPTIONS"
+  # set :allow_headers, "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since"
+  # set :expose_headers, "location,link"
+
+  # options "*" do
+  #   response.headers["Allow"] = "GET,PUT,POST,OPTIONS"
+  #   response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept"
+  #   200
+  # end
+
   # Check if the body is base64 encoded. If it is, try to decode it
   body = if event['isBase64Encoded']
     Base64.decode64 event['body']
@@ -22,6 +40,12 @@ def handler(event:, context:)
 
   # Rack expects the querystring in plain text, not a hash
   headers = event.fetch 'headers', {}
+
+  # headers["Access-Control-Allow-Origin"] = "*"
+  # headers["Access-Control-Allow-Methods"] = "*"
+  # headers["Access-Control-Allow-Headers"] = "*"
+
+  puts "HEADERS: #{headers}"
 
   # puts "Lambda Handler EVENT: #{event}"
   # Environment required by Rack (http://www.rubydoc.info/github/rack/rack/file/SPEC)

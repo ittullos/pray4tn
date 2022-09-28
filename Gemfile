@@ -10,6 +10,8 @@ gem "sinatra-contrib",require: false
 gem 'json'
 gem 'dotenv'
 gem 'sinatra-sequel'
+gem 'sinatra-cross_origin'
+gem 'sinatra-cors'
 
 
 # group :development do

@@ -32,6 +32,12 @@ Resources:
         IndexDocument: index.html
       BucketName: wpt.bap.tn.react-app
 
+  LogBucket: 
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: wpt.bap.tn.logs
+
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -84,18 +90,46 @@ Resources:
       CloudFrontOriginAccessIdentityConfig:
         Comment: 'Pray4TN OA'
 
+  # MyDistribution:
+  #   Type: "AWS::CloudFront::Distribution"
+  #   Properties:
+  #     DistributionConfig:
+  #       DefaultCacheBehavior:
+  #         ViewerProtocolPolicy: allow-all
+  #         TargetOriginId: Pray4TN-react-app
+  #         DefaultTTL: 0
+  #         MinTTL: 0
+  #         MaxTTL: 0
+  #         ForwardedValues:
+  #           QueryString: false
+  #       Origins:
+  #       - Id: Pray4TN-react-app
+  #         DomainName: wpt.bap.tn.react-app.s3.us-east-1.amazonaws.com
+  #         S3OriginConfig:
+  #           OriginAccessIdentity:
+  #             Fn::Sub: 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
+  #       - Id: Pray4TN-API
+  #         DomainName: !Sub '${Pray4TNapi}.execute-api.${AWS::Region}.amazonaws.com'
+  #         CustomOriginConfig:
+  #           OriginProtocolPolicy: match-viewer
+  #           HTTPPort: '80'
+  #           HTTPSPort: '443'
+  #       Enabled: "true"
+  #       DefaultRootObject: index.html
+
+
   MyDistribution:
-    Type: "AWS::CloudFront::Distribution"
+    Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
-        DefaultCacheBehavior:
-          ViewerProtocolPolicy: allow-all
-          TargetOriginId: Pray4TN-react-app
-          DefaultTTL: 0
-          MinTTL: 0
-          MaxTTL: 0
-          ForwardedValues:
-            QueryString: false
+        Comment: "Cloudfront distribution for Pray4TN"
+        DefaultRootObject: "index.html"
+        Enabled: true
+        HttpVersion: http2
+        Logging:
+          IncludeCookies: 'false'
+          Bucket: wpt.bap.tn.logs.s3.amazonaws.com
+          Prefix: funnel
         Origins:
         - Id: Pray4TN-react-app
           DomainName: wpt.bap.tn.react-app.s3.us-east-1.amazonaws.com
@@ -108,8 +142,40 @@ Resources:
             OriginProtocolPolicy: match-viewer
             HTTPPort: '80'
             HTTPSPort: '443'
-        Enabled: "true"
-        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          TargetOriginId: Pray4TN-react-app
+          Compress: 'true'
+          AllowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          ForwardedValues:
+            QueryString: false
+          ViewerProtocolPolicy : redirect-to-https
+        CacheBehaviors:
+        - TargetOriginId: Pray4TN-API
+          PathPattern: /hello/*
+          ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+        - TargetOriginId: Pray4TN-react-app
+          PathPattern: /
+          AllowedMethods:
+          - GET
+          - HEAD
+          ViewerProtocolPolicy: allow-all
+          # Name: Managed-UserAgentRefererHeaders
+          OriginRequestPolicyId: acba4595-bd28-49b8-b9fe-13317c0390fa
+          # Name: Managed-CachingOptimized
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

@@ -76,6 +76,8 @@ GEM
       rack-protection (= 2.2.2)
       sinatra (= 2.2.2)
       tilt (~> 2.0)
+    sinatra-cors (1.2.0)
+    sinatra-cross_origin (0.4.0)
     sinatra-sequel (0.9.0)
       sequel (>= 3.2.0)
       sinatra (>= 0.9.4)
@@ -102,6 +104,8 @@ DEPENDENCIES
   shotgun
   sinatra
   sinatra-contrib
+  sinatra-cors
+  sinatra-cross_origin
   sinatra-sequel
 
 BUNDLED WITH
