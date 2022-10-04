@@ -2,12 +2,14 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import NavbarComp from '../components/NavbarComp'
 import Button from 'react-bootstrap/Button'
+import Votd from '../components/Votd'
 
 
 function Home() {
 
   const [verse, setVerse] = useState('')
   const [notation, setNotation] = useState('')
+  const [openVotd, setOpenVotd] = useState(false)
 
   const getVerse = () => {
     axios.get("https://1wegclp8d9.execute-api.us-east-1.amazonaws.com/Prod/hello")
@@ -24,20 +26,11 @@ function Home() {
     <div>
       <NavbarComp />
       <div className="center-button">
-        <Button className="mt-5 btn-lg" onClick={getVerse}>Get Verse</Button>
+        <Button className="mt-5 btn-md btn-info" onClick={()=>{ getVerse(); setOpenVotd(true) }}>Verse of the Day</Button>
       </div>
-      <div className="text-center mx-5 mt-5">
-        <figure>
-          <blockquote className="blockquote">
-            <p className="mb-0" style={{fontSize: 25}}>"{verse}"</p>
-          
-          </blockquote>
-          <figcaption className="blockquote-footer mt-2" style={{fontSize: 20}}>
-            {notation}
-          </figcaption>
-        </figure>
+      <div>
+        {openVotd && <Votd notation={notation} verse={verse} closeModal={setOpenVotd}/>}
       </div>
-      
     </div>
   )
 }
