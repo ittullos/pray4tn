@@ -1,37 +1,49 @@
-import React from 'react'
-import Button from 'react-bootstrap/Button'
-import "../styles/Modal.css"
-
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 function Votd(props) {
   return (
-    <div className='modalBackground'>
-      <div className='modalContainer'>
-        <div className='modalCloseBtn'>
-          <button onClick={() => props.closeModal(false)}> X </button>
-        </div>
-        <div className='modalTitle'>
-          <h3>Verse of the day</h3>
-        </div>
-        <div className='modalBody'>
-          <div className="text-center mx-5 mt-5">
-            <figure>
-              <blockquote className="blockquote">
-                <p className="mb-0" style={{fontSize: 25}}>"{props.verse}"</p>
-              
-              </blockquote>
-              <figcaption className="blockquote-footer mt-2" style={{fontSize: 20}}>
-                {props.notation}
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-        <div className='modalFooter'>
-          <Button onClick={() => props.closeModal(false)}>Exit</Button>
-        </div>
-      </div>
-    </div>
-  )
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      className='text-center'
+    >
+      <Modal.Header 
+        closeButton 
+        className='text-center'
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
+        <Modal.Title 
+          id="contained-modal-title-vcenter" 
+          className="ms-auto ps-3"
+          style={{fontSize:28}}>
+            Verse of the day
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body className='mt-3'>
+        <figure class="text-center">
+          <blockquote class="blockquote" style={{fontSize:24}}>
+            <p class="mb-0">
+              {props.verse}
+            </p>      
+          </blockquote>
+          <figcaption 
+            class="blockquote-footer mt-2 me-1"
+            style={{fontSize:22}}>
+              {props.notation}
+          </figcaption>
+        </figure>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={props.onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+  );
 }
 
 export default Votd

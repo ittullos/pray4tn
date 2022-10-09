@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import NavbarComp from '../components/NavbarComp'
 import Button from 'react-bootstrap/Button'
@@ -9,7 +9,7 @@ function Home() {
 
   const [verse, setVerse] = useState('')
   const [notation, setNotation] = useState('')
-  const [openVotd, setOpenVotd] = useState(false)
+  const [votdShow, setVotdShow] = React.useState(false);
 
   const getVerse = () => {
     axios.get("https://1wegclp8d9.execute-api.us-east-1.amazonaws.com/Prod/hello")
@@ -22,14 +22,33 @@ function Home() {
     })
   }
 
+  useEffect(() => {
+    let ignore = false
+    
+    if (!ignore)  getVerse()
+    return () => { ignore = true }
+    },[])
+
+  // getVerse()
+
   return (
     <div>
       <NavbarComp />
       <div className="center-button">
-        <Button className="mt-5 btn-md btn-info" onClick={()=>{ getVerse(); setOpenVotd(true) }}>Verse of the Day</Button>
-      </div>
-      <div>
-        {openVotd && <Votd notation={notation} verse={verse} closeModal={setOpenVotd}/>}
+        
+        <Button 
+          variant="success" 
+          onClick={() => setVotdShow(true)}
+          className="mt-5 btn-md">
+          Verse of the Day
+        </Button>
+
+        <Votd
+          show={votdShow}
+          onHide={() => setVotdShow(false)}
+          notation={notation} 
+          verse={verse}
+        />
       </div>
     </div>
   )
