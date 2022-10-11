@@ -5,7 +5,7 @@ require "dotenv"
 Dotenv.load
 
 if ENV["RACK_ENV"] == "prod"
-  DB = Sequel.connect(:adapter => 'mysql2', :host => 'test-pr.cnklfpyep1np.us-east-1.rds.amazonaws.com',:port => 3307, :user => 'admin', :password => 'FullStack710', :database => 'test-prod') 
+  DB = Sequel.connect(:adapter => 'mysql2', :host => (ENV["DB_HOST"]),:port => 3306, :user => 'admin', :password => (ENV["DB_PWRD"]), :database => 'test') 
 else
   DB = Sequel.connect(ENV["DB_DEV"])
 end 
