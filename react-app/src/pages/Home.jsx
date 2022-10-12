@@ -12,7 +12,7 @@ function Home() {
   const [votdShow, setVotdShow] = React.useState(false);
 
   const getVerse = () => {
-    axios.get("https://1wegclp8d9.execute-api.us-east-1.amazonaws.com/Prod/hello")
+    axios.get("https://jwzannz7l2.execute-api.us-east-1.amazonaws.com/Prod/hello")
     .then(res => {
       console.log(res)
       setVerse(res.data.verse)
@@ -28,8 +28,6 @@ function Home() {
     if (!ignore)  getVerse()
     return () => { ignore = true }
     },[])
-
-  // getVerse()
 
   return (
     <div>

@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  pray4tn
+  wpt.bap.tn
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -9,7 +9,7 @@ Globals:
     Timeout: 3
 
 Resources:
-  HelloWorldFunction:
+  LambdaFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: app/
@@ -70,7 +70,7 @@ Resources:
               responses: {}
               x-amazon-apigateway-integration:
                 uri:
-                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HelloWorldFunction.Arn}/invocations'
+                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations'
                 passthroughBehavior: "when_no_match"
                 httpMethod: POST
                 type: "aws_proxy"
@@ -79,7 +79,7 @@ Resources:
               responses: {}
               x-amazon-apigateway-integration:
                 uri:
-                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HelloWorldFunction.Arn}/invocations'
+                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations'
                 passthroughBehavior: "when_no_match"
                 httpMethod: GET
                 type: "aws_proxy"
@@ -90,39 +90,11 @@ Resources:
       CloudFrontOriginAccessIdentityConfig:
         Comment: 'Pray4TN OA'
 
-  # MyDistribution:
-  #   Type: "AWS::CloudFront::Distribution"
-  #   Properties:
-  #     DistributionConfig:
-  #       DefaultCacheBehavior:
-  #         ViewerProtocolPolicy: allow-all
-  #         TargetOriginId: Pray4TN-react-app
-  #         DefaultTTL: 0
-  #         MinTTL: 0
-  #         MaxTTL: 0
-  #         ForwardedValues:
-  #           QueryString: false
-  #       Origins:
-  #       - Id: Pray4TN-react-app
-  #         DomainName: wpt.bap.tn.react-app.s3.us-east-1.amazonaws.com
-  #         S3OriginConfig:
-  #           OriginAccessIdentity:
-  #             Fn::Sub: 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
-  #       - Id: Pray4TN-API
-  #         DomainName: !Sub '${Pray4TNapi}.execute-api.${AWS::Region}.amazonaws.com'
-  #         CustomOriginConfig:
-  #           OriginProtocolPolicy: match-viewer
-  #           HTTPPort: '80'
-  #           HTTPSPort: '443'
-  #       Enabled: "true"
-  #       DefaultRootObject: index.html
-
-
-  MyDistribution:
+  CloudfrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
-        Comment: "Cloudfront distribution for Pray4TN"
+        Comment: "wpt.bap.tn"
         DefaultRootObject: "index.html"
         Enabled: true
         HttpVersion: http2
@@ -182,12 +154,18 @@ Outputs:
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
 
-  HelloWorldApi:
+  Pray4TNapi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  Pray4TNLambdaFunction:
+    Description: "WPT.BAP.TN Lambda Function ARN"
+    Value: !GetAtt LambdaFunction.Arn
+  Pray4TNFunctionIamRole:
+    Description: "Implicit IAM Role created for WPT.BAP.TN function"
+    Value: !GetAtt LambdaFunctionRole.Arn
+  Pray4TNDistribution:
+    Description: "The CloudFront distribution in front of the S3 bucket"
+    Value: !Ref CloudfrontDistribution
+  # WebsiteUrl:
+  #   Description: "The website URL"
+  #   Value: !Sub "https://${DomainName}/"

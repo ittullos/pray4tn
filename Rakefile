@@ -10,8 +10,6 @@ else
   DB = Sequel.connect(ENV["DB_DEV"])
 end 
 
-# pry
-
 namespace :db do
   desc "Run Migrations"
   task :migrate, [:version] do |t, args|
