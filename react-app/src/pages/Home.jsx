@@ -12,7 +12,7 @@ function Home() {
   const [votdShow, setVotdShow] = React.useState(false);
 
   const getVerse = () => {
-    axios.get("https://jwzannz7l2.execute-api.us-east-1.amazonaws.com/Prod/hello")
+    axios.get("https://ard1b3wic0.execute-api.us-east-1.amazonaws.com/Prod/hello")
     .then(res => {
       console.log(res)
       setVerse(res.data.verse)

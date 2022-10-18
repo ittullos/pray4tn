@@ -14,7 +14,7 @@ list-stacks:
 	aws cloudformation list-stacks
 
 nuke-stack:
-	aws cloudformation delete-stack --stack-name sam-app
+	aws cloudformation delete-stack --stack-name wpt-bap-tn
 
 nuke-react:
 	aws s3 rm s3://wpt.bap.tn.react-app --recursive && aws s3 rm s3://wpt.bap.tn.logs --recursive && aws s3 rb s3://wpt.bap.tn.react-app --force && aws s3 rb s3://wpt.bap.tn.logs --force

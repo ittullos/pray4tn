@@ -3,10 +3,12 @@ GEM
   specs:
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
+    mysql2 (0.5.4)
     rack (2.2.4)
     rack-protection (2.2.2)
       rack
     ruby2_keywords (0.0.5)
+    sequel (5.61.0)
     sinatra (2.2.2)
       mustermann (~> 2.0)
       rack (~> 2.2)
@@ -19,7 +21,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  mysql2
   rack
+  sequel
   sinatra
   sinatra-cors
 

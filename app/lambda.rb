@@ -3,12 +3,16 @@ require 'rack'
 require 'base64'
 require 'app'
 require "sinatra/cors"
+require "sequel"
 
 # Global object that responds to the call method. Stay outside of the handler
 # to take advantage of container reuse
 $app ||= Sinatra::Application
 
-ENV['RACK_ENV'] ||= 'production'
+# ENV['RACK_ENV'] ||= 'prod'
+
+# DB = Sequel.connect(:adapter => 'mysql2', :host => (ENV["DB_HOST"]),:port => 3306, :user => 'admin', :password => (ENV["DB_PWRD"]), :database => 'test')
+
 
 set :allow_origin, "*"
 set :allow_methods, "GET,DELETE,PATCH,OPTIONS"
@@ -40,6 +44,8 @@ def handler(event:, context:)
     'rack.input' => StringIO.new(body),
     'rack.errors' => $stderr,
   }
+
+  puts "HEADERS: #{headers}"
 
   # Pass request headers to Rack if they are available
   headers.each_pair do |key, value|
