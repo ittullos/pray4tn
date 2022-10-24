@@ -1,5 +1,5 @@
 deploy-aws:
-	sam build && sam deploy
+	sam build --use-container && sam deploy
 
 deploy-react:
 	aws s3 sync ./react-app/build s3://wpt.bap.tn.react-app
