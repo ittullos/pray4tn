@@ -1,13 +1,16 @@
 require 'json'
 require 'sinatra'
 require 'mysql2'
+require 'sequel'
 
 
-puts ENV["DB_HOST"]
+puts "DEBUG: DB host env #{ENV["DB_HOST"]}"
+puts "DEBUG: DB password env #{ENV["DB_PWRD"]}"
 
 Sequel.connect(:adapter => 'mysql2', :host => (ENV["DB_HOST"]),:port => 3306, :user => 'admin', :password => (ENV["DB_PWRD"]), :database => 'test')
 
-require './app/models/verse'
+puts "DEBUG after connect"
+require './models/verse'
 
 get '/hello' do
   # content_type :json
