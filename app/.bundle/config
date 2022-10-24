@@ -1,0 +1,3 @@
+---
+BUNDLE_BUILD__MYSQL: "--with-mysql-config=/usr/lib64/mysql/mysql_config"
+BUNDLE_DEPLOYMENT: "true"
