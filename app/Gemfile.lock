@@ -1,6 +1,20 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    aws-eventstream (1.2.0)
+    aws-partitions (1.649.0)
+    aws-sdk-core (3.164.0)
+      aws-eventstream (~> 1, >= 1.0.2)
+      aws-partitions (~> 1, >= 1.525.0)
+      aws-sigv4 (~> 1.1)
+      jmespath (~> 1, >= 1.6.1)
+    aws-sdk-kms (1.58.0)
+      aws-sdk-core (~> 3, >= 3.127.0)
+      aws-sigv4 (~> 1.1)
+    aws-sigv4 (1.5.2)
+      aws-eventstream (~> 1, >= 1.0.2)
+    base64 (0.1.1)
+    jmespath (1.6.1)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
     mysql2 (0.5.4)
@@ -21,6 +35,8 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  aws-sdk-kms
+  base64
   mysql2
   rack
   sequel

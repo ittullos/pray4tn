@@ -23,6 +23,12 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-04e38f5ca3081cd9d
+        SubnetIds:
+          - subnet-09548401ffa6c31f8
+          - subnet-0330e233936772fe8
 
   ReactApp: 
     Type: AWS::S3::Bucket

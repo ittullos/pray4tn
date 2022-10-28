@@ -1,12 +1,44 @@
-/* Navbar */
-.right-aligned {
-  justify-content: flex-end;
+/* Body */
+
+.full-screen {
+  height: 100%;
+  height: -webkit-fill-available;
+  overflow: hidden
+  position-fixed
 }
 
-/* Buttons */
+.body {
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* align-items: center; */
+  /* justify-content: space-between; */
+  /* max-width: 500px; */
+  height: 92vh;
+  /* height: -webkit-fill-available; */
+  min-height: -moz-available;
+  min-height: -webkit-fill-available;
+  min-height: fill-available;
+  position: absolute;
+}
 
-.center-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.votd {
+  min-height: 30vh;
+  width: 100vw;
+  max-width: 800px;
+
+}
+
+.route {
+  min-height: 20vh;
+  width: 100vw;
+  max-width: 800px;
+
+
+}
+
+.popups {
+  min-height: 15vh;
+  width: 100vw;
+  max-width: 800px;
+
 }

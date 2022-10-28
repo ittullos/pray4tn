@@ -9,17 +9,14 @@ require "sequel"
 # to take advantage of container reuse
 $app ||= Sinatra::Application
 
-# ENV['RACK_ENV'] ||= 'prod'
-
-# DB = Sequel.connect(:adapter => 'mysql2', :host => (ENV["DB_HOST"]),:port => 3306, :user => 'admin', :password => (ENV["DB_PWRD"]), :database => 'test')
-
-
 set :allow_origin, "*"
 set :allow_methods, "GET,DELETE,PATCH,OPTIONS"
 set :allow_headers, "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since"
 set :expose_headers, "location,link"
 
 def handler(event:, context:)
+
+  puts "Lambda: top of handler"
 
   # Check if the body is base64 encoded. If it is, try to decode it
   body = if event['isBase64Encoded']
@@ -30,6 +27,9 @@ def handler(event:, context:)
 
   # Rack expects the querystring in plain text, not a hash
   headers = event.fetch 'headers', {}
+
+  puts "Lambda: HEADERS: #{headers}"
+  puts "Lambda: EVENT: #{event}"
 
   env = {
     'REQUEST_METHOD' => event.fetch('httpMethod'),
@@ -43,9 +43,11 @@ def handler(event:, context:)
     'rack.url_scheme' => headers.fetch('CloudFront-Forwarded-Proto') { headers.fetch('X-Forwarded-Proto', 'https') },
     'rack.input' => StringIO.new(body),
     'rack.errors' => $stderr,
+    # 'db_host' => kms_decrypt(ENV["DB1"]),
+    # 'db_pwrd' => kms_decrypt(ENV["DB2"]),
   }
 
-  puts "HEADERS: #{headers}"
+  puts "Lambda: env: #{env}"
 
   # Pass request headers to Rack if they are available
   headers.each_pair do |key, value|
@@ -62,7 +64,7 @@ def handler(event:, context:)
   end
 
   begin
-    puts "Lambda Handler ENV: #{env}"
+    puts "Lambda: calling app"
     # Response from Rack must have status, headers and body
     status, headers, body = $app.call env
 

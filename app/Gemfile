@@ -5,6 +5,8 @@ gem 'sinatra'
 gem 'sinatra-cors'
 gem 'sequel'
 gem 'mysql2'
+gem 'aws-sdk-kms'
+gem 'base64'
 # gem "sinatra-contrib",require: false
 # gem 'json'
 # gem 'dotenv'
