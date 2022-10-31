@@ -1,10 +1,17 @@
+/* App */
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
 /* Body */
 
 .full-screen {
   height: 100%;
   height: -webkit-fill-available;
-  overflow: hidden
-  position-fixed
+  /* overflow: hidden */
+  /* position-fixed */
 }
 
 .body {
@@ -17,19 +24,19 @@
   /* height: -webkit-fill-available; */
   min-height: -moz-available;
   min-height: -webkit-fill-available;
-  min-height: fill-available;
+  min-height: stretch;
   position: absolute;
 }
 
 .votd {
-  min-height: 30vh;
+  min-height: 33vh;
   width: 100vw;
   max-width: 800px;
 
 }
 
 .route {
-  min-height: 20vh;
+  min-height: 23vh;
   width: 100vw;
   max-width: 800px;
 
@@ -40,5 +47,144 @@
   min-height: 15vh;
   width: 100vw;
   max-width: 800px;
+}
 
+/* Buttons */
+
+.route-button {
+  max-width: 300px;
+  min-width: 200px;
+}
+.popup-btn {
+  width: 150px;
+}
+
+/* VOTD */
+
+.votd-container {
+  overflow-y: scroll;
+}
+
+/* Navabar */
+
+.navbar {
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  max-width: 1200px;
+}
+
+.nav-logo {
+  align-items: center;
+  margin-left: 20px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 2rem;
+  flex-grow: 1;
+  color: white;
+  margin-bottom: 7px;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  text-align: center;
+
+}
+
+.nav-links {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  height: 100%;
+  border-bottom: 3px solid transparent;
+}
+
+.nav-item {
+  line-height: 40px;
+  margin-right: 1rem;
+  color: white;
+  margin-right: 2rem;
+  margin-top: 1rem;
+}
+
+.nav-item:after {
+  content: "";
+  display: block;
+  height: 3px;
+  width: 0;
+  background: transparent;
+  transition: width .7s ease;
+}
+
+.nav-item:hover:after {
+  width: 100%;
+}
+
+.nav-icon {
+  display: none;
+}
+
+@media screen and (max-width: 960px) {
+  
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-top: 1pxsolid white;
+    position: absolute;
+    top: 80px;
+    left: -110%;
+    opacity: 1;
+  }
+
+  .nav-menu.active {
+    background: #4582ec;
+    left: 0px;
+    opacity: 1;
+    transition: all 0.5s ease;
+    z-index: 1;
+  }
+  
+  .nav-icon {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(-100%, 60%);
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  .nav-link {
+    padding: 1.5rem;
+    width: 100%;
+    display: table;
+    margin-bottom: 10px;
+
+  }
+}
+
+/* Icons */
+
+.burger {
+  height: 30px;
+}
+
+.close-icon {
+  height: 25px;
+  padding-left: 7px;
 }
