@@ -1,10 +1,6 @@
-/* eslint-disable react/jsx-no-comment-textnodes */
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
-// import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
-// import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button'
 import Votd from '../components/Votd'
 
@@ -30,8 +26,6 @@ function Home() {
     })
   }
 
-  // setVerse("Love is patient and kind; love does not envy or boast; it is not arrogant or rude. It does not insist on its own way; it is not irritable or resentful.")
-  // setNotation("1 Corinthians 13:4-5")
   useEffect(() => {
     let ignore = false
     
@@ -52,27 +46,14 @@ function Home() {
               <Button variant="success" className='btn-lg route-button mt-3'>Start Route</Button>
           </div>
           <div className="col-12 p-2 bd-highlight popups d-flex flex-row justify-content-center align-items-center">
-              <Button variant="warning" className='popup-btn m-4'>
+              <Button variant="primary" className='popup-btn m-4'>
                 Devotional
               </Button>
-              <Button variant="info" className='popup-btn m-4'>
+              <Button variant="primary" className='popup-btn m-4'>
                 Prayer
               </Button>
           </div>
       </div>
-      {/* <div className="body bg-warning flex-column flex-md-row justify-content-between">
-
-        <div className="votd bg-secondary">
-          VOTD
-        </div>
-
-        <div className="route bg-success">
-          ROUTE
-        </div>
-
-        <div className="popups bg-danger">
-          POPUPS
-        </div> */}
 
               {/* <Button 
                 variant="success" 

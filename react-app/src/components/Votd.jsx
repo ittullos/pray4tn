@@ -5,7 +5,7 @@ function Votd(props) {
     <div>
       <div className="votd-container text-center"       
            aria-labelledby="contained-modal-title-vcenter">
-        <h2 className='pt-3 mt-4'>Verse of the Day</h2>
+        <h2 className='pt-3 mt-1'>Verse of the Day</h2>
         <figure className="text-center mx-4 mt-3">
           <blockquote className="blockquote" style={{fontSize:24}}>
             <p className="mb-0">
