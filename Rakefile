@@ -4,11 +4,15 @@ require "dotenv"
 
 Dotenv.load
 
-if ENV["RACK_ENV"] == "prod"
-  DB = Sequel.connect(:adapter => 'mysql2', :host => (ENV["DB_HOST"]),:port => 3306, :user => 'admin', :password => (ENV["DB_PWRD"]), :database => 'test') 
-else
+if ENV["RACK_ENV"] == "dev"
   DB = Sequel.connect(ENV["DB_DEV"])
-end 
+else
+  DB = Sequel.connect(:adapter => 'mysql2', 
+                      :host => (ENV["DB_HOST"]),
+                      :port => 3306, :user => 'admin', 
+                      :password => (ENV["DB_PWRD"]), 
+                      :database => 'test')
+end
 
 require "./app/models/verse"
 

@@ -4,14 +4,24 @@ require 'mysql2'
 require 'sequel'
 
 before do
-  Sequel.connect(:adapter => 'mysql2',
-    :host => (ENV["DB_HOST"]),
-    :port => 3306,
-    :user => 'admin',
-    :password => (ENV["DB_PWRD"]),
-    :database => 'test')
-  require './models/verse'
+  if ENV["RACK_ENV"] == "dev"
+    Sequel.connect(ENV["DB_DEV"])
+    require './app/models/verse'
+
+  else
+    Sequel.connect(:adapter => 'mysql2',
+                   :host => (ENV["DB_HOST"]),
+                   :port => 3306,
+                   :user => 'admin',
+                   :password => (ENV["DB_PWRD"]),
+                   :database => 'test')
+    require './models/verse'
+  end
+  # pry.byebug
+  
 end
+
+
 
 get '/hello' do
   @verse = Verse.first
@@ -21,4 +31,11 @@ get '/hello' do
     notation: @verse.notation,
     version: @verse.version
   }.to_json
+
+  # content_type :json
+  # { 
+  #   verse: "lkdfshfdlfsdaslk",
+  #   notation: "hlkdkls;jf;dsjf;;ds",
+  #   version: "khldshslkfhlsdf"
+  # }.to_json
 end
