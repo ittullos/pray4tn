@@ -16,7 +16,7 @@ function Home() {
   
 
   const getVerse = () => {
-    axios.get("https://5uwcujb2za.execute-api.us-east-1.amazonaws.com/Prod/hello")
+    axios.get("https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l/home")
     // axios.get("http://localhost:9292/hello")
     .then(res => {
       console.log(res)

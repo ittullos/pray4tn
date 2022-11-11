@@ -9,7 +9,7 @@ Globals:
     Timeout: 3
 
 Resources:
-  LambdaFunction:
+  Pastor4Life:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: app/
@@ -18,11 +18,16 @@ Resources:
       Architectures:
         - x86_64
       Events:
-        HelloWorld:
+        Home:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /p4l/home
             Method: get
+        Location:
+          Type: Api
+          Properties:
+            Path: /p4l/checkpoint
+            Method: post
       VpcConfig:
         SecurityGroupIds:
           - sg-04e38f5ca3081cd9d
@@ -62,33 +67,33 @@ Resources:
                 - /*
       Bucket: !Ref ReactApp
 
-  Pray4TNapi:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name: Pray4TNapi
-      StageName: Prod
-      DefinitionBody:
-        swagger: '2.0'
-        basePath: '/hello'
-        paths:
-          /hello/{proxy+}:
-            x-amazon-apigateway-any-method:
-              responses: {}
-              x-amazon-apigateway-integration:
-                uri:
-                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations'
-                passthroughBehavior: "when_no_match"
-                httpMethod: POST
-                type: "aws_proxy"
-          /hello/{proxy+}:
-            x-amazon-apigateway-any-method:
-              responses: {}
-              x-amazon-apigateway-integration:
-                uri:
-                  !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations'
-                passthroughBehavior: "when_no_match"
-                httpMethod: GET
-                type: "aws_proxy"
+  # Pray4TNapi:
+  #   Type: AWS::Serverless::Api
+  #   Properties:
+  #     Name: Pray4TNapi
+  #     StageName: Prod
+  #     DefinitionBody:
+  #       swagger: '2.0'
+  #       basePath: '/p4l'
+  #       paths:
+  #         /p4l/{proxy+}:
+  #           x-amazon-apigateway-any-method:
+  #             responses: {}
+  #             x-amazon-apigateway-integration:
+  #               uri:
+  #                 !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Pastor4Life.Arn}/invocations'
+  #               passthroughBehavior: "when_no_match"
+  #               httpMethod: POST
+  #               type: "aws_proxy"
+  #         /p4l/{proxy+}:
+  #           x-amazon-apigateway-any-method:
+  #             responses: {}
+  #             x-amazon-apigateway-integration:
+  #               uri:
+  #                 !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Pastor4Life.Arn}/invocations'
+  #               passthroughBehavior: "when_no_match"
+  #               httpMethod: GET
+  #               type: "aws_proxy"
 
   CloudFrontOriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
@@ -115,7 +120,8 @@ Resources:
             OriginAccessIdentity:
               Fn::Sub: 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
         - Id: Pray4TN-API
-          DomainName: !Sub '${Pray4TNapi}.execute-api.${AWS::Region}.amazonaws.com'
+          # DomainName: !Sub '${Pray4TNapi}.execute-api.${AWS::Region}.amazonaws.com'
+          DomainName: !Sub "${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com"
           CustomOriginConfig:
             OriginProtocolPolicy: match-viewer
             HTTPPort: '80'
@@ -132,7 +138,7 @@ Resources:
           ViewerProtocolPolicy : redirect-to-https
         CacheBehaviors:
         - TargetOriginId: Pray4TN-API
-          PathPattern: /hello/*
+          PathPattern: /p4l/*
           ViewerProtocolPolicy: redirect-to-https
           CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
           OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
@@ -145,7 +151,7 @@ Resources:
             - POST
             - PUT
         - TargetOriginId: Pray4TN-react-app
-          PathPattern: /
+          PathPattern: /p4lapp
           AllowedMethods:
           - GET
           - HEAD
@@ -160,15 +166,15 @@ Outputs:
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
 
-  Pray4TNapi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  Pray4TNLambdaFunction:
+  # Pray4TNapi:
+  #   Description: "API Gateway endpoint URL for Prod stage for Pastor4Life API"
+  #   Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/p4l/"
+  Pray4TNPastor4Life:
     Description: "WPT.BAP.TN Lambda Function ARN"
-    Value: !GetAtt LambdaFunction.Arn
+    Value: !GetAtt Pastor4Life.Arn
   Pray4TNFunctionIamRole:
     Description: "Implicit IAM Role created for WPT.BAP.TN function"
-    Value: !GetAtt LambdaFunctionRole.Arn
+    Value: !GetAtt Pastor4LifeRole.Arn
   Pray4TNDistribution:
     Description: "The CloudFront distribution in front of the S3 bucket"
     Value: !Ref CloudfrontDistribution

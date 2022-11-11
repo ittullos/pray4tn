@@ -22,7 +22,7 @@ end
 
 
 
-get '/hello' do
+get '/p4l/home' do
   @verse = Verse.first
 
   content_type :json
