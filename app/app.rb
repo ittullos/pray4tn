@@ -8,23 +8,23 @@ before do
     Sequel.connect(ENV["DB_DEV"])
     require './app/models/verse'
 
-  else
+  elsif ENV["RACK_ENV"] == "prod"
     Sequel.connect(:adapter => 'mysql2',
                    :host => (ENV["DB_HOST"]),
                    :port => 3306,
                    :user => 'admin',
                    :password => (ENV["DB_PWRD"]),
-                   :database => 'test')
+                   :database => (ENV["DB_NAME"]))
     require './models/verse'
   end
   # pry.byebug
-  
 end
 
 
 
 get '/hello' do
   @verse = Verse.first
+
   content_type :json
   { 
     verse: @verse.scripture,
