@@ -10,7 +10,20 @@ class Checkpoint < Sequel::Model
                             seconds:      0)
       self.route_id = route
       self.save
-    elsif self.type == "heartbeat"
+
+      if self.user.prev_route_id != self.user.last_route_id
+        
+        if Route[self.user.prev_route_id].checkpoints.last.type != "stop"
+          checkpoint = self.user.add_checkpoint(timestamp: Time.now.to_i,
+                                                lat:       0,
+                                                long:      0,
+                                                type:      "stop")      
+          checkpoint.route_id = Route[self.user.prev_route_id].id
+          checkpoint.save  
+        end
+      end
+
+    elsif self.type == "heartbeat" || self.type == "stop"
       user_id = self.user_id
       self.route_id = User[user_id].last_route_id
       self.save

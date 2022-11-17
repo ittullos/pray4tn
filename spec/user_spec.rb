@@ -1,6 +1,6 @@
 require './spec/spec_helper'
 
-describe "Pastor4Life API - " do
+describe "User model - " do
 
   include Rack::Test::Methods
 
@@ -13,14 +13,6 @@ describe "Pastor4Life API - " do
   end
 
   before do 
-
-    VERSES.each do |verse|
-      Verse.insert(
-        scripture: verse["scripture"],
-        version: verse["version"],
-        notation: verse["notation"]
-      )
-    end
 
     for i in 1..5 do
       User.insert(
@@ -47,38 +39,30 @@ describe "Pastor4Life API - " do
         end
         user.add_checkpoint(
           timestamp: Time.now.to_i,
-          lat: random_location[0],
-          long: random_location[1],
-          type: "stop"
+          lat:       random_location[0],
+          long:      random_location[1],
+          type:      "stop"
         )
       end
     end
 
     @user = User.find(email: "email3")
     @new_checkpoint  = @user.add_checkpoint(timestamp: Time.now.to_i,
-                                            lat: random_location[0],
-                                            long: random_location[1],
-                                            type: "start")
+                                            lat:       random_location[0],
+                                            long:      random_location[1],
+                                            type:      "start")
   end
 
-  describe "Routes - " do
-    let(:votd) { VERSES.first["scripture"] }
-
-    context "Home route - " do
-      it "returns the correct verse" do
-        get '/p4l/home'
-        expect(last_response.status).to eq(200)
-        expect last_response.body.include?(votd)
-      end
+  context "Methods - " do
+    it "gets the user's route ids" do
+      @route_ids = @user.route_ids
+      expect(@route_ids.count).to eq(8)
     end
-
-    context "Checkpoint route - " do
-        
-      xit "logs a heartbeat checkpoint" do
-
-        post '/p4l/checkpoint', params
-        expect(User.first)
-      end
-    end
+    it "gets the user's most recent route id" do
+      @last_route_id = @user.last_route_id
+      expect(@last_route_id).to eq(@new_checkpoint.route_id)
+    end 
   end
+
+
 end
