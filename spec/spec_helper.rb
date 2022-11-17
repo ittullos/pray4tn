@@ -7,6 +7,10 @@ require 'rack/test'
 require 'rspec/sequel'
 require './app/app'
 require './app/models/verse'
+require './app/models/user'
+require './app/models/checkpoint'
+require './app/models/route'
+
 
 RSpec.configure do |c|
   c.around(:each) do |example|
@@ -31,4 +35,5 @@ VERSES = [
     "notation" => "Philippians 4:6-7"
   }
 ]
+
   

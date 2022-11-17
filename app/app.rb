@@ -17,10 +17,7 @@ before do
                    :database => (ENV["DB_NAME"]))
     require './models/verse'
   end
-  # pry.byebug
 end
-
-
 
 get '/p4l/home' do
   @verse = Verse.first
@@ -31,11 +28,4 @@ get '/p4l/home' do
     notation: @verse.notation,
     version: @verse.version
   }.to_json
-
-  # content_type :json
-  # { 
-  #   verse: "lkdfshfdlfsdaslk",
-  #   notation: "hlkdkls;jf;dsjf;;ds",
-  #   version: "khldshslkfhlsdf"
-  # }.to_json
 end

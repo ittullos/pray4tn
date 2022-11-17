@@ -13,15 +13,11 @@ gem 'sinatra-sequel'
 gem 'sinatra-cross_origin'
 gem 'sinatra-cors'
 
-
-# group :development do
-
-# end
-
 group :test do
   gem 'rspec-sequel'
   gem 'rake'
   gem 'rack-test'
   gem 'rspec'
   gem 'capybara'
+  gem 'random-location'
 end
