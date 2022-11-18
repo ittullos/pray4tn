@@ -16,6 +16,7 @@ GEM
     coderay (1.1.3)
     diff-lcs (1.5.0)
     dotenv (2.8.1)
+    haversine (0.3.2)
     json (2.6.2)
     matrix (0.4.2)
     method_source (1.0.0)
@@ -88,6 +89,7 @@ PLATFORMS
 DEPENDENCIES
   capybara
   dotenv
+  haversine
   json
   mysql2
   pry-byebug

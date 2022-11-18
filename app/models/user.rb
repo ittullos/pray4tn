@@ -3,18 +3,19 @@ class User < Sequel::Model
   one_to_many :checkpoints
 
   def route_ids
-    self.checkpoints.map { |point| point.route_id }.uniq.compact
+    checkpoints.map { |point| point.route_id }.uniq.compact
   end
 
   def last_route_id
-    self.route_ids.sort.last
+    route_ids.sort.last
+    # Checkpoint.last_route_id(id)
   end
 
   def prev_route_id
-    if self.route_ids.count > 1    
-      return_id = self.route_ids[-2]
+    if route_ids.count > 1    
+      return_id = route_ids[-2]
     else
-      return_id = self.last_route_id
+      return_id = last_route_id
     end
     return_id
   end

@@ -12,6 +12,7 @@ gem 'dotenv'
 gem 'sinatra-sequel'
 gem 'sinatra-cross_origin'
 gem 'sinatra-cors'
+gem "haversine"
 
 group :test do
   gem 'rspec-sequel'

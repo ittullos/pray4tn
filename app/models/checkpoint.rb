@@ -2,6 +2,19 @@ class Checkpoint < Sequel::Model
   many_to_one :user
   many_to_one :route
 
+  # def self.route_ids(user_id)
+  #   # pry.byebug
+  #   Checkpoint.where(user_id: user_id)
+  # end
+
+  # def self.last_route_id
+  #   # pry.byebug
+  # end
+
+  # def self.prev_route_id(user_id)
+  #   pry.byebug
+  # end
+
   def after_create 
     if self.type == "start"
       route  = Route.insert(started_at:   Time.now.to_i,
@@ -26,7 +39,11 @@ class Checkpoint < Sequel::Model
     elsif self.type == "heartbeat" || self.type == "stop"
       user_id = self.user_id
       self.route_id = User[user_id].last_route_id
-      self.save
+      self.save   
+    end
+
+    if self.type == "stop" 
+      self.route.calculate_route_data
     end
     super
   end

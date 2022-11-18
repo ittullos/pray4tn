@@ -8,12 +8,7 @@ describe "Checkpoint model -" do
     Sinatra::Application
   end
 
-  def random_location
-    RandomLocation.near_by(36.174465, -86.767960, 1000)
-  end
-
   before do 
-
     for i in 1..5 do
       User.insert(
         email: "email#{i}",
@@ -65,7 +60,7 @@ describe "Checkpoint model -" do
   end
 
   describe "New checkpoint -" do
-    context "Start - " do
+    context "Start -" do
       before do
         @route_count = @user.route_ids.count
         @user.add_checkpoint(timestamp: Time.now.to_i,
@@ -74,7 +69,7 @@ describe "Checkpoint model -" do
                             type:      "start")                          
       end
 
-      it "creates new route" do
+      it "creates a new route" do
         expect(@route_count + 1).to eq(@user.route_ids.count)   
       end
 
@@ -98,8 +93,33 @@ describe "Checkpoint model -" do
         checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
                                           lat:       random_location[0],
                                           long:      random_location[1],
-                                          type:      "stop")      
+                                          type:      "stop")
         expect(checkpoint.route_id).to eq(Route[@user.last_route_id].id)
+      end
+
+      it "calculates and fills in the route data" do 
+        @start_checkpoint = @user.add_checkpoint(timestamp: TEST_ROUTE[0]["timestamp"],
+                                                 lat:       TEST_ROUTE[0]["lat"],
+                                                 long:      TEST_ROUTE[0]["long"],
+                                                 type:      "start")
+        @test_route = @start_checkpoint.route
+
+        for i in 1..3 do
+          @user.add_checkpoint(timestamp: TEST_ROUTE[i]["timestamp"],
+                               lat:       TEST_ROUTE[i]["lat"],
+                               long:      TEST_ROUTE[i]["long"],
+                               type:      "heartbeat")
+        end
+
+        @user.add_checkpoint(timestamp: TEST_ROUTE[4]["timestamp"],
+                             lat:       TEST_ROUTE[4]["lat"],
+                             long:      TEST_ROUTE[4]["long"],
+                             type:      "stop")
+             
+        expect(Route[@user.last_route_id].seconds).to eq(TEST_DURATION)
+        expect(Route[@user.last_route_id].mileage).to eq(TEST_DISTANCE.to_i)
+        expect(Route[@user.last_route_id].started_at).to eq(TEST_ROUTE[0]["timestamp"])
+        expect(Route[@user.last_route_id].stopped_at).to eq(TEST_ROUTE[5]["timestamp"])
       end
     end
   end
