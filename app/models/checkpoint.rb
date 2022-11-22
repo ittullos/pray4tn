@@ -2,38 +2,34 @@ class Checkpoint < Sequel::Model
   many_to_one :user
   many_to_one :route
 
-  def self.get_user_checkpoints(user_id)
-    Checkpoint.where(user_id: user_id).order_by(Sequel.desc(:id))
+  dataset_module do
+    def user_checkpoints(user_id)
+      where(:user_id => user_id)
+    end
+
+    def start_points
+      where(:type => "start")
+    end
+
+    def next_to_last
+      order_by(Sequel.desc(:id)).limit(2).offset(1).first
+    end
+
+    def most_recent
+      order_by(Sequel.desc(:id)).first
+    end
   end
-
-  def self.user_checkpoints(user_id)
-    get_user_checkpoints(user_id).all
-  end
-
-  def self.user_route_ids(user_id)
-    user_checkpoints(user_id).map { |point| point.route_id }.uniq.compact
-  end
-
-  def self.last_route(user_id)
-    get_user_checkpoints(user_id).first.route
-  end
-
-  def self.last_checkpoint(user_id)
-    get_user_checkpoints(user_id).first
-  end
-
-
 
   def before_create
     if type == "start"
-      if  Checkpoint.user_route_ids(user.id).count > 1
-        if Checkpoint.last_checkpoint(user.id).type != "stop"
+      if  Checkpoint.user_checkpoints(user.id).start_points.count > 1
+        if Checkpoint.user_checkpoints(user.id).most_recent.type != "stop"
           checkpoint = user.add_checkpoint(timestamp: Time.now.to_i,
-                                                lat:       0,
-                                                long:      0,
-                                                type:      "stop") 
+                                           lat:       0,
+                                           long:      0,
+                                           type:      "stop") 
                                                 
-          checkpoint.route_id = Checkpoint.last_route(user.id).id
+          checkpoint.route_id = Checkpoint.user_checkpoints(user.id).most_recent.route_id
           checkpoint.save  
         end
       end
@@ -50,11 +46,12 @@ class Checkpoint < Sequel::Model
       self.save
 
     elsif type == "heartbeat" || self.type == "stop"
-      self.route_id = Checkpoint.user_route_ids(user.id).sort.last
+      self.route_id = Checkpoint.user_checkpoints(user.id).start_points.most_recent.route_id
       self.save   
     end
 
     if type == "stop" 
+
       self.route.calculate_route_data
     end
     super

@@ -17,7 +17,6 @@ class Route < Sequel::Model
                                       self.checkpoints[i-1].long.to_f,
                                       self.checkpoints[i].lat.to_f,
                                       self.checkpoints[i].long.to_f)
-      
         mileage_count += km_to_mi(distance.to_km)
       end
       self.mileage = (mileage_count * 10).to_i    

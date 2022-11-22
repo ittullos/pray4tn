@@ -62,19 +62,19 @@ describe "Checkpoint model -" do
   describe "New checkpoint -" do
     context "Start -" do
       before do
-        @route_count = @user.route_ids.count
+        @route_count = Checkpoint.user_checkpoints(@user.id).start_points.count
         @user.add_checkpoint(timestamp: Time.now.to_i,
-                            lat:       random_location[0],
-                            long:      random_location[1],
-                            type:      "start")                          
+                             lat:       random_location[0],
+                             long:      random_location[1],
+                             type:      "start")                          
       end
 
       it "creates a new route" do
-        expect(@route_count + 1).to eq(@user.route_ids.count)   
+        expect(@route_count + 1).to eq(Checkpoint.user_checkpoints(@user.id).start_points.count)   
       end
 
       it "ends the previous route" do  
-        expect(Route[@user.prev_route_id].checkpoints.last.type).to eq("stop") 
+        expect(Checkpoint.user_checkpoints(@user.id).next_to_last.type).to eq("stop") 
       end
     end
 
@@ -84,7 +84,7 @@ describe "Checkpoint model -" do
                                           lat:       random_location[0],
                                           long:      random_location[1],
                                           type:      "heartbeat")
-        expect(checkpoint.route_id).to eq(Route[@user.last_route_id].id)
+        expect(checkpoint.route_id).to eq(Checkpoint.user_checkpoints(@user.id).most_recent.route_id)
       end
     end
 
@@ -94,7 +94,7 @@ describe "Checkpoint model -" do
                                           lat:       random_location[0],
                                           long:      random_location[1],
                                           type:      "stop")
-        expect(checkpoint.route_id).to eq(Route[@user.last_route_id].id)
+        expect(checkpoint.route_id).to eq(Checkpoint.user_checkpoints(@user.id).most_recent.route_id)
       end
 
       it "calculates and fills in the route data" do 
@@ -102,7 +102,7 @@ describe "Checkpoint model -" do
                                                  lat:       TEST_ROUTE[0]["lat"],
                                                  long:      TEST_ROUTE[0]["long"],
                                                  type:      "start")
-        @test_route = @start_checkpoint.route
+        @test_route_id = @start_checkpoint.route_id
 
         for i in 1..3 do
           @user.add_checkpoint(timestamp: TEST_ROUTE[i]["timestamp"],
@@ -116,12 +116,8 @@ describe "Checkpoint model -" do
                              long:      TEST_ROUTE[4]["long"],
                              type:      "stop")
 
-                            #  pry.byebug
-             
-        expect(Route[@user.last_route_id].seconds).to eq(TEST_DURATION)
-        expect(Route[@user.last_route_id].mileage).to eq(TEST_DISTANCE.to_i)
-        # expect(Route[@user.last_route_id].started_at).to eq(TEST_ROUTE[0]["timestamp"])
-        # expect(Route[@user.last_route_id].stopped_at).to eq(TEST_ROUTE[5]["timestamp"])
+        expect(Route[@test_route_id].seconds).to eq(TEST_DURATION)
+        expect(Route[@test_route_id].mileage).to eq(TEST_DISTANCE.to_i)
       end
     end
   end
