@@ -1,4 +1,5 @@
 require 'sequel'
+require 'logger'
 ENV['RACK_ENV'] = "test"
 
 require './config/environment'
@@ -16,6 +17,8 @@ RSpec.configure do |c|
     DB.transaction(:rollback=>:always, :auto_savepoint=>true){example.run}
   end
 end
+
+DB.loggers << Logger.new($stdout)
 
 def km_to_mi (km)
   mi = km * 0.6214

@@ -74,10 +74,16 @@ describe "Pastor4Life API - " do
 
     context "Checkpoint route - " do
         
-      xit "logs a heartbeat checkpoint" do
+      it "logs a start checkpoint" do
+
+        route_count = Checkpoint.user_checkpoints(@user.id).start_points.count
+
+        params = { :lat  => random_location[0],
+                   :long => random_location[1],
+                   :type => "start"}
 
         post '/p4l/checkpoint', params
-        expect(User.first)
+        expect(Checkpoint.user_checkpoints(@user.id).start_points.count).to eq(route_count + 1)
       end
     end
   end
