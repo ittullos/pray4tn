@@ -12,7 +12,7 @@ function Navbar() {
     <>
       <nav className='navbar bg-primary'>
         <div className="nav-container">
-          <h3 className='nav-logo'>
+          <h3 className='nav-logo mb-5'>
             Pastor4Life
           </h3>
           <ul className={!navbarClose ? "nav-menu active" : "nav-menu"}>

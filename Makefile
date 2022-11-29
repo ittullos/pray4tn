@@ -7,6 +7,9 @@ deploy-react:
 build-react:
 	cd react-app/ && npm run build
 
+refresh-react:
+	cd react-app/ && npm run build && cd .. && aws s3 sync ./react-app/build s3://wpt.bap.tn.react-app && aws cloudfront create-invalidation --distribution-id E738Q3ALC03PW --paths "/*" --no-cli-pager
+
 build-aws: 
 	sam build
 
