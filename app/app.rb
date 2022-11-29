@@ -5,12 +5,12 @@ require 'sequel'
 
 before do
   if ENV["RACK_ENV"] == "dev"
-    Sequel.connect(ENV["DB_DEV"])
+    DB = Sequel.connect(ENV["DB_DEV"])
     require './app/models/verse'
     DB.loggers << Logger.new($stdout)
 
   elsif ENV["RACK_ENV"] == "prod"
-    Sequel.connect(:adapter => 'mysql2',
+    DB = Sequel.connect(:adapter => 'mysql2',
                    :host => (ENV["DB_HOST"]),
                    :port => 3306,
                    :user => 'admin',
@@ -39,6 +39,4 @@ post '/p4l/checkpoint' do
                        lat:       params[:lat],
                        long:      params[:long],
                        type:      params[:type])
-
-
 end
