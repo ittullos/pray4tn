@@ -7,36 +7,45 @@
 
 /* Body */
 
+.debug-border{
+  border: 2px;
+  border-style: dashed;
+}
+
 .full-screen {
   height: 100%;
   height: -webkit-fill-available;
 }
 
 .body {
-  height: -webkit-fill-available;
+  /* height: -webkit-fill-available; */
   min-height: -moz-available;
-  min-height: -webkit-fill-available;
+  /* min-height: -webkit-fill-available; */
   min-height: stretch;
   position: absolute;
 }
 
 .votd {
-  height: 40vh;
+  height: 35vh;
   width: 100vw;
   max-width: 675px;
   overflow-y: scroll;
 }
 
 .route {
-  min-height: 30vh;
+  min-height: 28vh;
+  max-height: 35vh;
   width: 100vw;
   max-width: 800px;
+  padding-bottom: 20px;
 }
 
 .popups {
   min-height: 15vh;
+  max-height: 20vh;
   width: 100vw;
   max-width: 800px;
+  margin-bottom: 20px;
 }
 
 /* Buttons */
@@ -47,6 +56,7 @@
 }
 .popup-btn {
   width: 150px;
+  /* margin-bottom: 2rem; */
 }
 
 /* VOTD */
@@ -147,6 +157,7 @@
     opacity: 1;
     transition: all 0.5s ease;
     z-index: 1;
+    overflow: scroll;
   }
   
   .nav-icon {
@@ -164,6 +175,27 @@
     width: 100%;
     display: table;
     margin-bottom: 10px;
+
+  }
+}
+@media screen and (max-width: 650px) {
+  .route-button {
+    font-size: medium;
+    max-width: 200px;
+    min-width: 150px;
+  }
+  .popup-btn {
+    font-size: small;
+    width: 120px;
+  }
+}
+
+@media screen and (max-height: 650px) {
+  .nav-link {
+    padding: 0.5rem;
+    /* width: 100%;
+    display: table; */
+    margin-bottom: 5px;
 
   }
 }

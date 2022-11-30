@@ -37,20 +37,47 @@ function Home() {
   return (
     <div className='full-screen'>
       <Navbar />
-      <div className="row d-flex justify-content-center align-items-between text-start body fill-height">
-          <div className="col-12 p-2 bd-highlight votd">
+      <div className="body
+                      row d-flex 
+                      justify-content-center 
+                      align-items-start
+                      text-start  
+                      fill-height">
+          <div className="votd
+                          col-12 
+                          p-2 
+                          bd-highlight">
             <Votd notation={notation} 
                   verse={verse}
             />
           </div>
-          <div className="col-12 p-2 bd-highlight route d-flex flex-column justify-content-start align-items-center">
-              <Button variant="success" className='btn-lg route-button mt-3'>Start Route</Button>
+          <div className="route 
+                          col-12 
+                          p-2 bd-highlight 
+                          d-flex 
+                          flex-column 
+                          justify-content-start 
+                          align-items-center">
+              <Button variant="success" className='route-button 
+                                                   btn-lg 
+                                                   mt-3'>
+                Start Route
+              </Button>
           </div>
-          <div className="col-12 p-2 bd-highlight popups d-flex flex-row justify-content-center align-items-center">
-              <Button variant="primary" className='popup-btn m-4'>
+          <div className="popups
+                          col-12 
+                          p-2 
+                          bd-highlight 
+                          d-flex 
+                          flex-row 
+                          justify-content-center 
+                          align-items-start">
+              <Button variant="primary" className='popup-btn 
+                                                   m-4'>
                 Devotional
               </Button>
-              <Button variant="primary" className='popup-btn m-4'>
+              <Button variant="primary" className='popup-btn 
+                                                   m-4'>
                 Prayer
               </Button>
           </div>
