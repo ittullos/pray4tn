@@ -211,3 +211,23 @@
   height: 25px;
   padding-left: 7px;
 }
+
+/* Geo Tracker */
+
+.tracker-stats {
+  min-height: 15vh;
+  width: 100%;
+}
+
+.timer {
+  min-height: 15vh;
+  width: 30vw;
+}
+.mileage {
+  min-height: 15vh;
+  width: 30vw;
+}
+.prayer-count {
+  min-height: 15vh;
+  width: 30vw;
+}

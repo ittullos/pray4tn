@@ -3,6 +3,7 @@ import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Button from 'react-bootstrap/Button'
 import Votd from '../components/Votd'
+import GeoTracker from '../components/GeoTracker'
 
 document.body.style.overflow = "hidden"
 
@@ -53,7 +54,8 @@ function Home() {
           </div>
           <div className="route 
                           col-12 
-                          p-2 bd-highlight 
+                          p-2 
+                          bd-highlight 
                           d-flex 
                           flex-column 
                           justify-content-start 
@@ -63,6 +65,7 @@ function Home() {
                                                    mt-3'>
                 Start Route
               </Button>
+              <GeoTracker />
           </div>
           <div className="popups
                           col-12 
