@@ -218,6 +218,8 @@
 }
 
 .timer {
+  font-family: Imported;
+  font-size: 2.5rem;
   min-height: 15vh;
   width: 30vw;
 }
@@ -228,4 +230,9 @@
 .prayer-count {
   min-height: 15vh;
   width: 30vw;
+}
+
+@font-face {
+  font-family: Imported;
+  src: url(./fonts/digital-7.ttf);
 }
