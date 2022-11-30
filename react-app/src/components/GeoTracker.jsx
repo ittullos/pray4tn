@@ -1,4 +1,5 @@
 import React from 'react'
+import Timer from '../components/Timer'
 
 function GeoTracker() {
   return (
@@ -8,13 +9,13 @@ function GeoTracker() {
                     col-12
                     justify-content-center 
                     align-items-center">
-      <div className="timer debug-border">
+      <div className="timer d-flex justify-content-center align-items-center">
+        <Timer />
+      </div>
+      <div className="mileage">
 
       </div>
-      <div className="mileage debug-border">
-
-      </div>
-      <div className="prayer-count debug-border">
+      <div className="prayer-count">
 
       </div>
 
