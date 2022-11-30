@@ -10,8 +10,14 @@ document.body.style.overflow = "hidden"
 
 function Home() {
 
-  const [verse, setVerse] = useState('')
-  const [notation, setNotation] = useState('')
+  const [verse, setVerse]                     = useState('')
+  const [notation, setNotation]               = useState('')
+  const [routeStart, setRouteStart]           = useState(false)
+  const [routeButtonText, setRouteButtonText] = useState('Start')
+
+  const handleRouteStart = () => {
+    setRouteStart(!routeStart)
+    setRouteButtonText(routeStart ? "Start" : "Stop")}
   // const [votdShow, setVotdShow] = React.useState(false);
 
   
@@ -60,12 +66,17 @@ function Home() {
                           flex-column 
                           justify-content-start 
                           align-items-center">
-              <Button variant="success" className='route-button 
-                                                   btn-lg 
-                                                   mt-3'>
-                Start Route
+              <Button variant="success" 
+                      onClick={handleRouteStart}
+                      style={{ backgroundColor: routeStart ? "#d9534f" : "#02b875" }}
+                      className='route-button 
+                                 btn-lg 
+                                 mt-3'>
+                                  {/* #02b875 */}
+                                  {/* #d9534f */}
+                {routeButtonText} Route
               </Button>
-              <GeoTracker />
+              {routeStart && <GeoTracker />}
           </div>
           <div className="popups
                           col-12 
