@@ -5,9 +5,10 @@ Sequel.migration do
       foreign_key :user_id, :users
       foreign_key :route_id, :routes
       Integer :timestamp, null: false
-      String :lat, null: false
-      String :long, null: false
-      String :type
+      String  :lat, null: false
+      String  :long, null: false
+      String  :type
+      Float   :distance, null: false
     end
   end
 

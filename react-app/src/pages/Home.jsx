@@ -12,19 +12,19 @@ function Home() {
 
   const [verse, setVerse]                     = useState('')
   const [notation, setNotation]               = useState('')
-  const [routeStart, setRouteStart]           = useState(false)
+  const [routeStarted, setRouteStarted]           = useState(false)
   const [routeButtonText, setRouteButtonText] = useState('Start')
 
   const handleRouteStart = () => {
-    setRouteStart(!routeStart)
-    setRouteButtonText(routeStart ? "Start" : "Stop")}
+    setRouteStarted(!routeStarted)
+    setRouteButtonText(routeStarted ? "Start" : "Stop")}
   // const [votdShow, setVotdShow] = React.useState(false);
 
   
 
   const getVerse = () => {
-    axios.get("https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l/home")
-    // axios.get("http://localhost:9292/hello")
+    // axios.get("https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l/home")
+    axios.get("http://localhost:9292/p4l/home")
     .then(res => {
       console.log(res)
       setVerse(res.data.verse)
@@ -36,7 +36,6 @@ function Home() {
 
   useEffect(() => {
     let ignore = false
-    
     if (!ignore)  getVerse()
     return () => { ignore = true }
     },[])
@@ -68,7 +67,7 @@ function Home() {
                           align-items-center">
               <Button variant="success" 
                       onClick={handleRouteStart}
-                      style={{ backgroundColor: routeStart ? "#d9534f" : "#02b875" }}
+                      style={{ backgroundColor: routeStarted ? "#d9534f" : "#02b875" }}
                       className='route-button 
                                  btn-lg 
                                  mt-3'>
@@ -76,7 +75,7 @@ function Home() {
                                   {/* #d9534f */}
                 {routeButtonText} Route
               </Button>
-              {routeStart && <GeoTracker />}
+              {routeStarted && <GeoTracker />}
           </div>
           <div className="popups
                           col-12 

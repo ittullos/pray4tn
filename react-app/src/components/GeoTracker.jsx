@@ -1,11 +1,12 @@
 import React from 'react'
 import Timer from '../components/Timer'
+import Mileage from '../components/Mileage'
+import PrayerCount from '../components/PrayerCount'
 
 function GeoTracker() {
   return (
     <div className="tracker-stats
                     d-flex
-                    debug-border
                     flex-row
                     col-12
                     justify-content-center 
@@ -17,10 +18,16 @@ function GeoTracker() {
         <Timer />
       </div>
       <div className="mileage
-                      debug-border">
+                      d-flex
+                      justify-content-center
+                      align-items-center">
+        <Mileage />
       </div>
-      <div className="prayer-count">
-
+      <div className="prayer-count
+                      d-flex
+                      justify-content-center
+                      align-items-center">
+        <PrayerCount />
       </div>
 
     </div>
@@ -28,3 +35,5 @@ function GeoTracker() {
 }
 
 export default GeoTracker
+
+

@@ -23,7 +23,10 @@ before do
 end
 
 get '/p4l/home' do
+  # pry.byebug
   @verse = Verse.first
+
+
 
   content_type :json
   { 
