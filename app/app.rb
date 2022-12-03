@@ -2,11 +2,17 @@ require 'json'
 require 'sinatra'
 require 'mysql2'
 require 'sequel'
+require "sinatra/cors"
+
+set :allow_origin, "*"
+set :allow_methods, "GET,POST,DELETE,PATCH,OPTIONS"
+set :allow_headers, "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since"
+set :expose_headers, "location,link"
 
 before do
   if ENV["RACK_ENV"] == "dev"
     DB = Sequel.connect(ENV["DB_DEV"])
-    require './app/models/verse'
+    
     DB.loggers << Logger.new($stdout)
 
   elsif ENV["RACK_ENV"] == "prod"
@@ -16,10 +22,13 @@ before do
                    :user => 'admin',
                    :password => (ENV["DB_PWRD"]),
                    :database => (ENV["DB_NAME"]))
-    require './models/verse'
     DB.loggers << Logger.new($stdout)
   end
-  
+  require './app/models/verse'
+  require './app/models/user'
+  require './app/models/checkpoint'
+  require './app/models/route'
+
 end
 
 get '/p4l/home' do
@@ -37,9 +46,16 @@ get '/p4l/home' do
 end
 
 post '/p4l/checkpoint' do
-  @user = User.find(:email => "email3")
+  @user = User.first
+  packet = JSON.parse(request.body.read)["checkpointData"]
+
+  puts "packet: #{packet}"
+  
   @user.add_checkpoint(timestamp: Time.now.to_i,
-                       lat:       params[:lat],
-                       long:      params[:long],
-                       type:      params[:type])
+                       lat:       packet["lat"].to_s,
+                       long:      packet["long"].to_s,
+                       type:      packet["type"],
+                       distance:  packet["distance"].to_f)
+
+  200
 end

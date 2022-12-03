@@ -7,24 +7,27 @@ import GeoTracker from '../components/GeoTracker'
 
 document.body.style.overflow = "hidden"
 
-
 function Home() {
 
+    // API endpoint
+    // const uri = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
+    const uri = "http://localhost:9292/p4l"
+
+  // Home state
   const [verse, setVerse]                     = useState('')
   const [notation, setNotation]               = useState('')
   const [routeStarted, setRouteStarted]           = useState(false)
   const [routeButtonText, setRouteButtonText] = useState('Start')
 
-  const handleRouteStart = () => {
+  const handleRouteButton = () => {
+    // Set route state
     setRouteStarted(!routeStarted)
-    setRouteButtonText(routeStarted ? "Start" : "Stop")}
-  // const [votdShow, setVotdShow] = React.useState(false);
-
-  
+    // Change route button text
+    setRouteButtonText(routeStarted ? "Start" : "Stop")
+  }
 
   const getVerse = () => {
-    // axios.get("https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l/home")
-    axios.get("http://localhost:9292/p4l/home")
+    axios.get(`${uri}/home`)
     .then(res => {
       console.log(res)
       setVerse(res.data.verse)
@@ -34,6 +37,7 @@ function Home() {
     })
   }
 
+  // Get verse on page load
   useEffect(() => {
     let ignore = false
     if (!ignore)  getVerse()
@@ -66,16 +70,14 @@ function Home() {
                           justify-content-start 
                           align-items-center">
               <Button variant="success" 
-                      onClick={handleRouteStart}
+                      onClick={handleRouteButton}
                       style={{ backgroundColor: routeStarted ? "#d9534f" : "#02b875" }}
                       className='route-button 
                                  btn-lg 
                                  mt-3'>
-                                  {/* #02b875 */}
-                                  {/* #d9534f */}
                 {routeButtonText} Route
               </Button>
-              {routeStarted && <GeoTracker />}
+              {routeStarted && <GeoTracker uri={uri}/>}
           </div>
           <div className="popups
                           col-12 

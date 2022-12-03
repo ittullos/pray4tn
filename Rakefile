@@ -17,6 +17,7 @@ else
 end
 
 require "./app/models/verse"
+require "./app/models/user"
 
 namespace :db do
   desc "Run Migrations"
@@ -39,5 +40,9 @@ namespace :db do
       scripture: "Do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
       version: "ESV",
       notation: "Philippians 4:6-7")
+    User.insert(
+      email: "user@example.com",
+      password: "password"
+    )
   end
 end
