@@ -1,9 +1,9 @@
-import React from 'react'
-import Timer from '../components/Timer'
-import Mileage from '../components/Mileage'
-import PrayerCount from '../components/PrayerCount'
+import React , { useState, useEffect } from 'react'
+import Timer from './Timer'
+import Mileage from './Mileage'
+import PrayerCount from './PrayerCount'
 
-function GeoTracker() {
+export const RouteStats = (props) => {
   return (
     <div className="tracker-stats
                     d-flex
@@ -29,11 +29,8 @@ function GeoTracker() {
                       align-items-center">
         <PrayerCount />
       </div>
-
     </div>
   )
 }
 
-export default GeoTracker
-
-
+export default RouteStats

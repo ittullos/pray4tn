@@ -24,3 +24,19 @@ nuke-react:
 
 empty-react:
 	aws s3 rm s3://wpt.bap.tn.react-app --recursive && aws s3 rm s3://wpt.bap.tn.logs --recursive
+
+run-dev:
+	RACK_ENV=dev rackup
+
+seed-dev:
+	RACK_ENV=dev rake db:seed
+
+migrate-dev:
+	RACK_ENV=dev rake db:migrate
+
+migrate-test:
+	RACK_ENV=test rake db:migrate
+
+migrate-prod:
+	RACK_ENV=prod rake db:migrate
+

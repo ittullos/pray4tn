@@ -8,7 +8,6 @@ Sequel.migration do
       String  :lat, null: false
       String  :long, null: false
       String  :type
-      Float   :distance, :default => 0.0
     end
   end
 

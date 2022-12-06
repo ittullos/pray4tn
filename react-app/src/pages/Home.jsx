@@ -1,29 +1,59 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Button from 'react-bootstrap/Button'
 import Votd from '../components/Votd'
-import GeoTracker from '../components/GeoTracker'
+import RouteStats from '../components/RouteStats'
 
 document.body.style.overflow = "hidden"
 
 function Home() {
+  // API endpoint
+  // const uri = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
+  const uri = "http://localhost:9292/p4l"
 
-    // API endpoint
-    // const uri = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
-    const uri = "http://localhost:9292/p4l"
+  // VOTD state
+  const [verse, setVerse]       = useState('')
+  const [notation, setNotation] = useState('')
 
-  // Home state
-  const [verse, setVerse]                     = useState('')
-  const [notation, setNotation]               = useState('')
-  const [routeStarted, setRouteStarted]           = useState(false)
+  // Route state
+  const [routeMileage, setRouteMileage]       = useState(0.0)
+  const [intervalId, setIntervalId]           = useState()
+  const [routeStarted, setRouteStarted]       = useState(false)
   const [routeButtonText, setRouteButtonText] = useState('Start')
+  const [heartbeatMode, setHeartbeatMode]     = useState(false)
+  const [routeMode, setRouteMode]             = useState('')
 
+  // Location state
+  const [location, setLocation] = useState({lat: '', long: ''})
+
+  // Functions
   const handleRouteButton = () => {
-    // Set route state
+    // Set route start
     setRouteStarted(!routeStarted)
-    // Change route button text
-    setRouteButtonText(routeStarted ? "Start" : "Stop")
+  }
+
+  const updateLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setLocation({lat: position.coords.latitude, long: position.coords.longitude})
+    })
+  }
+
+  const sendCheckpoint = (type) => {
+    if (type !== "") {
+      const checkpointData = {
+        type:     type,
+        lat:      location.lat,
+        long:     location.long
+      }
+      console.log(checkpointData)
+      axios.post(`${uri}/checkpoint`, { checkpointData
+      }).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    }
   }
 
   const getVerse = () => {
@@ -37,12 +67,57 @@ function Home() {
     })
   }
 
-  // Get verse on page load
+  function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
+
+  // getVerse on page load
   useEffect(() => {
     let ignore = false
     if (!ignore)  getVerse()
     return () => { ignore = true }
     },[])
+
+  // Send checkpoint when location changes
+  useEffect(() => {
+    sendCheckpoint(routeMode)
+  }, [location])
+
+  // Set routeMode when route is started
+  useEffect(() => {
+    // Change route button text
+    setRouteButtonText(routeStarted ? "Stop" : "Start")
+    if(routeStarted) {
+      console.log('routeStarted: ', routeStarted);
+      // Update start location
+      setRouteMode("start")
+      delay(3000).then(() => setRouteMode("heartbeat"))
+      delay(3000).then(() => setHeartbeatMode(true))
+    } else {
+      if (location.lat !== "") {
+        // Send stop checkpoint
+        setHeartbeatMode(false)
+        clearInterval(intervalId)
+        setRouteMode("stop")
+      }
+   }
+  }, [routeStarted])
+
+  // Update location when routeMode is set
+  useEffect(() => {
+    if (routeMode !== "") {
+      updateLocation()
+    }
+  }, [routeMode])
+
+  // Start heartbeat interval
+  useEffect(() => {
+    if (heartbeatMode) { 
+      setIntervalId(setInterval(() => {
+        updateLocation()
+      }, 3000))
+    }
+  }, [heartbeatMode]);
 
   return (
     <div className='full-screen'>
@@ -77,7 +152,7 @@ function Home() {
                                  mt-3'>
                 {routeButtonText} Route
               </Button>
-              {routeStarted && <GeoTracker uri={uri}/>}
+              {routeStarted && <RouteStats />}
           </div>
           <div className="popups
                           col-12 
@@ -113,7 +188,7 @@ function Home() {
               />           */}
         
 
-      </div>
+    </div>
   )
 }
 

@@ -49,13 +49,14 @@ post '/p4l/checkpoint' do
   @user = User.first
   packet = JSON.parse(request.body.read)["checkpointData"]
 
+  # pry.byebug
+
   puts "packet: #{packet}"
   
   @user.add_checkpoint(timestamp: Time.now.to_i,
                        lat:       packet["lat"].to_s,
                        long:      packet["long"].to_s,
-                       type:      packet["type"],
-                       distance:  packet["distance"].to_f)
+                       type:      packet["type"])
 
   200
 end
