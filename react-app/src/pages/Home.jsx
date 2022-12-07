@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar'
 import Button from 'react-bootstrap/Button'
 import Votd from '../components/Votd'
 import RouteStats from '../components/RouteStats'
+import PrayerScreen from '../components/PrayerScreen'
+import DevotionalScreen from '../components/DevotionalScreen'
 
 document.body.style.overflow = "hidden"
 
@@ -15,6 +17,11 @@ function Home() {
   // VOTD state
   const [verse, setVerse]       = useState('')
   const [notation, setNotation] = useState('')
+
+  // Pop-up screens state
+  const [showPrayerScreen, setShowPrayerScreen] = useState(false)
+  const [showDevotionalScreen, setShowDevotionalScreen] = useState(false)
+
 
   // Route state
   const [routeMileage, setRouteMileage]       = useState(0.0)
@@ -49,7 +56,8 @@ function Home() {
       console.log(checkpointData)
       axios.post(`${uri}/checkpoint`, { checkpointData
       }).then(res => {
-        console.log(res)
+        let distance = res.data["distance"]
+        setRouteMileage(routeMileage + distance)
       }).catch(err => {
         console.log(err)
       })
@@ -121,6 +129,12 @@ function Home() {
 
   return (
     <div className='full-screen'>
+      <PrayerScreen
+        show={showPrayerScreen}
+        onHide={() => setShowPrayerScreen(false)}/> 
+      <DevotionalScreen
+        show={showDevotionalScreen}
+        onHide={() => setShowDevotionalScreen(false)}/> 
       <Navbar />
       <div className="body
                       row d-flex 
@@ -152,7 +166,7 @@ function Home() {
                                  mt-3'>
                 {routeButtonText} Route
               </Button>
-              {routeStarted && <RouteStats />}
+              {routeStarted && <RouteStats mileage={routeMileage}/>}
           </div>
           <div className="popups
                           col-12 
@@ -162,12 +176,14 @@ function Home() {
                           flex-row 
                           justify-content-center 
                           align-items-start">
-              <Button variant="primary" className='popup-btn 
-                                                   m-4'>
+              <Button variant="primary" 
+                      className='popup-btn m-4'
+                      onClick={() => setShowDevotionalScreen(true)}>
                 Devotional
               </Button>
-              <Button variant="primary" className='popup-btn 
-                                                   m-4'>
+              <Button variant="primary" 
+                      className='popup-btn m-4'
+                      onClick={() => setShowPrayerScreen(true)}>
                 Prayer
               </Button>
           </div>

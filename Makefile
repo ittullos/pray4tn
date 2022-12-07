@@ -25,6 +25,9 @@ nuke-react:
 empty-react:
 	aws s3 rm s3://wpt.bap.tn.react-app --recursive && aws s3 rm s3://wpt.bap.tn.logs --recursive
 
+run-react:
+	cd react-app && npm start
+
 run-dev:
 	RACK_ENV=dev rackup
 

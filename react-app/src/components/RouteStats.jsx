@@ -21,7 +21,7 @@ export const RouteStats = (props) => {
                       d-flex
                       justify-content-center
                       align-items-center">
-        <Mileage />
+        <Mileage mileage={props.mileage}/>
       </div>
       <div className="prayer-count
                       d-flex

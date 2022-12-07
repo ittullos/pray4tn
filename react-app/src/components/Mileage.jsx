@@ -1,10 +1,14 @@
 import React from 'react'
 
-function Mileage() {
+function roundDecimal(float) {
+  return Number.parseFloat(float).toFixed(1)
+}
+
+function Mileage(props) {
   return (
     <>
       <div className='mileage-counter p-2 ms-4'>
-      0.0
+        {roundDecimal(props.mileage)}
       </div>
       <div className='mileage-text'>
         mi
