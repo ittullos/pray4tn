@@ -40,3 +40,6 @@ migrate-test:
 migrate-prod:
 	RACK_ENV=prod rake db:migrate
 
+test-app:
+	rspec ./spec/app_spec.rb
+

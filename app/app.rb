@@ -12,9 +12,7 @@ set :expose_headers, "location,link"
 before do
   if ENV["RACK_ENV"] == "dev"
     DB = Sequel.connect(ENV["DB_DEV"])
-    
     DB.loggers << Logger.new($stdout)
-
   elsif ENV["RACK_ENV"] == "prod"
     DB = Sequel.connect(:adapter => 'mysql2',
                    :host => (ENV["DB_HOST"]),
@@ -31,12 +29,14 @@ before do
 
 end
 
+def calculate_checkpoint_distance(location, prev_location)
+  delta_x = ((location["long"].to_f - prev_location.long.to_f) * 55)
+  delta_y = ((location["lat"].to_f  - prev_location.lat.to_f)  * 69)
+  return (Math.sqrt((delta_x * delta_x) + (delta_y * delta_y)))
+end
+
 get '/p4l/home' do
-  # pry.byebug
   @verse = Verse.first
-
-
-
   content_type :json
   { 
     verse: @verse.scripture,
@@ -47,16 +47,19 @@ end
 
 post '/p4l/checkpoint' do
   @user = User.first
-  packet = JSON.parse(request.body.read)["checkpointData"]
-
-  # pry.byebug
-
-  puts "packet: #{packet}"
-  
+  location = JSON.parse(request.body.read)["checkpointData"]
   @user.add_checkpoint(timestamp: Time.now.to_i,
-                       lat:       packet["lat"].to_s,
-                       long:      packet["long"].to_s,
-                       type:      packet["type"])
-
-  200
+                       lat:       location["lat"].to_s,
+                       long:      location["long"].to_s,
+                       type:      location["type"])
+  if location["type"] == "start"
+    @distance = 0
+  else
+    @distance = calculate_checkpoint_distance(location,
+      Checkpoint.user_checkpoints(@user.id).next_to_last,)
+  end
+  content_type :json
+  { 
+    distance: @distance
+  }.to_json
 end
