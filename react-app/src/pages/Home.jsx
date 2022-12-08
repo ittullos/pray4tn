@@ -208,22 +208,6 @@ function Home() {
               </Button>
           </div>
       </div>
-
-              {/* <Button 
-                variant="success" 
-                onClick={() => setVotdShow(true)}
-                className="mt-5 btn-md">
-                Verse of the Day
-              </Button>
-
-              <Votd
-                show={votdShow}
-                onHide={() => setVotdShow(false)}
-                notation={notation} 
-                verse={verse}
-              />           */}
-        
-
     </div>
   )
 }
