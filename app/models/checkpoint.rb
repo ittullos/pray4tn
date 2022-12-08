@@ -20,6 +20,12 @@ class Checkpoint < Sequel::Model
     end
   end
 
+  def calculate_distance()
+    delta_x = ((long.to_f - Checkpoint.user_checkpoints(user.id).next_to_last.long.to_f) * 55)
+    delta_y = ((lat.to_f - Checkpoint.user_checkpoints(user.id).next_to_last.lat.to_f)  * 69)
+    return (Math.sqrt((delta_x * delta_x) + (delta_y * delta_y)))
+  end
+
   def before_create
     if type == "start"
       if  Checkpoint.user_checkpoints(user.id).start_points.count > 1
@@ -44,14 +50,12 @@ class Checkpoint < Sequel::Model
                             seconds:      0)
       self.route_id = route
       self.save
-
     elsif type == "heartbeat" || self.type == "stop"
       self.route_id = Checkpoint.user_checkpoints(user.id).start_points.most_recent.route_id
       self.save   
     end
 
     if type == "stop" 
-
       self.route.calculate_route_data
     end
     super

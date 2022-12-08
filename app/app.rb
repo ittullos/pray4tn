@@ -29,11 +29,7 @@ before do
 
 end
 
-def calculate_checkpoint_distance(location, prev_location)
-  delta_x = ((location["long"].to_f - prev_location.long.to_f) * 55)
-  delta_y = ((location["lat"].to_f  - prev_location.lat.to_f)  * 69)
-  return (Math.sqrt((delta_x * delta_x) + (delta_y * delta_y)))
-end
+
 
 get '/p4l/home' do
   @verse = Verse.first
@@ -48,18 +44,12 @@ end
 post '/p4l/checkpoint' do
   @user = User.first
   location = JSON.parse(request.body.read)["checkpointData"]
-  @user.add_checkpoint(timestamp: Time.now.to_i,
+  @checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
                        lat:       location["lat"].to_s,
                        long:      location["long"].to_s,
                        type:      location["type"])
-  if location["type"] == "start"
-    @distance = 0
-  else
-    @distance = calculate_checkpoint_distance(location,
-      Checkpoint.user_checkpoints(@user.id).next_to_last,)
-  end
   content_type :json
   { 
-    distance: @distance
+    distance: @checkpoint.calculate_distance()
   }.to_json
 end
