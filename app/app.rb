@@ -26,10 +26,7 @@ before do
   require './app/models/user'
   require './app/models/checkpoint'
   require './app/models/route'
-
 end
-
-
 
 get '/p4l/home' do
   @verse = Verse.first

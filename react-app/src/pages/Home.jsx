@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Button from 'react-bootstrap/Button'
@@ -91,7 +91,11 @@ function Home() {
 
   // Send checkpoint when location changes
   useEffect(() => {
-    sendCheckpoint(routeMode)
+    if (heartbeatMode && !routeStarted) {
+      clearInterval(intervalId)
+    } else {
+      sendCheckpoint(routeMode)
+    }
   }, [location])
 
   // Set routeMode when route is started
@@ -114,6 +118,12 @@ function Home() {
    }
   }, [routeStarted])
 
+  useEffect(() => {
+    if (routeButtonText === "Start") {
+      clearInterval(intervalId)
+    }
+  }, [routeButtonText])
+
   // Update location when routeMode is set
   useEffect(() => {
     if (routeMode !== "") {
@@ -128,7 +138,7 @@ function Home() {
   useEffect(() => {
     if (heartbeatMode) { 
       setIntervalId(setInterval(() => {
-        updateLocation()
+          updateLocation()
       }, 3000))
     }
   }, [heartbeatMode]);
