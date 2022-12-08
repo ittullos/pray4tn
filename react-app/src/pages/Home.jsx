@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Button from 'react-bootstrap/Button'
@@ -6,6 +6,7 @@ import Votd from '../components/Votd'
 import RouteStats from '../components/RouteStats'
 import PrayerScreen from '../components/PrayerScreen'
 import DevotionalScreen from '../components/DevotionalScreen'
+import StatsScreen from '../components/StatsScreen'
 
 document.body.style.overflow = "hidden"
 
@@ -21,6 +22,7 @@ function Home() {
   // Pop-up screens state
   const [showPrayerScreen, setShowPrayerScreen] = useState(false)
   const [showDevotionalScreen, setShowDevotionalScreen] = useState(false)
+  const [showStatsScreen, setShowStatsScreen] = useState(false)
 
 
   // Route state
@@ -58,6 +60,7 @@ function Home() {
       }).then(res => {
         let distance = res.data["distance"]
         setRouteMileage(routeMileage + distance)
+        console.log("checkpoint response: ", res)
       }).catch(err => {
         console.log(err)
       })
@@ -67,7 +70,7 @@ function Home() {
   const getVerse = () => {
     axios.get(`${uri}/home`)
     .then(res => {
-      console.log(res)
+      console.log("getVerse: ", res)
       setVerse(res.data.verse)
       setNotation(res.data.notation)
     }).catch(err => {
@@ -116,6 +119,9 @@ function Home() {
     if (routeMode !== "") {
       updateLocation()
     }
+    if (routeMode === "stop") {
+      setRouteMileage(0.0)
+    }
   }, [routeMode])
 
   // Start heartbeat interval
@@ -135,7 +141,11 @@ function Home() {
       <DevotionalScreen
         show={showDevotionalScreen}
         onHide={() => setShowDevotionalScreen(false)}/> 
-      <Navbar />
+      <StatsScreen
+        show={showStatsScreen}
+        onHide={() => setShowStatsScreen(false)}/> 
+      <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}/>
+      
       <div className="body
                       row d-flex 
                       justify-content-center 
