@@ -209,12 +209,13 @@
   padding-left: 7px;
 }
 
-/* Geo Tracker */
+/* Route stats Tracker */
 
 .tracker-stats {
-  min-height: 15vh;
+  height: 15vh;
   width: 100%;
   max-width: 450px;
+  /* max-height: 18vh; */
 }
 
 .timer {
@@ -228,10 +229,17 @@
   width: 30vw;
   /* font-size: 3rem; */
 }
-.prayer-count {
+.prayer-counter {
   min-height: 15vh;
   width: 30vw;
-  font-size: 2.2rem;
+  margin-top: 15px;
+  margin-bottom: 4px;
+  /* font-size: 2.2rem; */
+}
+
+.prayer-count {
+  font-size: 2.3rem;
+  font-weight: 550;
 }
 
 @font-face {
@@ -245,6 +253,16 @@
 }
 
 .mileage-text {
-  padding-top: 14px;
-  margin-right: 13px;
+  font-size: 1.3rem;
+  font-weight: 566;
+}
+
+/* Icons */
+
+.stopwatch-icon {
+  width: 2.5rem;
+}
+
+.praying-hands-icon {
+  width: 2rem;
 }

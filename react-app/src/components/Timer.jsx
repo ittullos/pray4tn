@@ -1,4 +1,5 @@
 import useTimer from 'easytimer-react-hook'
+import stopwatchIcon from '../images/stopwatch.svg.png'
 
 const truncateTimer = (time) => { 
   let start_index = 0
@@ -29,7 +30,14 @@ const Timer = (props) => {
 
     const output = timer.getTimeValues().toString()
 
-    return <div>{truncateTimer(output)}</div>;
+    return <div className='d-flex
+                           flex-column
+                           justify-content-center
+                           align-items-center
+                           pt-1'>
+            {truncateTimer(output)}
+            <img src={stopwatchIcon} alt="" className='stopwatch-icon' />
+          </div>;
 }
 
 export default Timer

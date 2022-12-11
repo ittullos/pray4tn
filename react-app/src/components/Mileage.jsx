@@ -6,14 +6,17 @@ function roundDecimal(float) {
 
 function Mileage(props) {
   return (
-    <>
-      <div className='mileage-counter p-2 ms-4'>
+    <div className='d-flex
+                    flex-column
+                    justify-content-center
+                    align-items-center'>
+      <div className='mileage-counter'>
         {roundDecimal(props.mileage)}
       </div>
-      <div className='mileage-text'>
+      <div className='mileage-text pt-2'>
         mi
       </div>
-    </>
+    </div>
   )
 }
 

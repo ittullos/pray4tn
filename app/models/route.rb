@@ -6,7 +6,7 @@ class Route < Sequel::Model
     return mi
   end
 
-  def calculate_route_data
+  def finalize
     self.seconds = (self.checkpoints.last.timestamp - self.checkpoints.first.timestamp)
 
     if self.checkpoints.count > 2

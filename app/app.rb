@@ -12,7 +12,7 @@ set :expose_headers, "location,link"
 before do
   if ENV["RACK_ENV"] == "dev"
     DB = Sequel.connect(ENV["DB_DEV"])
-    DB.loggers << Logger.new($stdout)
+    # DB.loggers << Logger.new($stdout)
   elsif ENV["RACK_ENV"] == "prod"
     DB = Sequel.connect(:adapter => 'mysql2',
                    :host => (ENV["DB_HOST"]),
@@ -45,8 +45,15 @@ post '/p4l/checkpoint' do
                        lat:       location["lat"].to_s,
                        long:      location["long"].to_s,
                        type:      location["type"])
-  content_type :json
-  { 
-    distance: @checkpoint.calculate_distance()
-  }.to_json
+  if (@checkpoint.type == "start") 
+    content_type :json
+    { 
+      distance: 0.0
+    }.to_json
+  else 
+    content_type :json
+    { 
+      distance: @checkpoint.distance
+    }.to_json
+  end
 end
