@@ -8,18 +8,14 @@ class Route < Sequel::Model
 
   def finalize
     self.seconds = (self.checkpoints.last.timestamp - self.checkpoints.first.timestamp)
+    self.stopped_at = Time.now.to_i
+    mileage_count = 0.0
 
-    if self.checkpoints.count > 2
-      mileage_count = 0.0
-
-      for i in 1..((self.checkpoints.count) -1) do      
-        distance = Haversine.distance(self.checkpoints[i-1].lat.to_f,
-                                      self.checkpoints[i-1].long.to_f,
-                                      self.checkpoints[i].lat.to_f,
-                                      self.checkpoints[i].long.to_f)
-        mileage_count += km_to_mi(distance.to_km)
+    if self.checkpoints.count > 1
+      for i in 1..((self.checkpoints.count) - 1) do
+        mileage_count += self.checkpoints[i].distance
       end
-      self.mileage = (mileage_count * 10).to_i    
+      self.mileage = (mileage_count * 10).to_i
     end
     self.save
   end

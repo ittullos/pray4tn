@@ -21,9 +21,9 @@ class Checkpoint < Sequel::Model
   end
 
   def distance
-    last_checkpoint = Checkpoint.user_checkpoints(user.id).next_to_last
-    delta_x = ((long.to_f - last_checkpoint.long.to_f) * 55)
-    delta_y = ((lat.to_f - last_checkpoint.lat.to_f)  * 69)
+    previous_checkpoint = Checkpoint[id - 1]
+    delta_x = ((long.to_f - previous_checkpoint.long.to_f) * 55)
+    delta_y = ((lat.to_f - previous_checkpoint.lat.to_f) * 69)
     Math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
   end
 
@@ -32,10 +32,9 @@ class Checkpoint < Sequel::Model
       if  Checkpoint.user_checkpoints(user.id).start_points.count > 1
         if Checkpoint.user_checkpoints(user.id).most_recent.type != "stop"
           checkpoint = user.add_checkpoint(timestamp: Time.now.to_i,
-                                           lat:       0,
-                                           long:      0,
-                                           type:      "stop") 
-                                                
+                                           lat:       Checkpoint.user_checkpoints(user.id).most_recent.lat,
+                                           long:      Checkpoint.user_checkpoints(user.id).most_recent.long,
+                                           type:      "stop")                                        
           checkpoint.route_id = Checkpoint.user_checkpoints(user.id).most_recent.route_id
           checkpoint.save  
         end
