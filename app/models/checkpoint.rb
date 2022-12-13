@@ -21,7 +21,7 @@ class Checkpoint < Sequel::Model
   end
 
   def distance
-    previous_checkpoint = Checkpoint[id - 1]
+    previous_checkpoint = Checkpoint.user_checkpoints(user_id).where(:route_id => route_id).where(id: 1..id).next_to_last
     delta_x = ((long.to_f - previous_checkpoint.long.to_f) * 55)
     delta_y = ((lat.to_f - previous_checkpoint.lat.to_f) * 69)
     Math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
