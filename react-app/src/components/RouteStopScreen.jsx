@@ -30,7 +30,7 @@ function RouteStopScreen(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Mileage: {roundDecimal(props.mileage)}</p>
+        <h5>Mileage: {roundDecimal(props.mileage)}</h5>
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={props.onHide}>Close</Button>

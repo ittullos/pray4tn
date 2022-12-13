@@ -13,8 +13,8 @@ document.body.style.overflow = "hidden"
 
 function Home() {
   // API endpoint
-  const uri = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
-  // const uri = "http://localhost:9292/p4l"
+  // const uri = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
+  const uri = "http://localhost:9292/p4l"
 
   // VOTD state
   const [verse, setVerse]       = useState('')
