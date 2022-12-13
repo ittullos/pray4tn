@@ -7,22 +7,24 @@ import RouteStats from '../components/RouteStats'
 import PrayerScreen from '../components/PrayerScreen'
 import DevotionalScreen from '../components/DevotionalScreen'
 import StatsScreen from '../components/StatsScreen'
+import RouteStopScreen from '../components/RouteStopScreen'
 
 document.body.style.overflow = "hidden"
 
 function Home() {
   // API endpoint
-  // const uri = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
-  const uri = "http://localhost:9292/p4l"
+  const uri = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
+  // const uri = "http://localhost:9292/p4l"
 
   // VOTD state
   const [verse, setVerse]       = useState('')
   const [notation, setNotation] = useState('')
 
   // Pop-up screens state
-  const [showPrayerScreen, setShowPrayerScreen] = useState(false)
+  const [showPrayerScreen, setShowPrayerScreen]         = useState(false)
   const [showDevotionalScreen, setShowDevotionalScreen] = useState(false)
-  const [showStatsScreen, setShowStatsScreen] = useState(false)
+  const [showStatsScreen, setShowStatsScreen]           = useState(false)
+  const [showRouteStopScreen, setShowRouteStopScreen]   = useState(false)
 
 
   // Route state
@@ -130,9 +132,16 @@ function Home() {
       updateLocation()
     }
     if (routeMode === "stop") {
-      setRouteMileage(0.0)
+      setShowRouteStopScreen(true)
     }
   }, [routeMode])
+
+  // Reset route mileage when route stop screen closes
+  useEffect(() => {
+    if (!showRouteStopScreen) {
+      setRouteMileage(0.0)
+    }
+  }, [showRouteStopScreen])
 
   // Start heartbeat interval
   useEffect(() => {
@@ -153,7 +162,11 @@ function Home() {
         onHide={() => setShowDevotionalScreen(false)}/> 
       <StatsScreen
         show={showStatsScreen}
-        onHide={() => setShowStatsScreen(false)}/> 
+        onHide={() => setShowStatsScreen(false)}/>
+      <RouteStopScreen 
+        show={showRouteStopScreen}
+        onHide={() => setShowRouteStopScreen(false)}
+        mileage={routeMileage}/>
       <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}/>
       
       <div className="body
