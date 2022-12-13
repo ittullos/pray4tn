@@ -11,20 +11,14 @@ class Checkpoint < Sequel::Model
       where(:type => "start")
     end
 
-    # def next_to_last
-    #   order_by(Sequel.desc(:id)).limit(2).offset(1).first
-    # end
-
     def most_recent
       order_by(Sequel.desc(:id)).first
     end
 
     def previous_route_checkpoint(checkpoint)
-      # pry.byebug
       where(:route_id => checkpoint.route_id).where{id < checkpoint.id}.order_by(Sequel.desc(:id)).first
     end
   end
-
 
   def distance
     previous_checkpoint = Checkpoint.user_checkpoints(user_id).previous_route_checkpoint(self)
@@ -60,7 +54,6 @@ class Checkpoint < Sequel::Model
       self.route_id = Checkpoint.user_checkpoints(user.id).start_points.most_recent.route_id
       self.save   
     end
-
     if type == "stop" 
       self.route.finalize
     end

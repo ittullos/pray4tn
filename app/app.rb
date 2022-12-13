@@ -56,14 +56,4 @@ post '/p4l/checkpoint' do
       distance: @checkpoint.distance
     }.to_json
   end
-
-  # if (@checkpoint.type == "start") 
-  #   @distance = 0.0
-  # else 
-  #   @distance = @checkpoint.distance
-  # end
-  # content_type :json
-  # { 
-  #   distance: @distance
-  # }.to_json
 end
