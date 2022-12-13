@@ -115,7 +115,7 @@ describe "Checkpoint model -" do
                              lat:       TEST_ROUTE[4]["lat"],
                              long:      TEST_ROUTE[4]["long"],
                              type:      "stop")
-
+          # pry.byebug
         expect(Route[@test_route_id].seconds).to eq(TEST_DURATION)
         expect(Route[@test_route_id].mileage).to eq(TEST_DISTANCE.to_i)
       end

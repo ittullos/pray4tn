@@ -12,6 +12,14 @@ require './app/models/user'
 require './app/models/checkpoint'
 require './app/models/route'
 
+class Checkpoint
+  dataset_module do
+    def next_to_last
+      order_by(Sequel.desc(:id)).limit(2).offset(1).first
+    end
+  end
+end
+
 RSpec.configure do |c|
   c.around(:each) do |example|
     DB.transaction(:rollback=>:always, :auto_savepoint=>true){example.run}
@@ -27,6 +35,12 @@ end
 
 def random_location
   RandomLocation.near_by(36.174465, -86.767960, 1000)
+end
+
+def distance(location, prev_location)
+  delta_x = ((location["long"].to_f - prev_location["long"].to_f) * 55)
+  delta_y = ((location["lat"].to_f - prev_location["lat"].to_f) * 69)
+  Math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
 end
 
 VERSES = [
@@ -84,12 +98,9 @@ TEST_DISTANCE = 0
 TEST_DURATION = 0
 
 for i in 0..3 do
-  distance = Haversine.distance(TEST_ROUTE[i]["lat"],
-                                TEST_ROUTE[i]["long"],
-                                TEST_ROUTE[i + 1]["lat"],
-                                TEST_ROUTE[i + 1]["long"])
+  @distance = distance(TEST_ROUTE[i + 1], TEST_ROUTE[i])
 
-  TEST_DISTANCE += km_to_mi(distance.to_km)
+  TEST_DISTANCE += @distance
   TEST_DURATION += (TEST_ROUTE[i + 1]["timestamp"] - TEST_ROUTE[i]["timestamp"])
 end 
-TEST_DISTANCE = (TEST_DISTANCE * 10).to_i
+TEST_DISTANCE = (TEST_DISTANCE * 1000).round(0)

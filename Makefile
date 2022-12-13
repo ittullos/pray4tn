@@ -46,3 +46,9 @@ migrate-prod:
 test-app:
 	rspec ./spec/app_spec.rb
 
+test-checkpoint:
+	rspec ./spec/checkpoint_spec.rb
+
+test-user:
+	rspec ./spec/user_spec.rb
+

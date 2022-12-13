@@ -11,17 +11,23 @@ class Checkpoint < Sequel::Model
       where(:type => "start")
     end
 
-    def next_to_last
-      order_by(Sequel.desc(:id)).limit(2).offset(1).first
-    end
+    # def next_to_last
+    #   order_by(Sequel.desc(:id)).limit(2).offset(1).first
+    # end
 
     def most_recent
       order_by(Sequel.desc(:id)).first
     end
+
+    def previous_route_checkpoint(checkpoint)
+      # pry.byebug
+      where(:route_id => checkpoint.route_id).where{id < checkpoint.id}.order_by(Sequel.desc(:id)).first
+    end
   end
 
+
   def distance
-    previous_checkpoint = Checkpoint.user_checkpoints(user_id).where(:route_id => route_id).where(id: 1..id).next_to_last
+    previous_checkpoint = Checkpoint.user_checkpoints(user_id).previous_route_checkpoint(self)
     delta_x = ((long.to_f - previous_checkpoint.long.to_f) * 55)
     delta_y = ((lat.to_f - previous_checkpoint.lat.to_f) * 69)
     Math.sqrt((delta_x * delta_x) + (delta_y * delta_y))

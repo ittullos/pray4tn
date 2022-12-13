@@ -11,10 +11,10 @@ set :expose_headers, "location,link"
 
 before do
   if ENV["RACK_ENV"] == "dev"
-    DB = Sequel.connect(ENV["DB_DEV"])
-    # DB.loggers << Logger.new($stdout)
+    DB ||= Sequel.connect(ENV["DB_DEV"])
+    DB.loggers << Logger.new($stdout)
   elsif ENV["RACK_ENV"] == "prod"
-    DB = Sequel.connect(:adapter => 'mysql2',
+    DB ||= Sequel.connect(:adapter => 'mysql2',
                    :host => (ENV["DB_HOST"]),
                    :port => 3306,
                    :user => 'admin',
