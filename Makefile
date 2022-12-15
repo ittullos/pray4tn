@@ -34,6 +34,9 @@ run-dev:
 seed-dev:
 	RACK_ENV=dev rake db:seed
 
+seed-prod:
+	RACK_ENV=prod rake db:seed
+
 migrate-dev:
 	RACK_ENV=dev rake db:migrate
 
@@ -52,3 +55,8 @@ test-checkpoint:
 test-user:
 	rspec ./spec/user_spec.rb
 
+mysql-local:
+	mysql --user=root -p
+
+mysql-prod:
+	mysql -h wpt-bap-tn-prod.cnklfpyep1np.us-east-1.rds.amazonaws.com -P 3306 -u admin -p

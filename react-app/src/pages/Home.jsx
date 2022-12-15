@@ -11,10 +11,13 @@ import RouteStopScreen from '../components/RouteStopScreen'
 
 document.body.style.overflow = "hidden"
 
+const CheckpointInterval = 30000
+
 function Home() {
   // API endpoint
-  // const uri = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
-  const uri = "http://localhost:9292/p4l"
+  // const api = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
+  // const api = "http://localhost:9292/p4l"
+  const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
 
   // VOTD state
   const [verse, setVerse]       = useState('')
@@ -57,8 +60,8 @@ function Home() {
         lat:      location.lat,
         long:     location.long
       }
-      console.log(checkpointData)
-      axios.post(`${uri}/checkpoint`, { checkpointData
+      console.log(`${type} checkpoint taken`)
+      axios.post(`${api}/checkpoint`, { checkpointData
       }).then(res => {
         let distance = res.data["distance"]
         setRouteMileage(routeMileage + distance)
@@ -70,7 +73,7 @@ function Home() {
   }
 
   const getVerse = () => {
-    axios.get(`${uri}/home`)
+    axios.get(`${api}/home`)
     .then(res => {
       console.log("getVerse: ", res)
       setVerse(res.data.verse)
@@ -105,11 +108,10 @@ function Home() {
     // Change route button text
     setRouteButtonText(routeStarted ? "Stop" : "Start")
     if(routeStarted) {
-      console.log('routeStarted: ', routeStarted);
       // Update start location
       setRouteMode("start")
-      delay(3000).then(() => setRouteMode("heartbeat"))
-      delay(3000).then(() => setHeartbeatMode(true))
+      delay(CheckpointInterval).then(() => setRouteMode("heartbeat"))
+      delay(CheckpointInterval).then(() => setHeartbeatMode(true))
     } else {
       if (location.lat !== "") {
         // Send stop checkpoint
@@ -148,7 +150,7 @@ function Home() {
     if (heartbeatMode) { 
       setIntervalId(setInterval(() => {
           updateLocation()
-      }, 3000))
+      }, CheckpointInterval))
     }
   }, [heartbeatMode]);
 

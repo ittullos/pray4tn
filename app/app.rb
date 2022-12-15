@@ -13,6 +13,10 @@ before do
   if ENV["RACK_ENV"] == "dev"
     DB ||= Sequel.connect(ENV["DB_DEV"])
     DB.loggers << Logger.new($stdout)
+    require './app/models/verse'
+    require './app/models/user'
+    require './app/models/checkpoint'
+    require './app/models/route'
   elsif ENV["RACK_ENV"] == "prod"
     DB ||= Sequel.connect(:adapter => 'mysql2',
                    :host => (ENV["DB_HOST"]),
@@ -21,11 +25,12 @@ before do
                    :password => (ENV["DB_PWRD"]),
                    :database => (ENV["DB_NAME"]))
     DB.loggers << Logger.new($stdout)
+    require './models/verse'
+    require './models/user'
+    require './models/checkpoint'
+    require './models/route'
   end
-  require './app/models/verse'
-  require './app/models/user'
-  require './app/models/checkpoint'
-  require './app/models/route'
+
 end
 
 get '/p4l/home' do
@@ -41,6 +46,7 @@ end
 post '/p4l/checkpoint' do
   @user = User.first
   location = JSON.parse(request.body.read)["checkpointData"]
+  puts "LOCATION: #{location}"
   @checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
                        lat:       location["lat"].to_s,
                        long:      location["long"].to_s,
