@@ -266,3 +266,13 @@
 .praying-hands-icon {
   width: 2rem;
 }
+
+.loading-icon-container {
+  height: 100vh;
+  width: auto;
+}
+
+.loading-icon {
+  height: 13rem;
+  width: auto;
+}

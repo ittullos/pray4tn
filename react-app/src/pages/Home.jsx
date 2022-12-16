@@ -8,6 +8,7 @@ import PrayerScreen from '../components/PrayerScreen'
 import DevotionalScreen from '../components/DevotionalScreen'
 import StatsScreen from '../components/StatsScreen'
 import RouteStopScreen from '../components/RouteStopScreen'
+import Loading from '../components/Loading'
 
 document.body.style.overflow = "hidden"
 
@@ -15,20 +16,19 @@ const CheckpointInterval = 30000
 
 function Home() {
   // API endpoint
-  // const api = "https://2wg6nk0bs8.execute-api.us-east-1.amazonaws.com/Prod/p4l"
-  // const api = "http://localhost:9292/p4l"
-  const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
+  const api = "http://localhost:9292/p4l"
+  // const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
 
   // VOTD state
   const [verse, setVerse]       = useState('')
   const [notation, setNotation] = useState('')
+  const [loading, setLoading]    = useState(true)
 
   // Pop-up screens state
   const [showPrayerScreen, setShowPrayerScreen]         = useState(false)
   const [showDevotionalScreen, setShowDevotionalScreen] = useState(false)
   const [showStatsScreen, setShowStatsScreen]           = useState(false)
   const [showRouteStopScreen, setShowRouteStopScreen]   = useState(false)
-
 
   // Route state
   const [routeMileage, setRouteMileage]       = useState(0.0)
@@ -40,6 +40,7 @@ function Home() {
 
   // Location state
   const [location, setLocation] = useState({lat: '', long: ''})
+  // const []
 
   // Functions
   const handleRouteButton = () => {
@@ -96,11 +97,13 @@ function Home() {
 
   // Send checkpoint when location changes
   useEffect(() => {
+    console.log("location: ", location)
     if (heartbeatMode && !routeStarted) {
       clearInterval(intervalId)
     } else {
       sendCheckpoint(routeMode)
     }
+    // if location !== {lat: "", long:}
   }, [location])
 
   // Set routeMode when route is started
@@ -154,7 +157,15 @@ function Home() {
     }
   }, [heartbeatMode]);
 
+  useEffect(() => {
+    if (verse !== "") {
+      console.log("verse changed");
+      setLoading(false)
+    }
+  }, [verse])
+
   return (
+
     <div className='full-screen'>
       <PrayerScreen
         show={showPrayerScreen}
@@ -170,59 +181,63 @@ function Home() {
         onHide={() => setShowRouteStopScreen(false)}
         mileage={routeMileage}/>
       <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}/>
-      
-      <div className="body
-                      row d-flex 
-                      justify-content-center 
-                      align-items-start
-                      text-start  
-                      fill-height">
-          <div className="votd
-                          col-12 
-                          p-2 
-                          bd-highlight">
-            <Votd notation={notation} 
-                  verse={verse}
-            />
-          </div>
-          <div className="route 
-                          col-12 
-                          p-2 
-                          bd-highlight 
-                          d-flex 
-                          flex-column 
-                          justify-content-start 
-                          align-items-center">
-              <Button variant="success" 
-                      onClick={handleRouteButton}
-                      style={{ backgroundColor: routeStarted ? "#d9534f" : "#02b875" }}
-                      className='route-button 
-                                 btn-lg 
-                                 mt-3'>
-                {routeButtonText} Route
-              </Button>
-              {routeStarted && <RouteStats mileage={routeMileage}/>}
-          </div>
-          <div className="popups
-                          col-12 
-                          p-2 
-                          bd-highlight 
-                          d-flex 
-                          flex-row 
-                          justify-content-center 
-                          align-items-start">
-              <Button variant="primary" 
-                      className='popup-btn m-4'
-                      onClick={() => setShowDevotionalScreen(true)}>
-                Devotional
-              </Button>
-              <Button variant="primary" 
-                      className='popup-btn m-4'
-                      onClick={() => setShowPrayerScreen(true)}>
-                Prayer
-              </Button>
-          </div>
-      </div>
+
+      { loading ? (
+        <Loading />
+      ) : (   
+        <div className="body
+                        row d-flex 
+                        justify-content-center 
+                        align-items-start
+                        text-start  
+                        fill-height">
+            <div className="votd
+                            col-12 
+                            p-2 
+                            bd-highlight">
+              <Votd notation={notation} 
+                    verse={verse}
+              />
+            </div>
+            <div className="route 
+                            col-12 
+                            p-2 
+                            bd-highlight 
+                            d-flex 
+                            flex-column 
+                            justify-content-start 
+                            align-items-center">
+                <Button variant="success" 
+                        onClick={handleRouteButton}
+                        style={{ backgroundColor: routeStarted ? "#d9534f" : "#02b875" }}
+                        className='route-button 
+                                  btn-lg 
+                                  mt-3'>
+                  {routeButtonText} Route
+                </Button>
+                {routeStarted && <RouteStats mileage={routeMileage}/>}
+            </div>
+            <div className="popups
+                            col-12 
+                            p-2 
+                            bd-highlight 
+                            d-flex 
+                            flex-row 
+                            justify-content-center 
+                            align-items-start">
+                <Button variant="primary" 
+                        className='popup-btn m-4'
+                        onClick={() => setShowDevotionalScreen(true)}>
+                  Devotional
+                </Button>
+                <Button variant="primary" 
+                        className='popup-btn m-4'
+                        onClick={() => setShowPrayerScreen(true)}>
+                  Prayer
+                </Button>
+            </div>
+        </div>
+      )}
     </div>
   )
 }
