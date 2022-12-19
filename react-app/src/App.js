@@ -6,11 +6,15 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Error from './pages/Error'
+import PrivateRoutes from './components/PrivateRoutes'
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route element={<PrivateRoutes/>}>
+              <Route path='/' element={<Home/>} />
+        </Route>
         <Route path='/login' element={<Login />}/>
         <Route path='/signup' element={<Signup />}/>
         <Route path='/' element={<Home />}/>
