@@ -22,9 +22,13 @@ class Checkpoint < Sequel::Model
 
   def distance
     previous_checkpoint = Checkpoint.user_checkpoints(user_id).previous_route_checkpoint(self)
-    delta_x = ((long.to_f - previous_checkpoint.long.to_f) * 55)
-    delta_y = ((lat.to_f - previous_checkpoint.lat.to_f) * 69)
-    Math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
+    if (lat != "0" && long != "0" && previous_checkpoint.long != "0" && previous_checkpoint.long != "0")
+      delta_x = ((long.to_f - previous_checkpoint.long.to_f) * 55)
+      delta_y = ((lat.to_f - previous_checkpoint.lat.to_f) * 69)
+      Math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
+    else
+      0
+    end
   end
 
   def before_create

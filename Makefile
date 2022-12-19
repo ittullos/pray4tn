@@ -55,7 +55,7 @@ test-checkpoint:
 test-user:
 	rspec ./spec/user_spec.rb
 
-mysql-local:
+mysql-dev:
 	mysql --user=root -p
 
 mysql-prod:

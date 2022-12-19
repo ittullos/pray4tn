@@ -9,8 +9,9 @@ import DevotionalScreen from '../components/DevotionalScreen'
 import StatsScreen from '../components/StatsScreen'
 import RouteStopScreen from '../components/RouteStopScreen'
 import Loading from '../components/Loading'
+import LocationWarning from '../components/LocationWarning'
 
-document.body.style.overflow = "hidden"
+
 
 const CheckpointInterval = 30000
 
@@ -22,13 +23,14 @@ function Home() {
   // VOTD state
   const [verse, setVerse]       = useState('')
   const [notation, setNotation] = useState('')
-  const [loading, setLoading]    = useState(true)
+  const [isLoading, setIsLoading]    = useState(true)
 
   // Pop-up screens state
   const [showPrayerScreen, setShowPrayerScreen]         = useState(false)
   const [showDevotionalScreen, setShowDevotionalScreen] = useState(false)
   const [showStatsScreen, setShowStatsScreen]           = useState(false)
   const [showRouteStopScreen, setShowRouteStopScreen]   = useState(false)
+  const [showLocationWarning, setShowLocationWarning]   = useState(false)
 
   // Route state
   const [routeMileage, setRouteMileage]       = useState(0.0)
@@ -36,11 +38,11 @@ function Home() {
   const [routeStarted, setRouteStarted]       = useState(false)
   const [routeButtonText, setRouteButtonText] = useState('Start')
   const [heartbeatMode, setHeartbeatMode]     = useState(false)
-  const [routeMode, setRouteMode]             = useState('')
+  const [routeType, setRouteType]             = useState('')
 
   // Location state
-  const [location, setLocation] = useState({lat: '', long: ''})
-  // const []
+  const [location, setLocation]               = useState({lat: '', long: ''})
+  const [locationEnabled, setLocationEnabled] = useState(null)
 
   // Functions
   const handleRouteButton = () => {
@@ -51,10 +53,14 @@ function Home() {
   const updateLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
       setLocation({lat: position.coords.latitude, long: position.coords.longitude})
+      // setLocationEnabled(true)
+    }, () => {
+      // setLocationEnabled(false)
+      sendCheckpoint(routeType, {lat: "0", long: "0"})
     })
   }
 
-  const sendCheckpoint = (type) => {
+  const sendCheckpoint = (type, location) => {
     if (type !== "") {
       const checkpointData = {
         type:     type,
@@ -101,26 +107,29 @@ function Home() {
     if (heartbeatMode && !routeStarted) {
       clearInterval(intervalId)
     } else {
-      sendCheckpoint(routeMode)
+      sendCheckpoint(routeType, location)
     }
     // if location !== {lat: "", long:}
   }, [location])
 
-  // Set routeMode when route is started
+  // Set routeType when route is started
   useEffect(() => {
     // Change route button text
     setRouteButtonText(routeStarted ? "Stop" : "Start")
-    if(routeStarted) {
+    if (routeStarted) {
+      if (!locationEnabled) {
+        setShowLocationWarning(true)
+      }
       // Update start location
-      setRouteMode("start")
-      delay(CheckpointInterval).then(() => setRouteMode("heartbeat"))
+      setRouteType("start")
+      delay(CheckpointInterval).then(() => setRouteType("heartbeat"))
       delay(CheckpointInterval).then(() => setHeartbeatMode(true))
     } else {
-      if (location.lat !== "") {
+      if (routeType !== "") {
         // Send stop checkpoint
         setHeartbeatMode(false)
         clearInterval(intervalId)
-        setRouteMode("stop")
+        setRouteType("stop")
       }
    }
   }, [routeStarted])
@@ -131,15 +140,16 @@ function Home() {
     }
   }, [routeButtonText])
 
-  // Update location when routeMode is set
+  // Update location when routeType is set
   useEffect(() => {
-    if (routeMode !== "") {
+    console.log("routeType: ", routeType)
+    if (routeType !== "") {
       updateLocation()
     }
-    if (routeMode === "stop") {
+    if (routeType === "stop") {
       setShowRouteStopScreen(true)
     }
-  }, [routeMode])
+  }, [routeType])
 
   // Reset route mileage when route stop screen closes
   useEffect(() => {
@@ -158,11 +168,29 @@ function Home() {
   }, [heartbeatMode]);
 
   useEffect(() => {
-    if (verse !== "") {
-      console.log("verse changed");
-      setLoading(false)
+    if (verse !== "" && locationEnabled != null) {
+      setIsLoading(false)
     }
-  }, [verse])
+  }, [verse, locationEnabled])
+
+  // disable scroll on document body
+document.body.style.overflow = "hidden"
+// check geolocation on page load
+window.onload = function() {
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      setLocationEnabled(true)
+    }, function(error) {
+      // alert('Error occurred. Error code: ' + error.code)
+      alert('This page needs location services enabled to be fully functional')
+      setLocationEnabled(false)
+    })
+  } else {
+    //  alert("no geolocation support")
+    alert('This page needs location services enabled to be fully functional')
+    setLocationEnabled(false)
+  }
+}
 
   return (
 
@@ -180,9 +208,12 @@ function Home() {
         show={showRouteStopScreen}
         onHide={() => setShowRouteStopScreen(false)}
         mileage={routeMileage}/>
+      <LocationWarning 
+        show={showLocationWarning}
+        onHide={() => setShowLocationWarning(false)}/>
       <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}/>
 
-      { loading ? (
+      { isLoading ? (
         <Loading />
       ) : (   
         <div className="body
