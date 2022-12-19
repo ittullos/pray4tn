@@ -276,3 +276,49 @@
   height: 13rem;
   width: auto;
 }
+/* Login form */
+
+/* .form {
+  max-width: 550px;
+} */
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 5px;
+}
+
+.login-form {
+  width: 90vw;
+  max-width: 450px;
+  
+}
+
+.form-hero {
+  height: 20vh;
+  width: 100vw;
+  background-color: #4582ec;
+  color: white;
+}
+
+.form-hero-text {
+  font-size: 40px;
+}
+
+@media screen and (min-height: 650px) {
+
+  .form-container {
+    padding-top: 30px;
+  }
+  
+  .form-hero-text {
+    font-size: 50px;
+  }
+}
+
+@media screen and (min-width: 500px) {
+
+  .form-container {
+    padding-top: 50px;
+  }
+}
