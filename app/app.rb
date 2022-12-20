@@ -63,3 +63,12 @@ post '/p4l/checkpoint' do
     }.to_json
   end
 end
+
+post '/p4l/login' do
+  login_form_data = JSON.parse(request.body.read)["loginFormData"]
+  puts "LOGIN FORM DATA: #{login_form_data}"
+  content_type :json
+  { 
+    token: "login succes"
+  }.to_json
+end
