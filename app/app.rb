@@ -46,7 +46,6 @@ end
 post '/p4l/checkpoint' do
   @user = User.first
   location = JSON.parse(request.body.read)["checkpointData"]
-  puts "LOCATION: #{location}"
   @checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
                        lat:       location["lat"].to_s,
                        long:      location["long"].to_s,
@@ -66,9 +65,25 @@ end
 
 post '/p4l/login' do
   login_form_data = JSON.parse(request.body.read)["loginFormData"]
-  puts "LOGIN FORM DATA: #{login_form_data}"
+  email = login_form_data["email"]
+  password = login_form_data["password"]
+  user_id = 0
+  
+  if User.find(email: email)
+    @user = User.find(email: email)
+    if (@user.password == password)
+      user_id = @user.id
+      response_status = "success"
+    else
+      response_status = "Invalid Password"
+    end
+  else
+    response_status = "Invalid Email"
+  end
+  
   content_type :json
   { 
-    token: "login succes"
+    userId:         user_id,
+    responseStatus: response_status 
   }.to_json
 end

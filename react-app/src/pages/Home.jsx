@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Button from 'react-bootstrap/Button'
@@ -10,8 +10,6 @@ import StatsScreen from '../components/StatsScreen'
 import RouteStopScreen from '../components/RouteStopScreen'
 import Loading from '../components/Loading'
 import LocationWarning from '../components/LocationWarning'
-
-
 
 const CheckpointInterval = 30000
 
@@ -67,7 +65,6 @@ function Home() {
         lat:      location.lat,
         long:     location.long
       }
-      console.log(`${type} checkpoint taken`)
       axios.post(`${api}/checkpoint`, { checkpointData
       }).then(res => {
         let distance = res.data["distance"]
@@ -94,22 +91,36 @@ function Home() {
     return new Promise(resolve => setTimeout(resolve, time));
   }
 
-  // getVerse on page load
+  // getVerse and prompt for geo location on page load
   useEffect(() => {
     let ignore = false
-    if (!ignore)  getVerse()
+    if (!ignore) {
+      getVerse()
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          
+          setLocationEnabled(true)
+        }, function(error) {
+          // alert('Error occurred. Error code: ' + error.code)
+          alert('This page needs location services enabled to be fully functional')
+          setLocationEnabled(false)
+        })
+      } else {
+        //  alert("no geolocation support")
+        alert('This page needs location services enabled to be fully functional')
+        setLocationEnabled(false)
+      }
+    }
     return () => { ignore = true }
     },[])
 
   // Send checkpoint when location changes
   useEffect(() => {
-    console.log("location: ", location)
     if (heartbeatMode && !routeStarted) {
       clearInterval(intervalId)
     } else {
       sendCheckpoint(routeType, location)
     }
-    // if location !== {lat: "", long:}
   }, [location])
 
   // Set routeType when route is started
@@ -142,7 +153,6 @@ function Home() {
 
   // Update location when routeType is set
   useEffect(() => {
-    console.log("routeType: ", routeType)
     if (routeType !== "") {
       updateLocation()
     }
@@ -175,25 +185,8 @@ function Home() {
 
   // disable scroll on document body
 document.body.style.overflow = "hidden"
-// check geolocation on page load
-window.onload = function() {
-  if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      setLocationEnabled(true)
-    }, function(error) {
-      // alert('Error occurred. Error code: ' + error.code)
-      alert('This page needs location services enabled to be fully functional')
-      setLocationEnabled(false)
-    })
-  } else {
-    //  alert("no geolocation support")
-    alert('This page needs location services enabled to be fully functional')
-    setLocationEnabled(false)
-  }
-}
 
   return (
-
     <div className='full-screen'>
       <PrayerScreen
         show={showPrayerScreen}
