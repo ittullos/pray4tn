@@ -13,6 +13,7 @@ function Login() {
   const [password, setPassword]           = useState("")
   const [rememberMe, setRememberMe]       = useState(false)
   const [loggedIn, setLoggedIn]           = useContext(LoginContext)
+  const [userId, setUserId]               = useContext(LoginContext)
   const [showLoginForm, setShowLoginForm] = useState(false)
 
   useEffect(() => {
@@ -49,8 +50,10 @@ function Login() {
       let status = res.data["responseStatus"]
       if (status === "success") {
         setLoggedIn(true)
+        setUserId(res.data["userId"])
         if (rememberMe) {
           localStorage.setItem('loggedIn', true)
+          localStorage.setItem('userId', res.data["userId"])
         }
         navigate('/')
       } else {

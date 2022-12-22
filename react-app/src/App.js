@@ -13,6 +13,7 @@ export const LoginContext = createContext()
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(null)
+  const [userId, setUserId]     = useState(0)
 
   useEffect(() => {
     if (localStorage.getItem('loggedIn') === "true") {
@@ -24,7 +25,7 @@ function App() {
   }, [loggedIn])
 
   return (
-    <LoginContext.Provider value={[loggedIn, setLoggedIn]}>
+    <LoginContext.Provider value={[loggedIn, setLoggedIn, userId, setUserId]}>
       <Router>
         <Routes>
           <Route element={<PrivateRoutes/>}>

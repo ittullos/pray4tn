@@ -10,6 +10,7 @@ import StatsScreen from '../components/StatsScreen'
 import RouteStopScreen from '../components/RouteStopScreen'
 import Loading from '../components/Loading'
 import LocationWarning from '../components/LocationWarning'
+import { LoginContext } from '../App'
 
 const CheckpointInterval = 30000
 
@@ -42,6 +43,9 @@ function Home() {
   const [location, setLocation]               = useState({lat: '', long: ''})
   const [locationEnabled, setLocationEnabled] = useState(null)
 
+  // User context
+  const [userId, setUserId] = useContext(LoginContext)
+
   // Functions
   const handleRouteButton = () => {
     // Set route start
@@ -63,7 +67,8 @@ function Home() {
       const checkpointData = {
         type:     type,
         lat:      location.lat,
-        long:     location.long
+        long:     location.long,
+        userId:   userId
       }
       axios.post(`${api}/checkpoint`, { checkpointData
       }).then(res => {

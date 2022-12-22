@@ -43,8 +43,8 @@ get '/p4l/home' do
 end
 
 post '/p4l/checkpoint' do
-  @user = User.first
   location = JSON.parse(request.body.read)["checkpointData"]
+  @user = User.find(id: location["userId"])
   @checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
                        lat:       location["lat"].to_s,
                        long:      location["long"].to_s,
@@ -94,8 +94,6 @@ post '/p4l/signup' do
   confirm_password = signup_form_data["confirmPassword"]
   user_id          = 0
 
-  # pry.byebug
-  
   if User.find(email: email)
     response_status = "Email already in use"
   elsif password != confirm_password
