@@ -16,6 +16,7 @@ function App() {
   const [userId, setUserId]     = useState(0)
 
   useEffect(() => {
+    console.log("loggedIn: ", loggedIn)
     if (localStorage.getItem('loggedIn') === "true") {
       setLoggedIn(true)
     }

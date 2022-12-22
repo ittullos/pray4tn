@@ -52,8 +52,8 @@ function Login() {
         setLoggedIn(true)
         setUserId(res.data["userId"])
         if (rememberMe) {
-          localStorage.setItem('loggedIn', true)
-          localStorage.setItem('userId', res.data["userId"])
+          localStorage.setItem('loggedIn', JSON.stringify(true))
+          localStorage.setItem('userId', JSON.stringify(res.data["userId"]))
         }
         navigate('/')
       } else {
