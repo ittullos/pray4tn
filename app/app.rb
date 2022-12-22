@@ -44,11 +44,12 @@ end
 
 post '/p4l/checkpoint' do
   location = JSON.parse(request.body.read)["checkpointData"]
-  @user = User.find(id: location["userId"])
+  @user    = User.find(id: location["userId"])
   @checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
                        lat:       location["lat"].to_s,
                        long:      location["long"].to_s,
                        type:      location["type"])
+
   if (@checkpoint.type == "start") 
     content_type :json
     { 
@@ -64,9 +65,9 @@ end
 
 post '/p4l/login' do
   login_form_data = JSON.parse(request.body.read)["loginFormData"]
-  email    = login_form_data["email"]
-  password = login_form_data["password"]
-  user_id  = 0
+  email           = login_form_data["email"]
+  password        = login_form_data["password"]
+  user_id         = 0
   
   if User.find(email: email)
     @user = User.find(email: email)
@@ -102,6 +103,34 @@ post '/p4l/signup' do
     user_id         = User.insert(email: email, password: password)
     response_status = "success"
   end
+
+  content_type :json
+  { 
+    userId:         user_id,
+    responseStatus: response_status 
+  }.to_json
+end
+
+post '/p4l/password_reset' do
+  password_reset_form_data = JSON.parse(request.body.read)["passwordResetFormData"]
+  email                    = password_reset_form_data["email"]
+  password                 = password_reset_form_data["password"]
+  confirm_password         = password_reset_form_data["confirmPassword"]
+  user_id                  = 0
+
+  if !User.find(email: email)
+    response_status = "No account with that email address"
+  elsif password != confirm_password
+    response_status = "Passwords do not match"
+  else
+    @user          = User.find(email: email)
+    @user.password = password
+    @user.save
+
+    user_id = @user.id
+    response_status = "success"
+  end
+
   content_type :json
   { 
     userId:         user_id,

@@ -4,7 +4,6 @@ import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 import { LoginContext } from '../App';
-import Loading from '../components/Loading';
 
 const api = "http://localhost:9292/p4l"
 
@@ -14,7 +13,6 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [rememberMe, setRememberMe]           = useState(false)
   const [userId, setUserId]                   = useContext(LoginContext)
-
 
   useEffect(() => {
     if (userId !== 0) {
@@ -133,8 +131,6 @@ function Signup() {
                   </Link>
                 </div>
               </div>
-              
-
             </Form>
           </div>
         </div> 
