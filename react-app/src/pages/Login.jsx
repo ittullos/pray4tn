@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { LoginContext } from '../App';
 import Loading from '../components/Loading';
 
@@ -98,17 +98,37 @@ function Login() {
                               onChange={handlePasswordChange}
                               placeholder="Password" />
               </Form.Group>
-              <Form.Group className="mb-3" 
-                          controlId="formBasicCheckbox">
-                <Form.Check type="checkbox" 
-                            label="Remember Me"
-                            onChange={handleRememberMeChange} />
-              </Form.Group>
-              <Button variant="primary" 
-                      type="login" 
-                      className='bg-success'>
-                Login
-              </Button>
+              <div className='d-flex
+                              flex-row
+                              justify-content-between'>
+                <div>
+                  <Form.Group className="mb-3" 
+                              controlId="formBasicCheckbox">
+                    <Form.Check type="checkbox" 
+                                label="Remember Me"
+                                onChange={handleRememberMeChange} />
+                  </Form.Group>
+                  <Button variant="primary" 
+                          type="login" 
+                          className='bg-success'>
+                    Login
+                  </Button>
+                </div>
+                <div className='d-flex
+                                flex-column
+                                align-items-end'>
+                  <Link to="/password_reset"
+                        className='password-reset-link'>
+                    Forgot Password?
+                    </Link>
+                  <Link to="/signup"
+                        className='signup-link'>
+                    Sign Up
+                  </Link>
+                </div>
+              </div>
+              
+
             </Form>
           </div>
         </div> 

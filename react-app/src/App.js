@@ -7,6 +7,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Error from './pages/Error'
 import PrivateRoutes from './components/PrivateRoutes'
+import PasswordReset from './pages/PasswordReset'
 
 export const LoginContext = createContext()
 
@@ -29,9 +30,10 @@ function App() {
           <Route element={<PrivateRoutes/>}>
                 <Route path='/' element={<Home/>} />
           </Route>
-          <Route path='/login' element={<Login />}/>
-          <Route path='/signup' element={<Signup />}/>
-          <Route path='*' element={<Error />}/>
+          <Route path='/login'          element={<Login />}/>
+          <Route path='/signup'         element={<Signup />}/>
+          <Route path='/password_reset' element={<PasswordReset />} />
+          <Route path='*'               element={<Error />}/>
         </Routes>
       </Router>
     </LoginContext.Provider>

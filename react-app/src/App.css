@@ -323,3 +323,15 @@
   }
 }
 
+.signup-link {
+  font-size: larger;
+  text-decoration: none;
+  padding-top: .3rem;
+}
+
+.password-reset-link {
+  font-size: medium;
+  text-decoration: none;
+  padding-top: .2rem;
+}
+

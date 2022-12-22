@@ -19,27 +19,26 @@ before do
     require './app/models/route'
   elsif ENV["RACK_ENV"] == "prod"
     DB ||= Sequel.connect(:adapter => 'mysql2',
-                   :host => (ENV["DB_HOST"]),
-                   :port => 3306,
-                   :user => 'admin',
-                   :password => (ENV["DB_PWRD"]),
-                   :database => (ENV["DB_NAME"]))
+                          :host => (ENV["DB_HOST"]),
+                          :port => 3306,
+                          :user => 'admin',
+                          :password => (ENV["DB_PWRD"]),
+                          :database => (ENV["DB_NAME"]))
     DB.loggers << Logger.new($stdout)
     require './models/verse'
     require './models/user'
     require './models/checkpoint'
     require './models/route'
   end
-
 end
 
 get '/p4l/home' do
   @verse = Verse.first
   content_type :json
   { 
-    verse: @verse.scripture,
+    verse:    @verse.scripture,
     notation: @verse.notation,
-    version: @verse.version
+    version:  @verse.version
   }.to_json
 end
 
@@ -65,9 +64,9 @@ end
 
 post '/p4l/login' do
   login_form_data = JSON.parse(request.body.read)["loginFormData"]
-  email = login_form_data["email"]
+  email    = login_form_data["email"]
   password = login_form_data["password"]
-  user_id = 0
+  user_id  = 0
   
   if User.find(email: email)
     @user = User.find(email: email)
@@ -80,7 +79,31 @@ post '/p4l/login' do
   else
     response_status = "Invalid Email"
   end
+
+  content_type :json
+  { 
+    userId:         user_id,
+    responseStatus: response_status 
+  }.to_json
+end
+
+post '/p4l/signup' do
+  signup_form_data = JSON.parse(request.body.read)["signupFormData"]
+  email            = signup_form_data["email"]
+  password         = signup_form_data["password"]
+  confirm_password = signup_form_data["confirmPassword"]
+  user_id          = 0
+
+  # pry.byebug
   
+  if User.find(email: email)
+    response_status = "Email already in use"
+  elsif password != confirm_password
+    response_status = "Passwords do not match"
+  else
+    user_id         = User.insert(email: email, password: password)
+    response_status = "success"
+  end
   content_type :json
   { 
     userId:         user_id,
