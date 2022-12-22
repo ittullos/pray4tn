@@ -12,18 +12,17 @@ function Login() {
   const [email, setEmail]                 = useState("")
   const [password, setPassword]           = useState("")
   const [rememberMe, setRememberMe]       = useState(false)
-  const [loggedIn, setLoggedIn]           = useContext(LoginContext)
   const [userId, setUserId]               = useContext(LoginContext)
   const [showLoginForm, setShowLoginForm] = useState(false)
 
   useEffect(() => {
-    if (loggedIn) {
+    console.log("userId: ", userId);
+    if (userId !== 0) {
       navigate('/')
-    }
-    if (loggedIn === false || loggedIn === null) {
+    } else {
       setShowLoginForm(true)
     }
-  },[loggedIn])
+  },[userId])
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value)
@@ -49,10 +48,8 @@ function Login() {
     }).then(res => {
       let status = res.data["responseStatus"]
       if (status === "success") {
-        setLoggedIn(true)
         setUserId(res.data["userId"])
         if (rememberMe) {
-          localStorage.setItem('loggedIn', JSON.stringify(true))
           localStorage.setItem('userId', JSON.stringify(res.data["userId"]))
         }
         navigate('/')

@@ -12,21 +12,19 @@ import PasswordReset from './pages/PasswordReset'
 export const LoginContext = createContext()
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(null)
-  const [userId, setUserId]     = useState(0)
+  const [userId, setUserId] = useState(0)
 
   useEffect(() => {
-    console.log("loggedIn: ", loggedIn)
-    if (localStorage.getItem('loggedIn') === "true") {
-      setLoggedIn(true)
+    if (localStorage.getItem('userId') === "0") {
+      setUserId(0)
+    } 
+    if (localStorage.getItem('userId') !== "0" &&  localStorage.getItem('userId') != null) {
+      setUserId(localStorage.getItem('userId'))
     }
-    if (localStorage.getItem('loggedIn') === "false") {
-      setLoggedIn(false)
-    }
-  }, [loggedIn])
+  }, [userId])
 
   return (
-    <LoginContext.Provider value={[loggedIn, setLoggedIn, userId, setUserId]}>
+    <LoginContext.Provider value={[userId, setUserId]}>
       <Router>
         <Routes>
           <Route element={<PrivateRoutes/>}>

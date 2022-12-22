@@ -13,15 +13,14 @@ function Signup() {
   const [password, setPassword]               = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [rememberMe, setRememberMe]           = useState(false)
-  const [loggedIn, setLoggedIn]               = useContext(LoginContext)
   const [userId, setUserId]                   = useContext(LoginContext)
 
 
   useEffect(() => {
-    if (loggedIn) {
+    if (userId !== 0) {
       navigate('/')
     }
-  },[loggedIn])
+  },[userId])
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value)
@@ -52,10 +51,8 @@ function Signup() {
     }).then(res => {
       let status = res.data["responseStatus"]
       if (status === "success") {
-        setLoggedIn(true)
         setUserId(res.data["userId"])
         if (rememberMe) {
-          localStorage.setItem('loggedIn', JSON.stringify(true))
           localStorage.setItem('userId', JSON.stringify(res.data["userId"]))
         }
         navigate('/')
