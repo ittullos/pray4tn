@@ -1,15 +1,31 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form'
+import { useState, useEffect } from 'react';
 
 function LocationWarning(props) {
+
+  const [disableCheckbox, setDisableCheckbox] = useState(false)
+
+  const handleDisableChange = () => {
+    setDisableCheckbox(!disableCheckbox)
+  }
+
+  const handleSubmit = () => {
+    if (disableCheckbox) {
+      localStorage.setItem('disableLocationWarning', "true")
+    } else {
+      localStorage.setItem('disableLocationWarning', "false")
+    }
+  }
+
   return (
     <Modal
       {...props}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
-      className='text-center'
-    >
+      className='text-center'>
       <Modal.Header 
         closeButton 
         className='text-center'
@@ -31,8 +47,23 @@ function LocationWarning(props) {
           You can still enter stationary mileage without using location services.
         </p>
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+      <Modal.Footer className='d-flex
+                               flex-column
+                               justify-content-center
+                               align-items-center'>
+        <Form>
+          <Form.Group controlId="formBasicCheckbox">
+            <Form.Check type="checkbox" 
+                        label="Don't show this message again"
+                        onChange={handleDisableChange} />   
+            <Button onClick={() => {
+              props.onHide() 
+              handleSubmit()}}
+              className="mt-3">
+              Close
+            </Button>
+          </Form.Group>
+        </Form>
       </Modal.Footer>
     </Modal>
   );

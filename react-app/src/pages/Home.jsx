@@ -25,11 +25,12 @@ function Home() {
   const [isLoading, setIsLoading]    = useState(true)
 
   // Pop-up screens state
-  const [showPrayerScreen, setShowPrayerScreen]         = useState(false)
-  const [showDevotionalScreen, setShowDevotionalScreen] = useState(false)
-  const [showStatsScreen, setShowStatsScreen]           = useState(false)
-  const [showRouteStopScreen, setShowRouteStopScreen]   = useState(false)
-  const [showLocationWarning, setShowLocationWarning]   = useState(false)
+  const [showPrayerScreen, setShowPrayerScreen]             = useState(false)
+  const [showDevotionalScreen, setShowDevotionalScreen]     = useState(false)
+  const [showStatsScreen, setShowStatsScreen]               = useState(false)
+  const [showRouteStopScreen, setShowRouteStopScreen]       = useState(false)
+  const [showLocationWarning, setShowLocationWarning]       = useState(false)
+  const [disableLocationWarning, setDisableLocationWarning] = useState(false)
 
   // Route state
   const [routeMileage, setRouteMileage]       = useState(0.0)
@@ -103,7 +104,6 @@ function Home() {
       getVerse()
       if(navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-          
           setLocationEnabled(true)
         }, function(error) {
           // alert('Error occurred. Error code: ' + error.code)
@@ -134,6 +134,9 @@ function Home() {
     setRouteButtonText(routeStarted ? "Stop" : "Start")
     if (routeStarted) {
       if (!locationEnabled) {
+        if (localStorage.getItem('disableLocationWarning') === "true") {
+          setDisableLocationWarning(true)
+        }
         setShowLocationWarning(true)
       }
       // Update start location
@@ -207,8 +210,8 @@ document.body.style.overflow = "hidden"
         onHide={() => setShowRouteStopScreen(false)}
         mileage={routeMileage}/>
       <LocationWarning 
-        show={showLocationWarning}
-        onHide={() => setShowLocationWarning(false)}/>
+        show={showLocationWarning && !disableLocationWarning}
+        onHide={() => setShowLocationWarning(false)} />
       <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}/>
 
       { isLoading ? (
@@ -272,3 +275,4 @@ document.body.style.overflow = "hidden"
 }
 
 export default Home
+

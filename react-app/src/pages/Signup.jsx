@@ -127,7 +127,7 @@ function Signup() {
                                 flex-column'>
                   <Link to="/login"
                         className='signup-link'>
-                    Login
+                    Cancel
                   </Link>
                 </div>
               </div>

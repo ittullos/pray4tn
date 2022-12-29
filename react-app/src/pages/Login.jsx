@@ -16,7 +16,6 @@ function Login() {
   const [showLoginForm, setShowLoginForm] = useState(false)
 
   useEffect(() => {
-    console.log("userId: ", userId);
     if (userId !== 0) {
       navigate('/')
     } else {
