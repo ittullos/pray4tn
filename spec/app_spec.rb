@@ -69,24 +69,27 @@ describe "Pastor4Life API - " do
 
     context "Checkpoint route - " do
       before do
-        @data = { :checkpointData => {
-                  :lat  => random_location[0],
-                  :long => random_location[1],
-                  :type => "start" }}
+        @data = { "checkpointData" => {
+                  "lat"  => random_location[0],
+                  "long" => random_location[1],
+                  "type" => "start",
+                  "userId" => @user.id }}
       end
         
       it "logs a start checkpoint" do
+        # pry.byebug
         route_count = Checkpoint.user_checkpoints(@user.id).start_points.count
-        post '/p4l/checkpoint', @data.to_json
+        post '/p4l/checkpoint', @data.to_json, "CONTENT_TYPE" => "application/json"
         expect(Checkpoint.user_checkpoints(@user.id).start_points.count).to eq(route_count + 1)
       end
 
       it "calulates the distance between checkpoints and send back the result" do
-        post '/p4l/checkpoint', @data.to_json
-        @data = { :checkpointData => {
-                  :lat  => random_location[0],
-                  :long => random_location[1],
-                  :type => "heartbeat" }}
+        post '/p4l/checkpoint', @data.to_json, "CONTENT_TYPE" => "application/json"
+        @data = { "checkpointData" => {
+                  "lat"  => random_location[0],
+                  "long" => random_location[1],
+                  "type" => "heartbeat",
+                  "userId" => @user.id }}
         post '/p4l/checkpoint', @data.to_json
         expect(JSON.parse(last_response.body)["distance"]).to be > 0
       end
