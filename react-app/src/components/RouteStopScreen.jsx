@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 function roundDecimal(float) {
-  return Number.parseFloat(float).toFixed(1)
+  return Number.parseFloat(float).toFixed(2)
 }
 
 function RouteStopScreen(props) {

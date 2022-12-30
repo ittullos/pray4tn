@@ -6,8 +6,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import { LoginContext } from '../App';
 import Loading from '../components/Loading';
 
-const api = "http://localhost:9292/p4l"
-// const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
+// const api = "http://localhost:9292/p4l"
+const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
 
 function Login() {
   const [email, setEmail]                 = useState("")

@@ -1,7 +1,7 @@
 import React from 'react'
 
 function roundDecimal(float) {
-  return Number.parseFloat(float).toFixed(1)
+  return Number.parseFloat(float).toFixed(2)
 }
 
 function Mileage(props) {

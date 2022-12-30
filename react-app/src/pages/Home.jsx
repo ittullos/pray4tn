@@ -16,8 +16,8 @@ const CheckpointInterval = 30000
 
 function Home() {
   // API endpoint
-  const api = "http://localhost:9292/p4l"
-  // const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
+  // const api = "http://localhost:9292/p4l"
+  const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
 
   // VOTD state
   const [verse, setVerse]       = useState('')
