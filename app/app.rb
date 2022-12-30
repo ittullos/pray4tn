@@ -45,20 +45,31 @@ end
 post '/p4l/checkpoint' do
   location = JSON.parse(request.body.read)["checkpointData"]
   @user    = User.find(id: location["userId"])
-  @checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
-                       lat:       location["lat"].to_s,
-                       long:      location["long"].to_s,
-                       type:      location["type"])
+  is_valid = true
+  if location["type"] == "heartbeat" && Checkpoint.user_checkpoints(@user.id).most_recent.type == "stop"
+    is_valid = false
+  end
+  if is_valid
+    @checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
+                        lat:       location["lat"].to_s,
+                        long:      location["long"].to_s,
+                        type:      location["type"])
 
-  if (@checkpoint.type == "start") 
+    if (@checkpoint.type == "start") 
+      content_type :json
+      { 
+        distance: 0.0
+      }.to_json
+    else 
+      content_type :json
+      { 
+        distance: @checkpoint.distance
+      }.to_json
+    end
+  else
     content_type :json
     { 
-      distance: 0.0
-    }.to_json
-  else 
-    content_type :json
-    { 
-      distance: @checkpoint.distance
+      distance: 0
     }.to_json
   end
 end

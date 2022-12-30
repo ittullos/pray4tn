@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { LoginContext } from '../App';
 
 const api = "http://localhost:9292/p4l"
+// const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
 
 function PasswordReset() {
   const [email, setEmail]                     = useState("")
