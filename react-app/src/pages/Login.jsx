@@ -3,17 +3,15 @@ import Form from 'react-bootstrap/Form';
 import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
-import { LoginContext } from '../App';
+import { LoginContext, APIContext } from '../App';
 import Loading from '../components/Loading';
-
-// const api = "http://localhost:9292/p4l"
-const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
 
 function Login() {
   const [email, setEmail]                 = useState("")
   const [password, setPassword]           = useState("")
   const [rememberMe, setRememberMe]       = useState(false)
   const [userId, setUserId]               = useContext(LoginContext)
+  const [apiEndpoint, setApiEndpoint] = useContext(APIContext)
   const [showLoginForm, setShowLoginForm] = useState(false)
 
   useEffect(() => {
@@ -44,7 +42,7 @@ function Login() {
       email: email,
       password: password
     }
-    axios.post(`${api}/login`, { loginFormData
+    axios.post(`${apiEndpoint}/login`, { loginFormData
     }).then(res => {
       let status = res.data["responseStatus"]
       if (status === "success") {

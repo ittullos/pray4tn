@@ -10,18 +10,16 @@ import StatsScreen from '../components/StatsScreen'
 import RouteStopScreen from '../components/RouteStopScreen'
 import Loading from '../components/Loading'
 import LocationWarning from '../components/LocationWarning'
-import { LoginContext } from '../App'
+import PlanRouteScreen from '../components/PlanRouteScreen'
+import { LoginContext, APIContext } from '../App'
 
 const CheckpointInterval = 30000
 
 function Home() {
-  // API endpoint
-  // const api = "http://localhost:9292/p4l"
-  const api = "https://d3ekgffygrqmjk.cloudfront.net/p4l"
 
   // VOTD state
-  const [verse, setVerse]       = useState('')
-  const [notation, setNotation] = useState('')
+  const [verse, setVerse]            = useState('')
+  const [notation, setNotation]      = useState('')
   const [isLoading, setIsLoading]    = useState(true)
 
   // Pop-up screens state
@@ -31,6 +29,7 @@ function Home() {
   const [showRouteStopScreen, setShowRouteStopScreen]       = useState(false)
   const [showLocationWarning, setShowLocationWarning]       = useState(false)
   const [disableLocationWarning, setDisableLocationWarning] = useState(false)
+  const [showPlanRouteScreen, setShowPlanRouteScreen]       = useState(false)
 
   // Route state
   const [routeMileage, setRouteMileage]       = useState(0.0)
@@ -46,6 +45,7 @@ function Home() {
 
   // User context
   const [userId, setUserId] = useContext(LoginContext)
+  const [apiEndpoint, setApiEndpoint] = useContext(APIContext)
 
   // Functions
   const handleRouteButton = () => {
@@ -56,9 +56,7 @@ function Home() {
   const updateLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
       setLocation({lat: position.coords.latitude, long: position.coords.longitude})
-      // setLocationEnabled(true)
     }, () => {
-      // setLocationEnabled(false)
       sendCheckpoint(routeType, {lat: "0", long: "0"})
     })
   }
@@ -71,7 +69,7 @@ function Home() {
         long:     location.long,
         userId:   userId
       }
-      axios.post(`${api}/checkpoint`, { checkpointData
+      axios.post(`${apiEndpoint}/checkpoint`, { checkpointData
       }).then(res => {
         let distance = res.data["distance"]
         setRouteMileage(routeMileage + distance)
@@ -83,7 +81,7 @@ function Home() {
   }
 
   const getVerse = () => {
-    axios.get(`${api}/home`)
+    axios.get(`${apiEndpoint}/home`)
     .then(res => {
       console.log("getVerse: ", res)
       setVerse(res.data.verse)
@@ -212,7 +210,11 @@ document.body.style.overflow = "hidden"
       <LocationWarning 
         show={showLocationWarning && !disableLocationWarning}
         onHide={() => setShowLocationWarning(false)} />
-      <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}/>
+      <PlanRouteScreen 
+        show={showPlanRouteScreen}
+        onHide={() => setShowPlanRouteScreen(false)} />
+      <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}
+              showPlanRouteScreen={showPlanRouteScreen => setShowPlanRouteScreen(showPlanRouteScreen)}/>
 
       { isLoading ? (
         <Loading />

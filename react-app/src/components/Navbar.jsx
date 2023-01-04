@@ -15,13 +15,14 @@ function Navbar(props) {
           </h3>
           <ul className={!navbarClose ? "nav-menu active" : "nav-menu"}>
             <li className='nav-item' onClick={() => { props.showStatsScreen(true)
-                                                      handleNavbarClose()}}>
+                                                      handleNavbarClose() }}>
               <h6 className='nav-link'>My Stats</h6>
             </li>
             <li className='nav-item' onClick={handleNavbarClose}>
               <h6 className='nav-link'>My Commitment</h6>
             </li>
-            <li className='nav-item' onClick={handleNavbarClose}>
+            <li className='nav-item' onClick={() => { props.showPlanRouteScreen(true)
+                                                      handleNavbarClose() }}>
               <h6 className='nav-link'>Plan Route</h6>
             </li>
             <li className='nav-item' onClick={handleNavbarClose}>

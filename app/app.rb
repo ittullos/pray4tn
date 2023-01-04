@@ -17,6 +17,7 @@ before do
     require './app/models/user'
     require './app/models/checkpoint'
     require './app/models/route'
+    require './app/models/settings'
   elsif ENV["RACK_ENV"] == "prod"
     DB ||= Sequel.connect(:adapter => 'mysql2',
                           :host => (ENV["DB_HOST"]),
@@ -29,6 +30,7 @@ before do
     require './models/user'
     require './models/checkpoint'
     require './models/route'
+    require './models/settings'
   end
 end
 
@@ -146,5 +148,17 @@ post '/p4l/password_reset' do
   { 
     userId:         user_id,
     responseStatus: response_status 
+  }.to_json
+end
+
+get '/p4l/settings' do
+  @settings = Settings.last
+
+  content_type :json
+  { 
+    s3Bucket:         @settings.s3_bucket_name,
+    region:           @settings.region,
+    accessKeyId:      @settings.access_key_id,
+    secretAccessKey:  @settings.secret_access_key
   }.to_json
 end
