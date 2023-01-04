@@ -414,3 +414,11 @@ input[type=file]::file-selector-button:hover {
   line-height: 40px;
   max-width: 275px;
 }
+
+@media screen and (max-width: 850px) {
+
+  .upload-text {
+    display: none;
+  }
+
+}

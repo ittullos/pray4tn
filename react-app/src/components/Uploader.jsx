@@ -90,8 +90,8 @@ const Uploader = (props) => {
             onHide={() => setShowUploadSuccess(false)} />
 
         <label htmlFor="files" className="drop-container my-4">
-            <span className="drop-title">Drop file here</span>
-            or
+            <div className="upload-text"><span className="drop-title">Drop file here</span><br />
+            or</div>
             <input onChange={handleFileInput} type="file" id="files" accept="*" required />
         </label>
         <Button variant="success" size="lg" onClick={() => uploadFile(selectedFile, s3BucketName)}>
