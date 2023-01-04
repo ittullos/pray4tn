@@ -44,8 +44,8 @@ function PlanRouteScreen (props) {
           </h5>
           <hr className='page-line'/>
           <div className='py-3'>
-            <h5 className='plan-route-text'>
-              Step 2: Upload your prayer list here: 
+            <h5 className='plan-route-text ms-4'>
+              Step 2: Upload your prayer list here:
             </h5>
             <Uploader onHide={props.onHide}/>
           </div>
