@@ -5,8 +5,9 @@ Sequel.migration do
       Integer  :started_at,   null: false
       Integer  :stopped_at
       Integer  :mileage,      null: false
-      Integer :prayer_count, null: false
-      Integer :seconds     , null: false
+      Integer  :prayer_count, null: false
+      Integer  :seconds,      null: false
+      String   :type
     end
   end
 

@@ -11,6 +11,7 @@ require './app/models/verse'
 require './app/models/user'
 require './app/models/checkpoint'
 require './app/models/route'
+require './app/models/user_resident'
 
 class Checkpoint
   dataset_module do

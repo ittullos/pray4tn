@@ -8,7 +8,7 @@ class Checkpoint < Sequel::Model
     end
 
     def start_points
-      where(:type => "start")
+      where(:type => "start").or(:type => "prayer_start")
     end
 
     def most_recent
@@ -32,7 +32,7 @@ class Checkpoint < Sequel::Model
   end
 
   def before_create
-    if type == "start"
+    if type == "start"  || type == "prayer_start"
       if  Checkpoint.user_checkpoints(user.id).start_points.count > 1
         if Checkpoint.user_checkpoints(user.id).most_recent.type != "stop"
           checkpoint = user.add_checkpoint(timestamp: Time.now.to_i,
@@ -47,16 +47,25 @@ class Checkpoint < Sequel::Model
   end
 
   def after_create 
-    if type == "start"
+    if type == "start" || type == "prayer_start"
+      if type == "prayer_start"
+        @route_type = "prayer"
+      else
+        @route_type = "walk"
+      end
       route  = Route.insert(started_at:   Time.now.to_i,
                             mileage:      0,
                             prayer_count: 0,
-                            seconds:      0)
+                            seconds:      0,
+                            type:         @route_type)
       self.route_id = route
       self.save
-    elsif type == "heartbeat" || self.type == "stop"
+    elsif type == "heartbeat" || type == "stop" || type == "prayer"
       self.route_id = Checkpoint.user_checkpoints(user.id).start_points.most_recent.route_id
       self.save   
+    end
+    if type == "prayer"
+      
     end
     if type == "stop" 
       self.route.finalize

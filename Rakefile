@@ -18,6 +18,10 @@ end
 
 require "./app/models/verse"
 require "./app/models/user"
+require "./app/models/user_resident"
+
+names     = ["John Stewart", "Stephen Colbert", "Trever Noah"]
+addresses = ["44 Unknown dr", "431 Canberra dr", "607 Middlebrook pk"]
 
 namespace :db do
   desc "Run Migrations"
@@ -30,19 +34,25 @@ namespace :db do
   task :seed do
     Verse.insert(
       scripture: "Love is patient and kind; love does not envy or boast; it is not arrogant or rude. It does not insist on its own way; it is not irritable or resentful.",
-      version: "ESV",
-      notation: "1 Corinthians 13:4-5")
+      version:   "ESV",
+      notation:  "1 Corinthians 13:4-5")
     Verse.insert(
       scripture: "Rejoice always, pray without ceasing, give thanks in all circumstances; for this is the will of God in Christ Jesus for you.",
-      version: "ESV",
-      notation: "1 Thessalonians 5:16-18")
+      version:   "ESV",
+      notation:  "1 Thessalonians 5:16-18")
     Verse.insert(
       scripture: "Do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
-      version: "ESV",
-      notation: "Philippians 4:6-7")
-    User.insert(
-      email: "user@example.com",
-      password: "password"
-    )
+      version:   "ESV",
+      notation:  "Philippians 4:6-7")
+    user_id = User.insert(email:    "user@example.com",
+                          password: "password")
+    for i in 0..2 do
+      User[user_id].add_user_resident(
+        name: names[i],
+        address: addresses[i],
+        status: "active"
+      )
+    end
+    
   end
 end

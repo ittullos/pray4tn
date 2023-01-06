@@ -88,6 +88,35 @@ describe "Checkpoint model -" do
       end
     end
 
+    context "Prayer Start -" do
+      before do
+        @route_count = Checkpoint.user_checkpoints(@user.id).start_points.count
+        @user.add_checkpoint(timestamp:    Time.now.to_i,
+                             lat:          random_location[0],
+                             long:         random_location[1],
+                             type:         "prayer_start")
+      end
+
+      it "creates a new prayer route if there is no route in progress" do
+        expect(@route_count + 1).to eq(Checkpoint.user_checkpoints(@user.id).start_points.count)
+      end
+
+      it "sets the route type to 'prayer'" do
+        expect(Checkpoint.user_checkpoints(@user.id).most_recent.route.type).to eq("prayer")
+      end
+    end
+
+    context "Prayer -" do
+      it "associates checkpoint with the user's most recent route" do     
+        checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
+                                          lat:       random_location[0],
+                                          long:      random_location[1],
+                                          type:      "prayer")
+        expect(checkpoint.route_id).to eq(Checkpoint.user_checkpoints(@user.id).most_recent.route_id)
+      end
+    end
+
+
     context "Stop -" do
       it "associates checkpoint with the user's most recent route" do
         checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
@@ -115,7 +144,6 @@ describe "Checkpoint model -" do
                              lat:       TEST_ROUTE[4]["lat"],
                              long:      TEST_ROUTE[4]["long"],
                              type:      "stop")
-          # pry.byebug
         expect(Route[@test_route_id].seconds).to eq(TEST_DURATION)
         expect(Route[@test_route_id].mileage).to eq(TEST_DISTANCE.to_i)
       end

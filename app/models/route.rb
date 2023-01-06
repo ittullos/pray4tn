@@ -10,13 +10,14 @@ class Route < Sequel::Model
   def finalize
     self.seconds = (self.checkpoints.last.timestamp - self.checkpoints.first.timestamp)
     self.stopped_at = Time.now.to_i
-    mileage_count = 0.0
-
-    if self.checkpoints.count > 1
-      for i in 1..((self.checkpoints.count) - 1) do
-        mileage_count += self.checkpoints[i].distance
+    if type == "walk"
+      mileage_count = 0.0
+      if self.checkpoints.count > 1
+        for i in 1..((self.checkpoints.count) - 1) do
+          mileage_count += self.checkpoints[i].distance
+        end
+        self.mileage = (mileage_count * Precision).round(0)
       end
-      self.mileage = (mileage_count * Precision).round(0)
     end
     self.save
   end

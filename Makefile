@@ -34,6 +34,9 @@ run-dev:
 seed-dev:
 	RACK_ENV=dev rake db:seed
 
+seed-test:
+	RACK_ENV=test rake db:seed
+
 seed-prod:
 	RACK_ENV=prod rake db:seed
 

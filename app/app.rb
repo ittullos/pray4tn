@@ -18,6 +18,7 @@ before do
     require './app/models/checkpoint'
     require './app/models/route'
     require './app/models/settings'
+    require './app/models/user_resident'
   elsif ENV["RACK_ENV"] == "prod"
     DB ||= Sequel.connect(:adapter => 'mysql2',
                           :host => (ENV["DB_HOST"]),
@@ -31,6 +32,7 @@ before do
     require './models/checkpoint'
     require './models/route'
     require './models/settings'
+    require './models/user_resident'
   end
 end
 
@@ -45,17 +47,21 @@ get '/p4l/home' do
 end
 
 post '/p4l/checkpoint' do
-  location = JSON.parse(request.body.read)["checkpointData"]
-  @user    = User.find(id: location["userId"])
+  @checkpoint = JSON.parse(request.body.read)["checkpointData"]
+  @user    = User.find(id: @checkpoint["userId"])
   is_valid = true
-  if location["type"] == "heartbeat" && Checkpoint.user_checkpoints(@user.id).most_recent.type == "stop"
+  if @checkpoint["type"] == "heartbeat" && Checkpoint.user_checkpoints(@user.id).most_recent.type == "stop"
     is_valid = false
   end
   if is_valid
     @checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
-                        lat:       location["lat"].to_s,
-                        long:      location["long"].to_s,
-                        type:      location["type"])
+                                       lat:       @checkpoint["lat"].to_s,
+                                       long:      @checkpoint["long"].to_s,
+                                       type:      @checkpoint["type"])
+
+    if @checkpoint.type == "prayer_start" || @checkpoint.type == "prayer"
+      # Return next user_resident name
+    end
 
     if (@checkpoint.type == "start") 
       content_type :json
