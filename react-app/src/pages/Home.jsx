@@ -81,8 +81,8 @@ function Home() {
   }
 
   const getVerse = () => {
-    axios.get(`${apiEndpoint}/home`)
-    .then(res => {
+    axios.post(`${apiEndpoint}/home`, { userId 
+    }).then(res => {
       console.log("getVerse: ", res)
       setVerse(res.data.verse)
       setNotation(res.data.notation)
@@ -104,12 +104,10 @@ function Home() {
         navigator.geolocation.getCurrentPosition(function(position) {
           setLocationEnabled(true)
         }, function(error) {
-          // alert('Error occurred. Error code: ' + error.code)
           alert('This page needs location services enabled to be fully functional')
           setLocationEnabled(false)
         })
       } else {
-        //  alert("no geolocation support")
         alert('This page needs location services enabled to be fully functional')
         setLocationEnabled(false)
       }

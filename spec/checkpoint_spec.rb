@@ -73,7 +73,7 @@ describe "Checkpoint model -" do
         expect(@route_count + 1).to eq(Checkpoint.user_checkpoints(@user.id).start_points.count)   
       end
 
-      it "ends the previous route" do  
+      xit "ends the previous route" do  
         expect(Checkpoint.user_checkpoints(@user.id).next_to_last.type).to eq("stop") 
       end
     end
@@ -90,6 +90,10 @@ describe "Checkpoint model -" do
 
     context "Prayer Start -" do
       before do
+        @user.add_checkpoint(timestamp:    Time.now.to_i,
+                             lat:          random_location[0],
+                             long:         random_location[1],
+                             type:         "stop")
         @route_count = Checkpoint.user_checkpoints(@user.id).start_points.count
         @user.add_checkpoint(timestamp:    Time.now.to_i,
                              lat:          random_location[0],

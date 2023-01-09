@@ -18,6 +18,10 @@ class Checkpoint < Sequel::Model
     def previous_route_checkpoint(checkpoint)
       where(:route_id => checkpoint.route_id).where{id < checkpoint.id}.order_by(Sequel.desc(:id)).first
     end
+
+    def previous
+      order_by(Sequel.desc(:id)).limit(2).offset(1).first
+    end
   end
 
   def distance
@@ -31,42 +35,28 @@ class Checkpoint < Sequel::Model
     end
   end
 
-  def before_create
-    if type == "start"  || type == "prayer_start"
-      if  Checkpoint.user_checkpoints(user.id).start_points.count > 1
-        if Checkpoint.user_checkpoints(user.id).most_recent.type != "stop"
-          checkpoint = user.add_checkpoint(timestamp: Time.now.to_i,
-                                           lat:       Checkpoint.user_checkpoints(user.id).most_recent.lat,
-                                           long:      Checkpoint.user_checkpoints(user.id).most_recent.long,
-                                           type:      "stop")                                        
-          checkpoint.route_id = Checkpoint.user_checkpoints(user.id).most_recent.route_id
-          checkpoint.save  
-        end
-      end
-    end
-  end
-
   def after_create 
-    if type == "start" || type == "prayer_start"
-      if type == "prayer_start"
-        @route_type = "prayer"
-      else
-        @route_type = "walk"
+    if type == "start"
+      @route  = Route.insert(started_at:   Time.now.to_i,
+                             mileage:      0,
+                             prayer_count: 0,
+                             seconds:      0,
+                             type:         "walk")
+    elsif type == "prayer_start"
+      if (Checkpoint.user_checkpoints(user.id).previous.type == "stop")
+        @route  = Route.insert(started_at:   Time.now.to_i,
+                              mileage:      0,
+                              prayer_count: 0,
+                              seconds:      0,
+                              type:         "prayer")
+      else 
+        @route = Checkpoint.user_checkpoints(user.id).start_points.most_recent.route_id
       end
-      route  = Route.insert(started_at:   Time.now.to_i,
-                            mileage:      0,
-                            prayer_count: 0,
-                            seconds:      0,
-                            type:         @route_type)
-      self.route_id = route
-      self.save
-    elsif type == "heartbeat" || type == "stop" || type == "prayer"
-      self.route_id = Checkpoint.user_checkpoints(user.id).start_points.most_recent.route_id
-      self.save   
+    else 
+      @route = Checkpoint.user_checkpoints(user.id).start_points.most_recent.route_id
     end
-    if type == "prayer"
-      
-    end
+    self.route_id = @route
+    self.save   
     if type == "stop" 
       self.route.finalize
     end

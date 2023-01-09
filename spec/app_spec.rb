@@ -63,8 +63,11 @@ describe "Pastor4Life API -" do
     let(:votd) { VERSES.first["scripture"] }
 
     context "Home -" do
+      before do
+        @home_data = { "userId" => "1"}
+      end
       it "returns the correct verse" do
-        get '/p4l/home'
+        post '/p4l/home', @home_data.to_json, "CONTENT_TYPE" => "application/json"
         expect(last_response.status).to eq(200)
         expect last_response.body.include?(votd)
       end
