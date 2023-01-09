@@ -6,13 +6,17 @@ gem 'shotgun'
 gem 'sequel'
 gem 'mysql2'
 gem 'pry-byebug'
-gem "sinatra-contrib",require: false
+gem "sinatra-contrib", require: false
 gem 'json'
 gem 'dotenv'
 gem 'sinatra-sequel'
 gem 'sinatra-cross_origin'
 gem 'sinatra-cors'
 gem "haversine"
+
+group :development do
+  gem 'random_name_generator'
+end
 
 group :test do
   gem 'rspec-sequel'

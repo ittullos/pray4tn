@@ -272,6 +272,12 @@
   width: auto;
 }
 
+.loading-component-icon-container {
+  margin-top: 40px;
+  height: 30vh;
+  width: auto;
+}
+
 .loading-icon {
   height: 13rem;
   width: auto;
