@@ -43,15 +43,11 @@ class Checkpoint < Sequel::Model
                              seconds:      0,
                              type:         "walk")
     elsif type == "prayer_start"
-      if (Checkpoint.user_checkpoints(user.id).previous.type == "stop")
         @route  = Route.insert(started_at:   Time.now.to_i,
                               mileage:      0,
                               prayer_count: 0,
                               seconds:      0,
                               type:         "prayer")
-      else 
-        @route = Checkpoint.user_checkpoints(user.id).start_points.most_recent.route_id
-      end
     else 
       @route = Checkpoint.user_checkpoints(user.id).start_points.most_recent.route_id
     end

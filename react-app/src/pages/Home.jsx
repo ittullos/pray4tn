@@ -38,10 +38,15 @@ function Home() {
   const [routeButtonText, setRouteButtonText] = useState('Start')
   const [heartbeatMode, setHeartbeatMode]     = useState(false)
   const [routeType, setRouteType]             = useState('')
+  const [prayerCount, setPrayerCount]         = useState(0)
 
   // Location state
   const [location, setLocation]               = useState({lat: '', long: ''})
   const [locationEnabled, setLocationEnabled] = useState(null)
+
+  // Prayer State
+  const [prayerName, setPrayerName]             = useState("Isaac")
+  const [prayerListLoaded, setPrayerListLoaded] = useState(false)
 
   // User context
   const [userId, setUserId] = useContext(LoginContext)
@@ -194,7 +199,15 @@ document.body.style.overflow = "hidden"
     <div className='full-screen'>
       <PrayerScreen
         show={showPrayerScreen}
-        onHide={() => setShowPrayerScreen(false)}/> 
+        onHide={() => setShowPrayerScreen(false)}
+        prayerName={prayerName}
+        prayerListLoaded={prayerListLoaded}
+        routeStarted={routeStarted}
+        userId={userId}
+        routeMileage={routeMileage}
+        setRouteMileage={setRouteMileage}
+        setPrayerName={setPrayerName}
+        setPrayerListLoaded={setPrayerListLoaded} /> 
       <DevotionalScreen
         show={showDevotionalScreen}
         onHide={() => setShowDevotionalScreen(false)}/> 

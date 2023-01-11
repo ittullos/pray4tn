@@ -40,14 +40,13 @@ post '/p4l/home' do
   @user_id = JSON.parse(request.body.read)["userId"].to_i
   if Checkpoint.user_checkpoints(@user_id).count > 1
     if Checkpoint.user_checkpoints(@user_id).most_recent.type != "stop"
-      User[@user_id].add_checkpoint(timestamp: Time.now.to_i,
-                                    lat:       Checkpoint.user_checkpoints(@user_id).most_recent.lat,
-                                    long:      Checkpoint.user_checkpoints(@user_id).most_recent.long,
-                                    type:      "stop")
+      # User[@user_id].add_checkpoint(timestamp: Time.now.to_i,
+      #                               lat:       Checkpoint.user_checkpoints(@user_id).most_recent.lat,
+      #                               long:      Checkpoint.user_checkpoints(@user_id).most_recent.long,
+      #                               type:      "stop")
     end
   end
   @verse = Verse.first
-  # pry.byebug
   content_type :json
   { 
     verse:    @verse.scripture,
@@ -57,41 +56,39 @@ post '/p4l/home' do
 end
 
 post '/p4l/checkpoint' do
-  @checkpoint  = JSON.parse(request.body.read)["checkpointData"]
-  @user        = User.find(id: @checkpoint["userId"])
-  @is_valid    = true
-  @distance    = 0.0
-  @prayer_name = ""
-
-  if @checkpoint["type"] == "heartbeat" && Checkpoint.user_checkpoints(@user.id).most_recent.type == "stop"
-    @is_valid = false
+  rng         = RandomNameGenerator.new(RandomNameGenerator::ROMAN)
+  location    = JSON.parse(request.body.read)["checkpointData"]
+  @user       = User[location["userId"].to_i]
+  is_valid    = true
+  prayer_name = ""
+  distance    = 0.0
+  if location["type"] == "heartbeat" && Checkpoint.user_checkpoints(@user.id).most_recent.type == "stop"
+    is_valid = false
   end
-
-  if @is_valid
+  if is_valid
     @checkpoint = @user.add_checkpoint(timestamp: Time.now.to_i,
-                                       lat:       @checkpoint["lat"].to_s,
-                                       long:      @checkpoint["long"].to_s,
-                                       type:      @checkpoint["type"])
+                        lat:       location["lat"].to_s,
+                        long:      location["long"].to_s,
+                        type:      location["type"])
+
     if @checkpoint.type == "prayer_start"
-      # Populate prayer_name list
-      # Return next user_resident name
-      @prayer_name = "John Stewart"
+      sleep 10
+      prayer_name = "#{rng.compose(3)} #{rng.compose(4)}"
     elsif @checkpoint.type == "prayer"
-      if Checkpoint.user_checkpoints(@user.id).most_recent.route.type == "walk"
-        @distance = @checkpoint.distance
-      end
-      # Return next user_resident name
-      @prayer_name = "Trever Noah"
-    elsif @checkpoint.type == "heartbeat" || @checkpoint.type == "stop"
-      @distance = @checkpoint.distance
+      prayer_name = "#{rng.compose(3)} #{rng.compose(4)}"
+      # distance = @checkpoint.distance
+    elsif @checkpoint.type == "heartbeat"
+      distance = @checkpoint.distance
+    elsif @checkpoint.type == "stop"
+      distance = @checkpoint.distance
     end
   end
 
   content_type :json
-    { 
-      distance:   @distance,
-      prayerName: @prayer_name
-    }.to_json
+  {
+    prayerName: prayer_name,
+    distance:   distance
+  }.to_json
 end
 
 post '/p4l/login' do
