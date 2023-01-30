@@ -2,6 +2,19 @@ require './spec/spec_helper'
 
 describe "Pastor4Life API -" do
   include Rack::Test::Methods
+  let(:user) { User.scan.first }
+  let(:start_checkpoint) {{ "checkpointData" => { "lat"    => random_location[0],
+                                                  "long"   => random_location[1],
+                                                  "type"   => "start",
+                                                  "userId" => user.id }}}
+  let(:heartbeat_checkpoint) {{ "checkpointData" => { "lat"    => random_location[0],
+                                                      "long"   => random_location[1],
+                                                      "type"   => "heartbeat",
+                                                      "userId" => user.id }}}
+  let(:prayer_checkpoint) {{ "checkpointData" => { "lat"    => random_location[0],
+                                                   "long"   => random_location[1],
+                                                   "type"   => "prayer",
+                                                   "userId" => user.id }}}
 
   def app
     Sinatra::Application
@@ -11,52 +24,11 @@ describe "Pastor4Life API -" do
     RandomLocation.near_by(36.174465, -86.767960, 1000)
   end
 
-  before do 
-    VERSES.each do |verse|
-      Verse.insert(
-        scripture: verse["scripture"],
-        version:   verse["version"],
-        notation:  verse["notation"]
-      )
-    end
-    for i in 1..3 do
-      User.insert(
-        email:    "email#{i}",
-        password: "password#{i}"
-      )
-    end
-    User.each do |user|
-      for i in 1..5 do
-        user.add_checkpoint(
-          timestamp: Time.now.to_i,
-          lat:       random_location[0],
-          long:      random_location[1],
-          type:      "start"
-        )
-        for i in 1..4 do
-          user.add_checkpoint(
-            timestamp: Time.now.to_i,
-            lat:       random_location[0],
-            long:      random_location[1],
-            type:      "heartbeat"
-          )
-        end
-        user.add_checkpoint(
-          timestamp: Time.now.to_i,
-          lat:       random_location[0],
-          long:      random_location[1],
-          type:      "stop"
-        )
-      end
-    end
-    @user = User.first
-    @new_checkpoint  = @user.add_checkpoint(timestamp: Time.now.to_i,
-                                            lat:       random_location[0],
-                                            long:      random_location[1],
-                                            type:      "start")
-
-    @names     = ["John Stewart", "Stephen Colbert", "Trever Noah"]
-    @addresses = ["44 Unknown dr", "431 Canberra dr", "607 Middlebrook pk"]
+  for i in 1..2 do
+    User.new(
+      email:    "email#{i}",
+      password: "password#{i}"
+    )
   end
 
   describe "Routes -" do
@@ -65,6 +37,9 @@ describe "Pastor4Life API -" do
     context "Home -" do
       before do
         @home_data = { "userId" => "1"}
+        clean_table(Checkpoint)
+        clean_table(Route)
+        clean_table(UserResident)
       end
       it "returns the correct verse" do
         post '/p4l/home', @home_data.to_json, "CONTENT_TYPE" => "application/json"
@@ -74,28 +49,43 @@ describe "Pastor4Life API -" do
     end
 
     context "Checkpoint -" do
-      
       before do
-        @data = { "checkpointData" => { "lat"    => random_location[0],
-                                        "long"   => random_location[1],
-                                        "type"   => "start",
-                                        "userId" => @user.id }}
+        clean_table(Checkpoint)
+        clean_table(Route)
+        clean_table(UserResident)
       end
         
       it "logs a start checkpoint" do
-        route_count = Checkpoint.user_checkpoints(@user.id).start_points.count
-        post '/p4l/checkpoint', @data.to_json, "CONTENT_TYPE" => "application/json"
-        expect(Checkpoint.user_checkpoints(@user.id).start_points.count).to eq(route_count + 1)
+        route_count = Route.scan.count
+        post '/p4l/checkpoint', start_checkpoint.to_json, "CONTENT_TYPE" => "application/json"
+        expect(Route.scan.count).to eq(route_count + 1)
       end
 
       it "calulates the distance between checkpoints and send back the result" do
-        post '/p4l/checkpoint', @data.to_json, "CONTENT_TYPE" => "application/json"
-        @data = { "checkpointData" => { "lat"    => random_location[0],
-                                        "long"   => random_location[1],
-                                        "type"   => "heartbeat",
-                                        "userId" => @user.id }}
-        post '/p4l/checkpoint', @data.to_json
+        post '/p4l/checkpoint', start_checkpoint.to_json, "CONTENT_TYPE" => "application/json"
+        sleep 1
+        post '/p4l/checkpoint', heartbeat_checkpoint.to_json
         expect(JSON.parse(last_response.body)["distance"]).to be > 0
+      end
+    end
+
+    context "Prayer -" do
+      before do
+        clean_table(Checkpoint)
+        clean_table(Route)
+        clean_table(UserResident)
+      end
+
+      it 'returns nil when theres no data' do
+        post '/p4l/checkpoint', prayer_checkpoint.to_json
+        expect(JSON.parse(last_response.body)["prayerName"]).to eq("")
+      end
+
+      it 'returns a name if there is data' do
+        resident = UserResident.new(name: "Steve", address: "101 Main st", user_id: user.id, match_key: "jhfsdlkhs")
+        resident.save
+        post '/p4l/checkpoint', prayer_checkpoint.to_json
+        expect(JSON.parse(last_response.body)["prayerName"]).to eq("Steve")
       end
     end
   end

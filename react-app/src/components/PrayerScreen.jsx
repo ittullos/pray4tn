@@ -8,79 +8,57 @@ import { APIContext } from '../App';
 function PrayerScreen(props) {
   const { prayerName,
           setPrayerName, 
+          prayerCount,
+          setPrayerCount,
+          routeStarted,
           prayerListLoaded,
-          setPrayerListLoaded, 
-          routeStarted, 
-          userId, 
-          routeMileage, 
-          setRouteMileage, 
+          setPrayerListLoaded,
+          userId,  
           ...rest } = props
 
   const [isLoading, setIsLoading]     = useState(true)
-  const [location, setLocation]       = useState({lat: '', long: ''})
-  const [prayerType, setPrayerType]   = useState('prayer_start')
   const [apiEndpoint, setApiEndpoint] = useContext(APIContext)
-  const [modalOpen, setModalOpen]     =useState(false)
+  const [modalOpen, setModalOpen]     = useState(false)
 
   const handleModalOpen = () => {
-    setPrayerType("prayer_start")
-    setModalOpen(true)
-    if (!prayerListLoaded) {
-      updateLocation()
+    if (!modalOpen) {
+      setModalOpen(true)
     }
   }
-
+  
   const handleModalClose = () => {
-    if (prayerType === "prayer" && !routeStarted) {
-      setPrayerType("stop")
-      updateLocation()
-    }
-    setIsLoading(true)
-    setPrayerListLoaded(false)
-
+    // setIsLoading(true)
+    // setModalOpen(false)
+    // setPrayerListLoaded(false)
   }
 
   const handleNextPrayerName = () => {
-    updateLocation()
+    sendPrayerCheckpoint("prayer")
   }
 
-  const updateLocation = () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setLocation({lat: position.coords.latitude, long: position.coords.longitude})
-    }, () => {
-      sendPrayerCheckpoint(prayerType, {lat: "0", long: "0"})
-    })
-  }
-
-  const sendPrayerCheckpoint = (type, location) => {
-    console.log("sending a ", type);
+  const sendPrayerCheckpoint = (type) => {
     if (type !== "") {
       const checkpointData = {
         type:     type,
-        lat:      location.lat,
-        long:     location.long,
+        lat:      0,
+        long:     0,
         userId:   userId
       }
       axios.post(`${apiEndpoint}/checkpoint`, { checkpointData
       }).then(res => {
-        let distance = res.data["distance"]
         let name = res.data["prayerName"]
-        if (distance > 0.0 && routeStarted) {
-          setRouteMileage(routeMileage + distance)
-        }
         if (name !== "") {
           setPrayerName(name)
-          if (!prayerListLoaded) {
-            setPrayerListLoaded(true)
+          if (type === "prayer_start") {
             setIsLoading(false)
+            setPrayerListLoaded(true)
           }
-          if (prayerType === "prayer_start") {
-            setPrayerType("prayer")
+          if (type === "prayer" && routeStarted) {
+            setPrayerCount(prayerCount + 1)
           }
-          else if (prayerType === "prayer") {
-
-          }
-
+        } else {
+          setPrayerListLoaded(false)
+          setIsLoading(false)
         }
         console.log("prayer checkpoint response: ", res)
       }).catch(err => {
@@ -91,17 +69,9 @@ function PrayerScreen(props) {
 
   useEffect(() => {
     if (modalOpen) {
-      sendPrayerCheckpoint(prayerType, location)
+      sendPrayerCheckpoint("prayer_start")
     }
-  }, [location])
-
-  // useEffect(() => {
-  //   let ignore = false
-  //   if (!ignore && !prayerListLoaded) {
-  //     updateLocation()
-  //   }
-  //   return () => { ignore = true }
-  //  },[])
+  }, [modalOpen])
   
   return (
 
@@ -132,10 +102,13 @@ function PrayerScreen(props) {
       <Modal.Body>
       { isLoading ? (
         <LoadingComponent />
+      ) : (!prayerListLoaded) ? (
+        <h3>No prayer list loaded</h3>
       ) : (
+      // )
         <div>
           <h4 className='my-4'>{prayerName}</h4>
-          <Button onClick={handleNextPrayerName} variant="success">Next</Button>
+          <Button onClick={handleNextPrayerName} variant="success" className='mb-3 mt-1'>Next</Button>
         </div>
       
       )}

@@ -7,6 +7,7 @@ gem 'sequel'
 gem 'mysql2'
 gem 'aws-sdk-kms'
 gem 'base64'
+gem 'aws-record'
 # gem "sinatra-contrib",require: false
 # gem 'json'
 # gem 'dotenv'

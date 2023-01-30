@@ -24,13 +24,13 @@ export const RouteStats = (props) => {
                       justify-content-center
                       align-items-center
                       mt-2">
-        <Mileage mileage={props.mileage}/>
+        <Mileage mileage={props.mileage} />
       </div>
       <div className="prayer-counter
                       d-flex
                       justify-content-center
                       align-items-center">
-        <PrayerCount />
+        <PrayerCount prayerCount={props.prayerCount} />
       </div>
     </div>
   )

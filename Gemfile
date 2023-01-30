@@ -13,6 +13,7 @@ gem 'sinatra-sequel'
 gem 'sinatra-cross_origin'
 gem 'sinatra-cors'
 gem "haversine"
+gem 'aws-record'
 
 group :development do
   gem 'random_name_generator'

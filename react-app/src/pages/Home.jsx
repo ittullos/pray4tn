@@ -52,6 +52,12 @@ function Home() {
   const [userId, setUserId] = useContext(LoginContext)
   const [apiEndpoint, setApiEndpoint] = useContext(APIContext)
 
+  useEffect(() => {
+    console.log("prayerCount: ", prayerCount)
+
+  }, [prayerCount])
+  
+
   // Functions
   const handleRouteButton = () => {
     // Set route start
@@ -150,6 +156,7 @@ function Home() {
         setHeartbeatMode(false)
         clearInterval(intervalId)
         setRouteType("stop")
+        setPrayerCount(0)
       }
    }
   }, [routeStarted])
@@ -204,9 +211,9 @@ document.body.style.overflow = "hidden"
         prayerListLoaded={prayerListLoaded}
         routeStarted={routeStarted}
         userId={userId}
-        routeMileage={routeMileage}
-        setRouteMileage={setRouteMileage}
         setPrayerName={setPrayerName}
+        setPrayerCount={setPrayerCount}
+        prayerCount={prayerCount}
         setPrayerListLoaded={setPrayerListLoaded} /> 
       <DevotionalScreen
         show={showDevotionalScreen}
@@ -260,7 +267,7 @@ document.body.style.overflow = "hidden"
                                   mt-3'>
                   {routeButtonText} Route
                 </Button>
-                {routeStarted && <RouteStats mileage={routeMileage}/>}
+                {routeStarted && <RouteStats mileage={routeMileage} prayerCount={prayerCount} />}
             </div>
             <div className="popups
                             col-12 
@@ -271,12 +278,12 @@ document.body.style.overflow = "hidden"
                             justify-content-center 
                             align-items-start">
                 <Button variant="primary" 
-                        className='popup-btn m-4'
+                        className='popup-btn m-4 navy-blue'
                         onClick={() => setShowDevotionalScreen(true)}>
                   Devotional
                 </Button>
                 <Button variant="primary" 
-                        className='popup-btn m-4'
+                        className='popup-btn m-4 navy-blue'
                         onClick={() => setShowPrayerScreen(true)}>
                   Prayer
                 </Button>

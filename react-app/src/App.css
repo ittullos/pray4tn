@@ -428,3 +428,7 @@ input[type=file]::file-selector-button:hover {
   }
 
 }
+
+.navy-blue {
+  background-color: #071448;
+}

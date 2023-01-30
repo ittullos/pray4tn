@@ -7,7 +7,6 @@ Sequel.migration do
       Integer  :mileage,      null: false
       Integer  :prayer_count, null: false
       Integer  :seconds,      null: false
-      String   :type
     end
   end
 

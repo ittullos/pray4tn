@@ -3,10 +3,30 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   wpt.bap.tn
 
+Parameters:
+  ResidentTableName:
+    Type: String
+  DbHost:
+    Type: String
+  DbPwrd:
+    Type: String
+  DbName:
+    Type: String
+  DbEnv:
+    Type: String
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 3
+    Environment:
+      Variables:
+        RESIDENT_TABLE_NAME: !Ref ResidentTableName
+        DB_HOST:             !Ref DbHost
+        DB_PWRD:             !Ref DbPwrd
+        DB_NAME:             !Ref DbName
+        RACK_ENV:            !Ref DbEnv
+
 
 Resources:
   Pastor4Life:
@@ -14,6 +34,9 @@ Resources:
     Properties:
       CodeUri: app/
       Handler: lambda.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ResidentTableName
       Runtime: ruby2.7
       Architectures:
         - x86_64

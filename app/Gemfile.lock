@@ -2,39 +2,46 @@ GEM
   remote: https://rubygems.org/
   specs:
     aws-eventstream (1.2.0)
-    aws-partitions (1.649.0)
-    aws-sdk-core (3.164.0)
+    aws-partitions (1.698.0)
+    aws-record (2.10.1)
+      aws-sdk-dynamodb (~> 1.18)
+    aws-sdk-core (3.169.0)
       aws-eventstream (~> 1, >= 1.0.2)
-      aws-partitions (~> 1, >= 1.525.0)
-      aws-sigv4 (~> 1.1)
+      aws-partitions (~> 1, >= 1.651.0)
+      aws-sigv4 (~> 1.5)
       jmespath (~> 1, >= 1.6.1)
-    aws-sdk-kms (1.58.0)
-      aws-sdk-core (~> 3, >= 3.127.0)
+    aws-sdk-dynamodb (1.81.0)
+      aws-sdk-core (~> 3, >= 3.165.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-kms (1.62.0)
+      aws-sdk-core (~> 3, >= 3.165.0)
       aws-sigv4 (~> 1.1)
     aws-sigv4 (1.5.2)
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.1.1)
-    jmespath (1.6.1)
+    jmespath (1.6.2)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
-    mysql2 (0.5.4)
-    rack (2.2.4)
-    rack-protection (3.0.2)
+    mysql2 (0.5.5)
+    rack (2.2.6.2)
+    rack-protection (3.0.5)
       rack
     ruby2_keywords (0.0.5)
-    sequel (5.61.0)
-    sinatra (3.0.2)
+    sequel (5.64.0)
+    sinatra (3.0.5)
       mustermann (~> 3.0)
       rack (~> 2.2, >= 2.2.4)
-      rack-protection (= 3.0.2)
+      rack-protection (= 3.0.5)
       tilt (~> 2.0)
     sinatra-cors (1.2.0)
     tilt (2.0.11)
 
 PLATFORMS
-  x86_64-linux
+  ruby
+  x86_64-darwin-20
 
 DEPENDENCIES
+  aws-record
   aws-sdk-kms
   base64
   mysql2
@@ -44,4 +51,4 @@ DEPENDENCIES
   sinatra-cors
 
 BUNDLED WITH
-   2.3.24
+   2.4.5

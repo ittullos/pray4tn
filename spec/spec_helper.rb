@@ -1,9 +1,10 @@
 require 'sequel'
 require 'logger'
 ENV['RACK_ENV'] = "test"
+require 'aws-record'
+require_relative 'dinodb'
 
 require './config/environment'
-DB = Sequel.connect(ENV["DB_TEST"])
 require 'rack/test'
 require 'rspec/sequel'
 require './app/app'
@@ -12,22 +13,6 @@ require './app/models/user'
 require './app/models/checkpoint'
 require './app/models/route'
 require './app/models/user_resident'
-
-class Checkpoint
-  dataset_module do
-    def next_to_last
-      order_by(Sequel.desc(:id)).limit(2).offset(1).first
-    end
-  end
-end
-
-RSpec.configure do |c|
-  c.around(:each) do |example|
-    DB.transaction(:rollback=>:always, :auto_savepoint=>true){example.run}
-  end
-end
-
-DB.loggers << Logger.new($stdout)
 
 def km_to_mi (km)
   mi = km * 0.6214
@@ -61,47 +46,3 @@ VERSES = [
     "notation" => "Philippians 4:6-7"
   }
 ]
-
-TEST_ROUTE = [
-  {
-    "timestamp" => 1668660018,
-    "lat"       => 36.175080062003715,
-    "long"      => -86.8311598921416,
-    "type"      => "start"
-  },
-  {
-    "timestamp" => 1668660078,
-    "lat"       => 36.16632472398893,
-    "long"      => -86.75612360308308,
-    "type"      => "heartbeat"
-  },
-  {
-    "timestamp" => 1668660138,
-    "lat"       => 36.16612439458566,
-    "long"      => -86.8523964024885,
-    "type"      => "heartbeat"
-  },
-  {
-    "timestamp" => 1668660198,
-    "lat"       => 36.17035610315898,
-    "long"      => -86.83360081319711,
-    "type"      => "heartbeat"
-  },
-  {
-    "timestamp" => 1668660318,
-    "lat"       => 36.17769072161397,
-    "long"      => -86.86458524697652,
-    "type"      => "stop"
-  }
-]
-
-TEST_DISTANCE = 0
-TEST_DURATION = 0
-
-for i in 0..3 do
-  @distance = distance(TEST_ROUTE[i + 1], TEST_ROUTE[i])
-
-  TEST_DISTANCE += @distance
-  TEST_DURATION += (TEST_ROUTE[i + 1]["timestamp"] - TEST_ROUTE[i]["timestamp"])
-end 
-TEST_DISTANCE = (TEST_DISTANCE * 1000).round(0)

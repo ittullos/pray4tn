@@ -6,7 +6,8 @@ stack_name = "wpt-bap-tn"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1ouhoyouxj575"
 s3_prefix = "wpt-bap-tn"
 region = "us-east-1"
-confirm_changeset = true
+confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
 disable_rollback = true
 image_repositories = []
+parameter_overrides = "ResidentTableName=\"wpt.bap.tn.user-resident-rev1\" DbHost=\"wpt-bap-tn-prod.cnklfpyep1np.us-east-1.rds.amazonaws.com\" DbPwrd=\"FullStack2468!\" DbName=\"wpt_bap_tn_prod\" DbEnv=\"prod\""
