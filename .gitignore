@@ -2,3 +2,4 @@
 .byebug_history
 .aws-sam/
 react-app/src/secret/
+app/vendor/

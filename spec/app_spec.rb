@@ -6,15 +6,15 @@ describe "Pastor4Life API -" do
   let(:start_checkpoint) {{ "checkpointData" => { "lat"    => random_location[0],
                                                   "long"   => random_location[1],
                                                   "type"   => "start",
-                                                  "userId" => user.id }}}
+                                                  "user_id" => user.email }}}
   let(:heartbeat_checkpoint) {{ "checkpointData" => { "lat"    => random_location[0],
                                                       "long"   => random_location[1],
                                                       "type"   => "heartbeat",
-                                                      "userId" => user.id }}}
+                                                      "user_id" => user.email }}}
   let(:prayer_checkpoint) {{ "checkpointData" => { "lat"    => random_location[0],
                                                    "long"   => random_location[1],
                                                    "type"   => "prayer",
-                                                   "userId" => user.id }}}
+                                                   "user_id" => user.email }}}
 
   def app
     Sinatra::Application
@@ -82,7 +82,7 @@ describe "Pastor4Life API -" do
       end
 
       it 'returns a name if there is data' do
-        resident = UserResident.new(name: "Steve", address: "101 Main st", user_id: user.id, match_key: "jhfsdlkhs")
+        resident = UserResident.new(name: "Steve", address: "101 Main st", user_id: user.email, match_key: "jhfsdlkhs")
         resident.save
         post '/p4l/checkpoint', prayer_checkpoint.to_json
         expect(JSON.parse(last_response.body)["prayerName"]).to eq("Steve")

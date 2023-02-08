@@ -3,7 +3,6 @@ require 'rack'
 require 'base64'
 require 'app'
 require "sinatra/cors"
-require "sequel"
 
 # Global object that responds to the call method. Stay outside of the handler
 # to take advantage of container reuse

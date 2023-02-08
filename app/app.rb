@@ -1,8 +1,9 @@
 require 'json'
 require 'sinatra'
-require 'mysql2'
 require 'sequel'
 require "sinatra/cors"
+# require "./spec/dinodb"
+
 
 set :allow_origin, "*"
 set :allow_methods, "GET,POST,DELETE,PATCH,OPTIONS"
@@ -13,62 +14,60 @@ puts "RACK_ENV: #{ENV['RACK_ENV']}"
 
 before do
   if ENV["RACK_ENV"] == "dev"
-    DB ||= Sequel.connect(ENV["DB_DEV"])
-    DB.loggers << Logger.new($stdout)
     require './app/models/verse'
     require './app/models/user'
     require './app/models/checkpoint'
     require './app/models/route'
-    # require './app/models/settings'
-    # require './app/models/user_resident'
-    require './app/models/resident'
+    require './app/models/user_resident'
   elsif ENV["RACK_ENV"] == "prod"
-    DB ||= Sequel.connect(:adapter => 'mysql2',
-                          :host => (ENV["DB_HOST"]),
-                          :port => 3306,
-                          :user => 'admin',
-                          :password => (ENV["DB_PWRD"]),
-                          :database => (ENV["DB_NAME"]))
-    DB.loggers << Logger.new($stdout)
     require './models/verse'
     require './models/user'
     require './models/checkpoint'
     require './models/route'
-    # require './models/settings'
-    # require './models/user_resident'
-    require './models/resident'
+    require './models/user_resident'
   end
 end
 
 post '/p4l/home' do
-  @user_id = JSON.parse(request.body.read)["userId"].to_i
-  Checkpoint.close_last_route(@user_id)
+  puts "HOME!!!"
+  user_id = JSON.parse(request.body.read)["userId"]
+  puts "HOME:user_id:#{user_id}"
   
-  @verse = Verse.scan.first
+  Checkpoint.close_last_route(user_id)
+  
+  puts "HOME:Start scanning Verse"
+  verse = Verse.scan.first if Verse.table_exists?
+  puts "HOME:Stop scanning Verse"
+
   content_type :json
   { 
-    verse:    @verse.scripture,
-    notation: @verse.notation,
-    version:  @verse.version
+    verse:    verse && verse.scripture,
+    notation: verse && verse.notation,
+    version:  verse && verse.version
   }.to_json
 end
 
 post '/p4l/checkpoint' do
   checkpoint_data = JSON.parse(request.body.read)["checkpointData"]
-  user_id         = checkpoint_data["userId"].to_i
+  user_id         = checkpoint_data["user_id"]
+
+  if checkpoint_data["type"] == "prayer"
+    resident = UserResident.next_resident(user_id)
+    prayer_name = resident ? resident.name : ""
+    checkpoint_data["match_key"] = resident.match_key if resident
+  end
+
   checkpoint = Checkpoint.new_checkpoint(checkpoint_data)
 
   if checkpoint
-    if checkpoint.type == "prayer"
-      prayer_name = UserResident.next_name(user_id)
-    elsif checkpoint.type == "heartbeat" || checkpoint.type == "stop"
+    if checkpoint.type == "heartbeat" || checkpoint.type == "stop"
       distance = checkpoint.distance
     end
   end
 
   content_type :json
   {
-    prayerName: prayer_name || "",
+    prayerName: prayer_name,
     distance:   distance || 0.0
   }.to_json
 end
@@ -81,7 +80,6 @@ post '/p4l/login' do
   if User.find(email: email)
     user = User.find(email: email)
     if (user.password == password)
-      user_id = user.id
       response_status = "success"
     else
       response_status = "Invalid Password"
@@ -92,7 +90,7 @@ post '/p4l/login' do
 
   content_type :json
   { 
-    userId:         user_id || 0,
+    userId:         email || 0,
     responseStatus: response_status 
   }.to_json
 end
@@ -108,13 +106,13 @@ post '/p4l/signup' do
   elsif password != confirm_password
     response_status = "Passwords do not match"
   else
-    user_id         = User.new_user(email: email, password: password)
+    User.new_user(email: email, password: password)
     response_status = "success"
   end
 
   content_type :json
   { 
-    userId:         user_id || 0,
+    userId:         email || 0,
     responseStatus: response_status 
   }.to_json
 end
@@ -136,7 +134,7 @@ post '/p4l/password_reset' do
 
   content_type :json
   { 
-    userId:         user.id || 0,
+    userId:         email || 0,
     responseStatus: response_status 
   }.to_json
 end

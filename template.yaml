@@ -4,13 +4,23 @@ Description: >
   wpt.bap.tn
 
 Parameters:
-  ResidentTableName:
+  UserResidentTableName:
     Type: String
-  DbHost:
+  UserTableName:
     Type: String
-  DbPwrd:
+  CheckpointTableName:
     Type: String
-  DbName:
+  RouteTableName:
+    Type: String
+  VerseTableName:
+    Type: String
+  UserResidentBucketName:
+    Type: String
+  Region:
+    Type: String
+  AccessKeyId:
+    Type: String
+  SecretAccessKey:
     Type: String
   DbEnv:
     Type: String
@@ -21,11 +31,16 @@ Globals:
     Timeout: 3
     Environment:
       Variables:
-        RESIDENT_TABLE_NAME: !Ref ResidentTableName
-        DB_HOST:             !Ref DbHost
-        DB_PWRD:             !Ref DbPwrd
-        DB_NAME:             !Ref DbName
-        RACK_ENV:            !Ref DbEnv
+        ROUTE_TABLE_NAME:         !Ref RouteTableName
+        VERSE_TABLE_NAME:         !Ref VerseTableName
+        USER_RESIDENT_TABLE_NAME: !Ref UserResidentTableName
+        USER_TABLE_NAME:          !Ref UserTableName
+        CHECKPOINT_TABLE_NAME:    !Ref CheckpointTableName
+        RACK_ENV:                 !Ref DbEnv
+        REGION:                   !Ref Region
+        ACCESS_KEY_ID:            !Ref AccessKeyId
+        SECRET_ACCESS_KEY:        !Ref SecretAccessKey
+        RESIDENT_NAMES_BUCKET:    !Ref UserResidentBucketName
 
 
 Resources:
@@ -36,7 +51,18 @@ Resources:
       Handler: lambda.handler
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref ResidentTableName
+            TableName: !Ref UserResidentTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CheckpointTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RouteTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VerseTableName
+        # - DynamoDBCrudPolicy:
+        #     TableName: !Ref CommitmentTableName
+
       Runtime: ruby2.7
       Architectures:
         - x86_64
@@ -45,7 +71,7 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /p4l/home
-            Method: get
+            Method: post
         Location:
           Type: Api
           Properties:
@@ -66,12 +92,75 @@ Resources:
           Properties:
             Path: /p4l/password_reset
             Method: post
-      VpcConfig:
-        SecurityGroupIds:
-          - sg-04e38f5ca3081cd9d
-        SubnetIds:
-          - subnet-09548401ffa6c31f8
-          - subnet-0330e233936772fe8
+        Settings:
+          Type: Api
+          Properties:
+            Path: /p4l/settings
+            Method: get
+
+  UserDDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref UserTableName
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  CheckpointDDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref CheckpointTableName
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  RouteDDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref RouteTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  VerseDDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref VerseTableName
+      AttributeDefinitions:
+        - AttributeName: version
+          AttributeType: S
+        - AttributeName: notation
+          AttributeType: S
+      KeySchema:
+        - AttributeName: version
+          KeyType: HASH
+        - AttributeName: notation
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
 
   ReactApp: 
     Type: AWS::S3::Bucket
@@ -105,34 +194,6 @@ Resources:
                 - /*
       Bucket: !Ref ReactApp
 
-  # Pray4TNapi:
-  #   Type: AWS::Serverless::Api
-  #   Properties:
-  #     Name: Pray4TNapi
-  #     StageName: Prod
-  #     DefinitionBody:
-  #       swagger: '2.0'
-  #       basePath: '/p4l'
-  #       paths:
-  #         /p4l/{proxy+}:
-  #           x-amazon-apigateway-any-method:
-  #             responses: {}
-  #             x-amazon-apigateway-integration:
-  #               uri:
-  #                 !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Pastor4Life.Arn}/invocations'
-  #               passthroughBehavior: "when_no_match"
-  #               httpMethod: POST
-  #               type: "aws_proxy"
-  #         /p4l/{proxy+}:
-  #           x-amazon-apigateway-any-method:
-  #             responses: {}
-  #             x-amazon-apigateway-integration:
-  #               uri:
-  #                 !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Pastor4Life.Arn}/invocations'
-  #               passthroughBehavior: "when_no_match"
-  #               httpMethod: GET
-  #               type: "aws_proxy"
-
   CloudFrontOriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
@@ -150,7 +211,7 @@ Resources:
         Logging:
           IncludeCookies: 'false'
           Bucket: wpt.bap.tn.logs.s3.amazonaws.com
-          Prefix: funnel
+          Prefix: Cloudfront
         Origins:
         - Id: Pray4TN-react-app
           DomainName: wpt.bap.tn.react-app.s3.us-east-1.amazonaws.com
@@ -160,6 +221,7 @@ Resources:
         - Id: Pray4TN-API
           # DomainName: !Sub '${Pray4TNapi}.execute-api.${AWS::Region}.amazonaws.com'
           DomainName: !Sub "${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com"
+          OriginPath: /Prod
           CustomOriginConfig:
             OriginProtocolPolicy: match-viewer
             HTTPPort: '80'

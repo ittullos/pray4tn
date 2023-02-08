@@ -78,7 +78,7 @@ function Home() {
         type:     type,
         lat:      location.lat,
         long:     location.long,
-        userId:   userId
+        user_id:   userId
       }
       axios.post(`${apiEndpoint}/checkpoint`, { checkpointData
       }).then(res => {
@@ -230,7 +230,8 @@ document.body.style.overflow = "hidden"
         onHide={() => setShowLocationWarning(false)} />
       <PlanRouteScreen 
         show={showPlanRouteScreen}
-        onHide={() => setShowPlanRouteScreen(false)} />
+        onHide={() => setShowPlanRouteScreen(false)}
+        userId={userId} />
       <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}
               showPlanRouteScreen={showPlanRouteScreen => setShowPlanRouteScreen(showPlanRouteScreen)}/>
 

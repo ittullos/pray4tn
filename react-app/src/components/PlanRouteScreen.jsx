@@ -3,9 +3,10 @@ import Modal from 'react-bootstrap/Modal';
 import Uploader from './Uploader';
 
 function PlanRouteScreen (props) {
+  const { userId, ...rest } = props
   return (
     <Modal
-      {...props}
+      {...rest}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -47,14 +48,14 @@ function PlanRouteScreen (props) {
             <h5 className='plan-route-text ms-4'>
               Step 2: Upload your prayer list here:
             </h5>
-            <Uploader onHide={props.onHide}/>
+            <Uploader onHide={rest.onHide} userId={userId}/>
           </div>
           <hr className='page-line'/>
           <h5 className='py-2 mb-2 plan-route-text'>Step 3: Pray for people in your community</h5>
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button onClick={rest.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

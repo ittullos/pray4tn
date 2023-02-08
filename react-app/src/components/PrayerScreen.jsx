@@ -36,23 +36,22 @@ function PrayerScreen(props) {
     sendPrayerCheckpoint("prayer")
   }
 
+  // The isLoading and prayerListLoading variables may need to be removed because of duplication
   const sendPrayerCheckpoint = (type) => {
     if (type !== "") {
       const checkpointData = {
         type:     type,
         lat:      0,
         long:     0,
-        userId:   userId
+        user_id:   userId
       }
       axios.post(`${apiEndpoint}/checkpoint`, { checkpointData
       }).then(res => {
         let name = res.data["prayerName"]
         if (name !== "") {
           setPrayerName(name)
-          if (type === "prayer_start") {
-            setIsLoading(false)
-            setPrayerListLoaded(true)
-          }
+          setPrayerListLoaded(true)
+          setIsLoading(false)
           if (type === "prayer" && routeStarted) {
             setPrayerCount(prayerCount + 1)
           }
@@ -69,9 +68,15 @@ function PrayerScreen(props) {
 
   useEffect(() => {
     if (modalOpen) {
-      sendPrayerCheckpoint("prayer_start")
+      sendPrayerCheckpoint("prayer")
     }
   }, [modalOpen])
+
+  useEffect(() => {
+    console.log("isLoading: ", isLoading)
+    console.log("prayerListLoaded: ", prayerListLoaded)
+
+  }, [isLoading, prayerListLoaded])
   
   return (
 

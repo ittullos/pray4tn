@@ -25,7 +25,7 @@ end
 
 def clean_table(model)
   puts "cleaning #{model} table!!!"
-  delete_table(model)
+  model.scan.each {|t| t.delete!} if model.table_exists?
   migrate_model(model)
 end
 

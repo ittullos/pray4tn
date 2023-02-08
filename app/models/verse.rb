@@ -8,4 +8,9 @@ class Verse
   string_attr :notation,  range_key: true
   string_attr :scripture
 
+  def self.new_verse(data)
+    verse = new(data)
+    verse.save!
+    verse
+  end
 end

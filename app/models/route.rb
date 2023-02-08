@@ -1,3 +1,4 @@
+require 'aws-record'
 
 class RouteNoIdError < StandardError; end
 class Route

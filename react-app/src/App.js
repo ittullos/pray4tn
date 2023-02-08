@@ -14,8 +14,8 @@ export const APIContext   = createContext()
 
 function App() {
   const [userId, setUserId] = useState(0)
-  const [apiEndpoint, setApiEndpoint] = useState("http://localhost:9292/p4l")
-  // const [apiEndpoint, setApiEndpoint] = useState("https://d3ekgffygrqmjk.cloudfront.net/p4l")
+  // const [apiEndpoint, setApiEndpoint] = useState("http://localhost:9292/p4l")
+  const [apiEndpoint, setApiEndpoint] = useState("https://d1i2wybwp12vb8.cloudfront.net/p4l")
 
   useEffect(() => {
     if (localStorage.getItem('userId') === "0") {

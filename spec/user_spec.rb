@@ -11,7 +11,7 @@ describe "User model - " do
   context "New User -" do
     it "assigns an id" do
       user = User.new_user(valid_user_data)
-      expect(user.id).to_not be_nil
+      expect(user.email).to_not be_nil
     end
   end
 

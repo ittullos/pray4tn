@@ -1,10 +1,11 @@
+require 'aws-record'
 require_relative 'route'
 
 class Checkpoint
   include Aws::Record
   set_table_name ENV["CHECKPOINT_TABLE_NAME"]
 
-  integer_attr :user_id,   hash_key: true
+  string_attr  :user_id,   hash_key: true
   integer_attr :timestamp, range_key: true
   integer_attr :route_id
   string_attr  :lat
@@ -14,16 +15,18 @@ class Checkpoint
   
   class << self
     def end_route(checkpoint)
-      User[checkpoint.user_id].add_checkpoint(timestamp: Time.now.to_i,
-                                              lat:       checkpoint.lat,
-                                              long:      checkpoint.long,
-                                              type:      "stop")
+      new_checkpoint(lat:       checkpoint.lat,
+                     long:      checkpoint.long,
+                     type:      "stop",
+                     user_id:    checkpoint.user_id)
     end
 
     def close_last_route(user_id)
+      puts "CHECKPOINT#clost_last_route"
       checkpoint = last_checkpoint(user_id)
+      puts "CHECKPOINT#close_last_route:checkpoint:#{checkpoint}"
       if checkpoint && checkpoint.type != "stop"
-        end_route(checkpoint)
+        end_route(checkpoint) if checkpoint.route_id
       end
     end
 
@@ -38,7 +41,7 @@ class Checkpoint
 
     def current_route(user_id)
       last_start_checkpoint = Checkpoint.last_user_checkpoint(user_id, "start")
-      if last_start_checkpoint
+      if last_start_checkpoint && !last_start_checkpoint.route_id.nil?
         last_route = Route.find(id: last_start_checkpoint.route_id)
         last_route.is_closed? ? nil : last_route
       else
@@ -53,41 +56,46 @@ class Checkpoint
     end
 
     def is_valid?(checkpoint_data)
-      true unless checkpoint_data["type"] == "heartbeat" && !current_route(checkpoint_data["userId"])
+      if checkpoint_data["type"] == "heartbeat"
+        return current_route(checkpoint_data["user_id"])
+        puts "Checkpoint:is_valid?:Invalid Checkpoint: trailing heartbeats"
+      elsif checkpoint_data["type"] == "prayer"
+        # pry.byebug
+        return checkpoint_data["match_key"] != ""
+        puts "Checkpoint:is_valid?:Invalid Checkpoint: no resident match key given"
+      else
+        true
+      end
     end
 
     def new_checkpoint(data)
       if is_valid?(data)
         # Need to remember to skip start points
         if data["lat"] == 0 || data["long"] == 0
-          if current_route = Checkpoint.current_route(user_id)
-            prev_checkpoint = last_route_checkpoint(user_id, current_route.id)
+          if current_route = Checkpoint.current_route(data["user_id"])
+            puts "Checkpoint:new_checkpoint:user_id: #{data["user_id"]}:current_route: #{current_route.id}"         
+            prev_checkpoint = last_route_checkpoint(data["user_id"], current_route.id)
+            puts "Checkpoint:new_checkpoint:prev_checkpoint: #{prev_checkpoint}"
             data["lat"]     = prev_checkpoint.lat
             data["long"]    = prev_checkpoint.long
           end
         end
 
-        data["user_id"] = data["userId"]
-        data.delete("userId")
         data["timestamp"] = Time.now.to_i
         puts "TIME!!!: #{Time.now.to_i}"
         checkpoint = new(data)
+        # pry.byebug
         checkpoint.save
         checkpoint
       else
+        puts "Checkpoint:new_checkpoint:We refused to put an invalid checkpoint into the database"
         nil
       end
     end
 
-    def last_name(user_id)
-      puts "checkpoint#last_name not implemented yet"
-    end
-
-    def add_checkpoint(user_id, data)
-      data[:user_id] = user_id
-      new_checkpoint = new(data)
-      new_checkpoint.save
-      new_checkpoint
+    def last_prayer(user_id)
+      checkpoint = last_user_checkpoint(user_id, "prayer")
+      checkpoint.match_key if checkpoint
     end
 
     def last_user_checkpoint(user_id, type)
@@ -105,6 +113,8 @@ class Checkpoint
           ":s" => 0
         }
       )
+      puts "Checkpoint:last_user_checkpoint:user_id #{user_id}"
+      puts "Checkpoint:last_user_checkpoint:type #{type}"
       query.to_a.last
     end
 

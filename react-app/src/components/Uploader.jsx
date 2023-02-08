@@ -14,16 +14,29 @@ const Uploader = (props) => {
     const [region, setRegion]                       = useState("")
     const [accessKeyId, setAccessKeyId]             = useState("")
     const [secretAccessKey, setSecretAccessKey]     = useState("")
+    const [location, setLocation]                   = useState({lat: '', long: ''})
 
-    // Fetch settings when component mounts
+
+    // Fetch settings and get GPS location when component mounts
     useEffect(() => {
         let ignore = false;
         
-        if (!ignore)  fetchSettings()
+        if (!ignore) { 
+            fetchSettings() 
+            updateLocation()
+        }
         return () => { ignore = true; }
     },[]);
 
-    const S3_BUCKET ='p4l-test-bucket';
+    const updateLocation = () => {
+            navigator.geolocation.getCurrentPosition((position) => {
+                setLocation({lat: position.coords.latitude, long: position.coords.longitude})
+            }, () => {
+                setLocation({lat: "0", long: "0"})
+            })
+      }
+
+    const S3_BUCKET ='wpt.bap.tn.resident.names'
 
     AWS.config.update({
         accessKeyId:     accessKeyId,
@@ -55,6 +68,7 @@ const Uploader = (props) => {
     const uploadFile = (file, bucketName) => {
 
         console.log("s3BucketName: ", bucketName);
+        let emailId = props.userId.replace("@", "-d")
 
         // Had to use a hardcoded value for 'Bucket'
         // Value from DB does not work for some reason
@@ -62,8 +76,11 @@ const Uploader = (props) => {
             ACL: 'public-read',
             Body: file,
             Bucket: S3_BUCKET,
-            Key: file.name
+            Key: `t${location.lat}${location.long}-u${emailId}.pdf`
+            // Key: file.name
         };
+
+        // console.log("params: ", params)
 
         myBucket.putObject(params)
             .on('httpUploadProgress', (evt) => {
