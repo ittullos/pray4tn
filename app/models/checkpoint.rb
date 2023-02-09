@@ -6,7 +6,7 @@ class Checkpoint
   set_table_name ENV["CHECKPOINT_TABLE_NAME"]
 
   string_attr  :user_id,   hash_key: true
-  integer_attr :timestamp, range_key: true
+  integer_attr :recorded_at, range_key: true
   integer_attr :route_id
   string_attr  :lat
   string_attr  :long
@@ -81,7 +81,7 @@ class Checkpoint
           end
         end
 
-        data["timestamp"] = Time.now.to_i
+        data["recorded_at"] = Time.now.to_i
         puts "TIME!!!: #{Time.now.to_i}"
         checkpoint = new(data)
         # pry.byebug
@@ -105,7 +105,7 @@ class Checkpoint
         expression_attribute_names: {
           "#U" => "user_id",
           "#T" => "type",
-          "#S" => "timestamp"
+          "#S" => "recorded_at"
         },
         expression_attribute_values: {
           ":u" => user_id,
@@ -123,7 +123,7 @@ class Checkpoint
         key_condition_expression: "#U = :u AND #S > :s",
         expression_attribute_names: {
           "#U" => "user_id",
-          "#S" => "timestamp"
+          "#S" => "recorded_at"
         },
         expression_attribute_values: {
           ":u" => user_id,
@@ -135,19 +135,19 @@ class Checkpoint
 
     def last_route_checkpoint(user_id, route_id)
       query = Checkpoint.query(
-        key_condition_expression: "#U = :u AND #S > :s",
-        filter_expression: "contains(#R, :r)",
-        expression_attribute_names: {
-          "#U" => "user_id",
-          "#R" => "route_id",
-          "#S" => "timestamp"
-        },
+        key_condition_expression: "user_id = :u AND recorded_at > :s",
+        filter_expression: "route_id = :r",
         expression_attribute_values: {
           ":u" => user_id,
           ":r" => route_id,
           ":s" => 0
         }
       )
+
+      # query = query(
+      #   key_condition_expression: "user_id = :id",
+      #   expression_attribute_values: { ":id" => user_id })
+
       query.to_a.last
     end
 
@@ -158,7 +158,7 @@ class Checkpoint
         expression_attribute_names: {
           "#U" => "user_id",
           "#R" => "route_id",
-          "#S" => "timestamp"
+          "#S" => "recorded_at"
         },
         expression_attribute_values: {
           ":u" => user_id,
@@ -175,12 +175,12 @@ class Checkpoint
         expression_attribute_names: {
           "#U" => "user_id",
           "#R" => "route_id",
-          "#S" => "timestamp"
+          "#S" => "recorded_at"
         },
         expression_attribute_values: {
           ":u" => checkpoint.user_id,
           ":r" => checkpoint.route_id,
-          ":s" => checkpoint.timestamp
+          ":s" => checkpoint.recorded_at
         }
       )
     end

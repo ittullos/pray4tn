@@ -4,7 +4,7 @@ describe UserResident do
   let(:user) { User.new_user(email: "email", password: "password") }
   let(:resident1) {{ name: "resident1", address: "address 1", user_id: user.email, match_key: "alfsdlfs;" }}
   let(:resident2) {{ name: "resident2", address: "address 2", user_id: user.email, match_key: "lkhfsldkj" }}
-  let(:prayer) {{ timestamp: Time.now.to_i,
+  let(:prayer) {{ recorded_at: Time.now.to_i,
                   lat:       random_location[0],
                   long:      random_location[1],
                   type:      "prayer",

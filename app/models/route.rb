@@ -58,7 +58,7 @@ class Route
 
   def finalize(user_id)
     checkpoints = Checkpoint.route_checkpoints(user_id, id).to_a
-    self.seconds = (checkpoints.last.timestamp - checkpoints.first.timestamp)
+    self.seconds = (checkpoints.last.recorded_at - checkpoints.first.recorded_at)
     self.stopped_at = Time.now.to_i
     mileage_count = 0.0
     if checkpoints.count > 1

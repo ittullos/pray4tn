@@ -1,6 +1,5 @@
 require 'json'
 require 'sinatra'
-require 'sequel'
 require "sinatra/cors"
 # require "./spec/dinodb"
 

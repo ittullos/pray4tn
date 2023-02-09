@@ -1,4 +1,3 @@
-require 'sequel'
 require 'logger'
 ENV['RACK_ENV'] = "test"
 require 'aws-record'
@@ -6,7 +5,6 @@ require_relative 'dinodb'
 
 require './config/environment'
 require 'rack/test'
-require 'rspec/sequel'
 require './app/app'
 require './app/models/verse'
 require './app/models/user'

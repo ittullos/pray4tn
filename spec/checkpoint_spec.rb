@@ -9,22 +9,22 @@ describe Checkpoint do
 
   let(:user) { User.new_user(email: "email2",
     password: "password2")}
-  let(:start_checkpoint_data) {{ "timestamp" => 1,
+  let(:start_checkpoint_data) {{ "recorded_at" => 1,
                                   "lat"     =>  random_location[0],
                                   "long"    =>  random_location[1],
                                   "type"    =>  "start",
                                   "user_id" =>  user.email }}
-  let(:stop_checkpoint_data) {{ "timestamp" => 100,
+  let(:stop_checkpoint_data) {{ "recorded_at" => 100,
     "lat"     =>  random_location[0],
     "long"    =>  random_location[1],
     "type"    =>  "stop",
     "user_id" =>  user.email }}
-  let(:heartbeat_checkpoint_data) {{ "timestamp" => 3,
+  let(:heartbeat_checkpoint_data) {{ "recorded_at" => 3,
       "lat"     =>  random_location[0],
       "long"    =>  random_location[1],
       "type"    =>  "heartbeat",
       "user_id" =>  user.email }}
-  let(:prayer_checkpoint_data) {{ "timestamp" => 5,
+  let(:prayer_checkpoint_data) {{ "recorded_at" => 5,
         "lat"     =>  random_location[0],
         "long"    =>  random_location[1],
         "type"    =>  "prayer",
@@ -101,7 +101,7 @@ describe Checkpoint do
         sleep 1
         stop_checkpoint = Checkpoint.new_checkpoint(stop_checkpoint_data)
         test_route = Route.find(id: start_checkpoint.route_id)
-        expect(test_route.seconds).to eq(stop_checkpoint.timestamp - start_checkpoint.timestamp)
+        expect(test_route.seconds).to eq(stop_checkpoint.recorded_at - start_checkpoint.recorded_at)
       end
     end
   end
@@ -127,7 +127,7 @@ describe Checkpoint do
       it "returns the correct checkpoint" do
         prev_checkpoint = Checkpoint.new_checkpoint(start_checkpoint_data)
         last_route_checkpoint = Checkpoint.last_route_checkpoint(user.email, prev_checkpoint.route_id)
-        expect(last_route_checkpoint).to eq prev_checkpoint
+        expect(last_route_checkpoint.recorded_at).to eq prev_checkpoint.recorded_at
       end
     end
   end
@@ -153,7 +153,7 @@ describe Checkpoint do
   describe "last_prayer_name -" do 
     let(:user) { User.new_user(email: "email", password: "password")}
     let(:resident1) {UserResident.new( name: "resident1", address: "address 1", user_id: user.email, match_key: "klfsdlfs;" )}
-    let(:prayer) {{ timestamp: Time.now.to_i,
+    let(:prayer) {{ recorded_at: Time.now.to_i,
                    lat:       random_location[0],
                    long:      random_location[1],
                    type:      "prayer",
