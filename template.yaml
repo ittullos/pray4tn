@@ -162,7 +162,7 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-  ReactApp: 
+  ReactApp:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: PublicRead
