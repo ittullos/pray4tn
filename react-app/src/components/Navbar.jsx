@@ -2,9 +2,7 @@ import React, { useState } from 'react'
 import closeIcon from '../images/close-icon.svg'
 import menuIcon from '../images/menu-icon.svg'
 
-
-function Navbar() {
-
+function Navbar(props) {
   const [navbarClose, setNavbarClose] = useState(true)
   const handleNavbarClose = () => setNavbarClose(!navbarClose)
 
@@ -12,17 +10,19 @@ function Navbar() {
     <>
       <nav className='navbar bg-primary'>
         <div className="nav-container">
-          <h3 className='nav-logo'>
+          <h3 className='nav-logo mb-5'>
             Pastor4Life
           </h3>
           <ul className={!navbarClose ? "nav-menu active" : "nav-menu"}>
-            <li className='nav-item' onClick={handleNavbarClose}>
+            <li className='nav-item' onClick={() => { props.showStatsScreen(true)
+                                                      handleNavbarClose() }}>
               <h6 className='nav-link'>My Stats</h6>
             </li>
             <li className='nav-item' onClick={handleNavbarClose}>
               <h6 className='nav-link'>My Commitment</h6>
             </li>
-            <li className='nav-item' onClick={handleNavbarClose}>
+            <li className='nav-item' onClick={() => { props.showPlanRouteScreen(true)
+                                                      handleNavbarClose() }}>
               <h6 className='nav-link'>Plan Route</h6>
             </li>
             <li className='nav-item' onClick={handleNavbarClose}>

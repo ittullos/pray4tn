@@ -3,14 +3,13 @@ require 'rack'
 require 'base64'
 require 'app'
 require "sinatra/cors"
-require "sequel"
 
 # Global object that responds to the call method. Stay outside of the handler
 # to take advantage of container reuse
 $app ||= Sinatra::Application
 
 set :allow_origin, "*"
-set :allow_methods, "GET,DELETE,PATCH,OPTIONS"
+set :allow_methods, "GET,POST,DELETE,PATCH,OPTIONS"
 set :allow_headers, "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since"
 set :expose_headers, "location,link"
 

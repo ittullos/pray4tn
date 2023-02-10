@@ -1,21 +1,21 @@
-class User < Sequel::Model
-  one_to_many :commitments
-  one_to_many :checkpoints
+require 'aws-record'
 
-  def route_ids
-    self.checkpoints.map { |point| point.route_id }.uniq.compact
+class UserNoIdError < StandardError; end
+class User
+  include Aws::Record
+  set_table_name ENV['USER_TABLE_NAME']
+
+  string_attr :email, hash_key: true
+  string_attr :password
+
+  def reset_password(password)
+    self.password = password
+    save
   end
 
-  def last_route_id
-    self.route_ids.sort.last
-  end
-
-  def prev_route_id
-    if self.route_ids.count > 1    
-      return_id = self.route_ids[-2]
-    else
-      return_id = self.last_route_id
-    end
-    return_id
+  def self.new_user(data)
+    user = new(data)
+    user.save!
+    user
   end
 end

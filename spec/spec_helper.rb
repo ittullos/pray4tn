@@ -1,21 +1,30 @@
-require 'sequel'
+require 'logger'
 ENV['RACK_ENV'] = "test"
+require 'aws-record'
+require_relative 'dinodb'
 
 require './config/environment'
-DB = Sequel.connect(ENV["DB_TEST"])
 require 'rack/test'
-require 'rspec/sequel'
 require './app/app'
 require './app/models/verse'
 require './app/models/user'
 require './app/models/checkpoint'
 require './app/models/route'
+require './app/models/user_resident'
 
+def km_to_mi (km)
+  mi = km * 0.6214
+  return mi
+end
 
-RSpec.configure do |c|
-  c.around(:each) do |example|
-    DB.transaction(:rollback=>:always, :auto_savepoint=>true){example.run}
-  end
+def random_location
+  RandomLocation.near_by(36.174465, -86.767960, 1000)
+end
+
+def distance(location, prev_location)
+  delta_x = ((location["long"].to_f - prev_location["long"].to_f) * 55)
+  delta_y = ((location["lat"].to_f - prev_location["lat"].to_f) * 69)
+  Math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
 end
 
 VERSES = [
@@ -35,5 +44,3 @@ VERSES = [
     "notation" => "Philippians 4:6-7"
   }
 ]
-
-  

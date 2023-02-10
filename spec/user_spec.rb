@@ -1,68 +1,43 @@
 require './spec/spec_helper'
 
 describe "User model - " do
-
-  include Rack::Test::Methods
-
-  def app
-    Sinatra::Application
+  let(:valid_user_data) {
+    { email: "validuser", password: "Frank" }
+  }
+  before do
+    clean_table(User)
   end
 
-  def random_location
-    RandomLocation.near_by(36.174465, -86.767960, 1000)
-  end
-
-  before do 
-
-    for i in 1..5 do
-      User.insert(
-        email: "email#{i}",
-        password: "password#{i}"
-      )
+  context "New User -" do
+    it "assigns an id" do
+      user = User.new_user(valid_user_data)
+      expect(user.email).to_not be_nil
     end
+  end
 
-    User.each do |user|
-      for i in 1..7 do
-        user.add_checkpoint(
-          timestamp: Time.now.to_i,
-          lat: random_location[0],
-          long: random_location[1],
-          type: "start"
-        )
-        for i in 1..6 do
-          user.add_checkpoint(
-            timestamp: Time.now.to_i,
-            lat: random_location[0],
-            long: random_location[1],
-            type: "heartbeat"
-          )
-        end
-        user.add_checkpoint(
-          timestamp: Time.now.to_i,
-          lat:       random_location[0],
-          long:      random_location[1],
-          type:      "stop"
-        )
+  context "Password Reset -" do
+    it "resets the password" do
+      User.new(valid_user_data).save
+      user = User.find({email: "validuser"})
+      user.reset_password("new_password")
+      expect(user.password).to eq("new_password")
+    end
+  end
+
+  context "Find -" do
+    context "When the user does not exist -" do
+      it "returns nil" do
+        user = User.find({email: "notauser"})
+        expect(user).to be_falsey
       end
     end
 
-    @user = User.find(email: "email3")
-    @new_checkpoint  = @user.add_checkpoint(timestamp: Time.now.to_i,
-                                            lat:       random_location[0],
-                                            long:      random_location[1],
-                                            type:      "start")
-  end
-
-  context "Methods - " do
-    it "gets the user's route ids" do
-      @route_ids = @user.route_ids
-      expect(@route_ids.count).to eq(8)
+    context "When the user exists -" do
+      it "return the correct user" do
+        User.new(valid_user_data).save
+        user = User.find({email: "validuser"})
+        expect(user.password).to eq("Frank")
+      end
     end
-    it "gets the user's most recent route id" do
-      @last_route_id = @user.last_route_id
-      expect(@last_route_id).to eq(@new_checkpoint.route_id)
-    end 
   end
-
-
 end
