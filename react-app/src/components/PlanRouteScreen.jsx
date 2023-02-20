@@ -1,6 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Uploader from './Uploader';
+import { styles } from '../styles/inlineStyles'
 
 function PlanRouteScreen (props) {
   const { userId, ...rest } = props
@@ -55,7 +56,7 @@ function PlanRouteScreen (props) {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={rest.onHide}>Close</Button>
+        <Button style={styles.navyButton} onClick={rest.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

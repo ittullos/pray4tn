@@ -1,5 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { styles } from '../styles/inlineStyles'
 
 function roundDecimal(float) {
   return Number.parseFloat(float).toFixed(2)
@@ -33,7 +34,7 @@ function RouteStopScreen(props) {
         <h5>Mileage: {roundDecimal(props.mileage)}</h5>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button style={styles.navyButton} onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

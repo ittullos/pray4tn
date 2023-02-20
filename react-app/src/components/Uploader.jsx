@@ -69,6 +69,7 @@ const Uploader = (props) => {
 
         console.log("s3BucketName: ", bucketName);
         let emailId = props.userId.replace("@", "-d")
+        let fileName = `t${location.lat}${location.long}-u${emailId}.pdf`
 
         // Had to use a hardcoded value for 'Bucket'
         // Value from DB does not work for some reason
@@ -76,11 +77,11 @@ const Uploader = (props) => {
             ACL: 'public-read',
             Body: file,
             Bucket: S3_BUCKET,
-            Key: `t${location.lat}${location.long}-u${emailId}.pdf`
+            Key: fileName.replace(/['"]+/g, '')
             // Key: file.name
         };
 
-        // console.log("params: ", params)
+        console.log("params: ", params)
 
         myBucket.putObject(params)
             .on('httpUploadProgress', (evt) => {
@@ -90,12 +91,6 @@ const Uploader = (props) => {
                 if (err) console.log(err)
             })
     }
-
-
-
-
-    
-
 
     return (
       <div className='d-flex
@@ -111,7 +106,10 @@ const Uploader = (props) => {
             or</div>
             <input onChange={handleFileInput} type="file" id="files" accept="*" required />
         </label>
-        <Button variant="success" size="lg" onClick={() => uploadFile(selectedFile, s3BucketName)}>
+        <Button variant="success" 
+                size="lg"
+                className='button'
+                onClick={() => uploadFile(selectedFile, s3BucketName)}>
             Upload
         </Button>
       </div>)

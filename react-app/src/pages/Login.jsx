@@ -5,6 +5,8 @@ import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 import { LoginContext, APIContext } from '../App';
 import Loading from '../components/Loading';
+import p4lLogo from '../images/p4l_logo.png'
+
 
 function Login() {
   const [email, setEmail]                 = useState("")
@@ -15,12 +17,17 @@ function Login() {
   const [showLoginForm, setShowLoginForm] = useState(false)
 
   useEffect(() => {
-    if (userId !== 0) {
+    console.log("Login:userId: ", userId)
+    if (userId) {
       navigate('/')
     } else {
       setShowLoginForm(true)
     }
   },[userId])
+
+  useEffect(() => {
+    console.log("Login:showLoginForm: ", showLoginForm)
+  }, [showLoginForm])
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value)
@@ -50,9 +57,8 @@ function Login() {
         if (rememberMe) {
           localStorage.setItem('userId', JSON.stringify(res.data["userId"]))
         }
-        navigate('/')
       } else {
-        navigate('/')
+        setUserId(0)
         if (status === "Invalid Email" || status === "Invalid Password") {
           alert(status)
         }
@@ -64,7 +70,7 @@ function Login() {
   }
 
   return (
-    <>
+    <div className='login-container'>
       { showLoginForm ? (
         <div className="form-body
                         d-flex
@@ -75,53 +81,61 @@ function Login() {
                           d-flex
                           justify-content-center
                           align-items-center">
-            <h1 className='form-hero-text'>Pastor4Life</h1>
+            <img src={p4lLogo} alt="" className='login-logo'/>
           </div>
-          <div className="form-container">
+          <h3 className='text-white'>Sign In</h3>
+          <div className="form-container
+                          d-flex
+                          flex-column">
             <Form className="login-form rounded"
                   onSubmit={handleSubmit}>
               <Form.Group className="mb-3 form" 
                           controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
                 <Form.Control type="email" 
                               value={email} 
-                              onChange={handleEmailChange} 
-                              placeholder="Enter email" />
+                              onChange={handleEmailChange}
+                              className='form-control rounded-pill button'
+                              placeholder="Email" />
               </Form.Group>
               <Form.Group className="mb-3 form" 
                           controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
                 <Form.Control type="password" 
                               value={password}
                               onChange={handlePasswordChange}
+                              className='form-control rounded-pill button'
                               placeholder="Password" />
               </Form.Group>
               <div className='d-flex
-                              flex-row
+                              flex-column
                               justify-content-between'>
-                <div>
+                <div className='d-flex
+                                flex-row
+                                justify-content-between'>
                   <Form.Group className="mb-3" 
                               controlId="formBasicCheckbox">
                     <Form.Check type="checkbox" 
                                 label="Remember Me"
-                                onChange={handleRememberMeChange} />
+                                onChange={handleRememberMeChange}
+                                className='text-white remember-me' />
                   </Form.Group>
-                  <Button variant="primary" 
-                          type="login" 
-                          className='bg-success'>
-                    Login
-                  </Button>
+                  <Link to="/password_reset"
+                        className='password-reset-link text-white'>
+                    Forgot Password? <b>Click Here</b>
+                    </Link>
+
                 </div>
                 <div className='d-flex
                                 flex-column
-                                align-items-end'>
-                  <Link to="/password_reset"
-                        className='password-reset-link'>
-                    Forgot Password?
-                    </Link>
+                                align-items-center'>
+
+                  <Button variant="primary" 
+                          type="login" 
+                          className='login-button rounded-pill button'>
+                    Login
+                  </Button>
                   <Link to="/signup"
-                        className='signup-link'>
-                    Sign Up
+                        className='signup-link text-white'>
+                    Don't have an account? <b>Sign Up</b>
                   </Link>
                 </div>
               </div>
@@ -133,7 +147,7 @@ function Login() {
       ) : (
         <Loading />)
       }
-    </>
+    </div>
   );
 }
 

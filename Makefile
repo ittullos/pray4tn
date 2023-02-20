@@ -8,7 +8,7 @@ build-react:
 	cd react-app/ && npm run build
 
 refresh-react:
-	cd react-app/ && npm run build && cd .. && aws s3 sync ./react-app/build s3://wpt.bap.tn.react-app && aws cloudfront create-invalidation --distribution-id E2EYJ5OXSGCSBP --paths "/*" --no-cli-pager
+	cd react-app/ && npm run build && cd .. && aws s3 sync ./react-app/build s3://wpt.bap.tn.react-app && aws cloudfront create-invalidation --distribution-id E18AQ3ZZWHCBWT --paths "/*" --no-cli-pager
 
 build-aws: 
 	sam build

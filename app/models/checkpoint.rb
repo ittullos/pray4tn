@@ -70,7 +70,6 @@ class Checkpoint
 
     def new_checkpoint(data)
       if is_valid?(data)
-        # Need to remember to skip start points
         if data["lat"] == 0 || data["long"] == 0
           if current_route = Checkpoint.current_route(data["user_id"])
             puts "Checkpoint:new_checkpoint:user_id: #{data["user_id"]}:current_route: #{current_route.id}"         
