@@ -1,5 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { styles } from '../styles/inlineStyles'
 
 function UploadSuccessModal(props) {
   return (
@@ -29,7 +30,7 @@ function UploadSuccessModal(props) {
         <h5>Prayer List Uploaded</h5>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>
+        <Button style={styles.navyButton} onClick={props.onHide}>
           Close
         </Button>
       </Modal.Footer>

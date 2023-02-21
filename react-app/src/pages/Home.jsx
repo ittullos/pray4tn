@@ -12,6 +12,7 @@ import Loading from '../components/Loading'
 import LocationWarning from '../components/LocationWarning'
 import PlanRouteScreen from '../components/PlanRouteScreen'
 import { LoginContext, APIContext } from '../App'
+import { styles } from '../styles/inlineStyles'
 
 const CheckpointInterval = 30000
 
@@ -264,7 +265,8 @@ document.body.style.overflow = "hidden"
                         onClick={handleRouteButton}
                         style={{ backgroundColor: routeStarted ? "#d9534f" : "#02b875" }}
                         className='route-button 
-                                  btn-lg 
+                                  btn-lg
+                                  button
                                   mt-3'>
                   {routeButtonText} Route
                 </Button>
@@ -278,13 +280,13 @@ document.body.style.overflow = "hidden"
                             flex-row 
                             justify-content-center 
                             align-items-start">
-                <Button variant="primary" 
-                        className='popup-btn m-4 navy-blue'
+                <Button className='popup-btn m-4 navy-blue button'
+                        style={styles.navyButton}
                         onClick={() => setShowDevotionalScreen(true)}>
                   Devotional
                 </Button>
-                <Button variant="primary" 
-                        className='popup-btn m-4 navy-blue'
+                <Button className='popup-btn m-4 navy-blue button'
+                        style={styles.navyButton}
                         onClick={() => setShowPrayerScreen(true)}>
                   Prayer
                 </Button>

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 import { LoginContext, APIContext } from '../App';
+import p4lLogo from '../images/p4l_logo.png'
 
 function Signup() {
   const [email, setEmail]                     = useState("")
@@ -16,6 +17,8 @@ function Signup() {
   useEffect(() => {
     if (userId !== 0) {
       navigate('/')
+    } else {
+      navigate("/signup")
     }
   },[userId])
 
@@ -52,9 +55,8 @@ function Signup() {
         if (rememberMe) {
           localStorage.setItem('userId', JSON.stringify(res.data["userId"]))
         }
-        navigate('/')
       } else {
-        navigate('/signup')
+        setUserId(0)
         if (status === "Email already in use" || status === "Passwords do not match") {
           alert(status)
         }
@@ -66,7 +68,7 @@ function Signup() {
   }
 
   return (
-    <>
+    <div className='login-container'>
         <div className="form-body
                         d-flex
                         flex-column
@@ -75,65 +77,69 @@ function Signup() {
           <div className="form-hero
                           d-flex
                           justify-content-center
-                          align-items-center
-                          bg-success">
-            <h1 className='form-hero-text'>Sign Up</h1>
+                          align-items-center">
+            <img src={p4lLogo} alt="" className='login-logo'/>
           </div>
+          <h3 className='text-white'>Sign Up</h3>
           <div className="form-container">
             <Form className="login-form rounded"
                   onSubmit={handleSubmit}>
               <Form.Group className="mb-3 form" 
                           controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
                 <Form.Control type="email" 
                               value={email} 
                               onChange={handleEmailChange} 
-                              placeholder="Enter email" />
+                              placeholder="Email"
+                              className='form-control rounded-pill button' />
               </Form.Group>
               <Form.Group className="mb-3 form" 
                           controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
                 <Form.Control type="password" 
                               value={password}
                               onChange={handlePasswordChange}
-                              placeholder="Password" />
+                              placeholder="Password"
+                              className='form-control rounded-pill button' />
               </Form.Group>
               <Form.Group className="mb-3 form" 
                           controlId="formBasicConfirmPassword">
-                <Form.Label>Confirm Password</Form.Label>
                 <Form.Control type="password" 
                               value={confirmPassword}
                               onChange={handleConfirmPasswordChange}
-                              placeholder="Confirm Password" />
+                              placeholder="Confirm Password"
+                              className='form-control rounded-pill button' />
               </Form.Group>
               <div className='d-flex
-                              flex-row
+                              flex-column
                               justify-content-between'>
-                <div>
+                <div className='d-flex
+                                flex-row
+                                justify-content-between'>
                   <Form.Group className="mb-3" 
                               controlId="formBasicCheckbox">
                     <Form.Check type="checkbox" 
                                 label="Remember Me"
-                                onChange={handleRememberMeChange} />
+                                onChange={handleRememberMeChange}
+                                className='text-white remember-me' />
                   </Form.Group>
-                  <Button variant="primary" 
-                          type="login" 
-                          className='bg-primary'>
-                    Sign up
-                  </Button>
+                  <Link to="/login"
+                        className='signup-link text-white cancel-link'>
+                    Cancel
+                  </Link>
+
                 </div>
                 <div className='d-flex
                                 flex-column'>
-                  <Link to="/login"
-                        className='signup-link'>
-                    Cancel
-                  </Link>
+                  <Button variant="primary" 
+                          type="login" 
+                          className='login-button rounded-pill button'>
+                    Sign up
+                  </Button>
                 </div>
               </div>
             </Form>
           </div>
         </div> 
-    </>
+    </div>
   );
 }
 

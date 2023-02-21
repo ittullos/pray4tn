@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  wpt.bap.tn.2
+  wpt.bap.tn
 
 Parameters:
   UserResidentTableName:
@@ -44,7 +44,7 @@ Globals:
 
 
 Resources:
-  Pastor4Life2:
+  Pastor4Life:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: app/
@@ -98,7 +98,7 @@ Resources:
             Path: /p4l/settings
             Method: get
 
-  UserDDBTable:
+  UserTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref UserTableName
@@ -112,7 +112,7 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-  CheckpointDDBTable:
+  CheckpointTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref CheckpointTableName
@@ -130,7 +130,7 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-  RouteDDBTable:
+  RouteTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref RouteTableName
@@ -144,7 +144,7 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-  VerseDDBTable:
+  VerseTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref VerseTableName
@@ -271,10 +271,10 @@ Outputs:
   #   Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/p4l/"
   Pray4TNPastor4Life:
     Description: "WPT.BAP.TN Lambda Function ARN"
-    Value: !GetAtt Pastor4Life2.Arn
+    Value: !GetAtt Pastor4Life.Arn
   Pray4TNFunctionIamRole:
     Description: "Implicit IAM Role created for WPT.BAP.TN function"
-    Value: !GetAtt Pastor4Life2Role.Arn
+    Value: !GetAtt Pastor4LifeRole.Arn
   Pray4TNDistribution:
     Description: "The CloudFront distribution in front of the S3 bucket"
     Value: !Ref CloudfrontDistribution

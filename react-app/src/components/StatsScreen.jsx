@@ -1,5 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { styles } from '../styles/inlineStyles'
 
 function StatsScreen(props) {
   return (
@@ -35,7 +36,7 @@ function StatsScreen(props) {
           culpa qui officia deserunt mollit anim id est laborum.</p>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button styles={styles.navyButton} onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

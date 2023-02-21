@@ -13,18 +13,20 @@ export const LoginContext = createContext()
 export const APIContext   = createContext()
 
 function App() {
-  const [userId, setUserId] = useState(0)
+  const [userId, setUserId] = useState(localStorage.getItem('userId'))
   // const [apiEndpoint, setApiEndpoint] = useState("http://localhost:9292/p4l")
-  const [apiEndpoint, setApiEndpoint] = useState("https://d1i2wybwp12vb8.cloudfront.net/p4l")
+  const [apiEndpoint, setApiEndpoint] = useState("https://dh06j3qhhf6jd.cloudfront.net/p4l")
 
-  useEffect(() => {
-    if (localStorage.getItem('userId') === "0") {
-      setUserId(0)
-    } 
-    if (localStorage.getItem('userId') !== "0" &&  localStorage.getItem('userId') != null) {
-      setUserId(localStorage.getItem('userId'))
-    }
-  }, [userId])
+  // useEffect(() => {
+  //   let savedUserId = localStorage.getItem('userId')
+  //   console.log("App:savedUserId: ", savedUserId)
+  
+  //   if (savedUserId) {
+  //     setUserId(savedUserId)
+  //   } else {
+  //     setUserId(0)
+  //   }    
+  //   },[])
 
   return (
     <APIContext.Provider value={[apiEndpoint, setApiEndpoint]}>

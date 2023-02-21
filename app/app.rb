@@ -13,6 +13,10 @@ puts "RACK_ENV: #{ENV['RACK_ENV']}"
 
 before do
   if ENV["RACK_ENV"] == "dev"
+    Aws.config.update(
+      endpoint: 'http://localhost:8000'
+    )
+    
     require './app/models/verse'
     require './app/models/user'
     require './app/models/checkpoint'
@@ -72,12 +76,15 @@ post '/p4l/checkpoint' do
 end
 
 post '/p4l/login' do
+  puts "App:login:initial call"
   login_form_data = JSON.parse(request.body.read)["loginFormData"]
   email           = login_form_data["email"]
   password        = login_form_data["password"]
   
   if User.find(email: email)
+    puts "App:login:before User.find"
     user = User.find(email: email)
+    puts "App:login:after User.find"
     if (user.password == password)
       response_status = "success"
     else

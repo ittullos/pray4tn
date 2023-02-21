@@ -50,9 +50,19 @@
 
 /* Buttons */
 
+.button:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.text-white {
+  color: white;
+}
+
 .route-button {
   max-width: 300px;
   min-width: 200px;
+  
 }
 .popup-btn {
   width: 150px;
@@ -76,6 +86,7 @@
   position: sticky;
   top: 0;
   z-index: 20;
+  background-color: #071448;
 }
 
 .nav-container {
@@ -152,7 +163,7 @@
   }
 
   .nav-menu.active {
-    background: #4582ec;
+    background: #071448;
     left: 0px;
     opacity: 1;
     transition: all 0.5s ease;
@@ -288,6 +299,39 @@
   max-width: 550px;
 } */
 
+.login-container {
+  height: 100vh;
+  background-image: linear-gradient(#cce70b, #071448);
+}
+
+.form-control {
+  background: rgba(255, 255, 255, .5);
+  padding-left: 25px;
+}
+
+.login-button {
+  background-color: white;
+  font-weight: bold;
+  color: black;
+  width: 80vw;
+  max-width: 450px;
+  font-size: large;
+}
+
+.login-button:hover {
+  background-color: #071448;
+}
+
+.form-control::input {
+  font-weight: bold;
+}
+
+.form-control::placeholder {
+  color: white;
+  opacity: 1 !important;
+  font-weight: bold;
+}
+
 .form-container {
   display: flex;
   justify-content: center;
@@ -295,20 +339,60 @@
 }
 
 .login-form {
-  width: 90vw;
+  width: 80vw;
   max-width: 450px;
-  
 }
 
 .form-hero {
-  height: 20vh;
+  height: 40vh;
   width: 100vw;
-  background-color: #4582ec;
+  /* background-color: #071448; */
   color: white;
 }
 
 .form-hero-text {
   font-size: 40px;
+}
+
+.login-logo {
+  height: 35vh;
+}
+
+.remember-me {
+  font-size: medium;
+}
+
+.signup-link {
+  font-size: medium;
+  text-decoration: none;
+  padding-top: .3rem;
+}
+
+.password-reset-link {
+  font-size: smaller;
+  text-decoration: none;
+  padding-top: 1px;
+}
+
+.cancel-link {
+  padding-top: 0px;
+  padding-right: 2px;
+}
+
+
+
+@media screen and (max-width: 450px) {
+  .remember-me {
+    font-size: small;
+  }
+
+  .password-reset-link {
+    font-size: small;
+  }
+
+  .signup-link {
+    font-size: small;
+  }
 }
 
 @media screen and (min-height: 650px) {
@@ -329,16 +413,23 @@
   }
 }
 
-.signup-link {
-  font-size: larger;
-  text-decoration: none;
-  padding-top: .3rem;
-}
+@media screen and (max-width: 380px) {
+  .remember-me {
+    font-size: 11px;
+  }
 
-.password-reset-link {
-  font-size: medium;
-  text-decoration: none;
-  padding-top: .2rem;
+  .password-reset-link {
+    font-size: 11px;
+    padding-top: 0px;
+  }
+
+  .signup-link {
+    font-size: 15px;
+  }
+
+  .cancel-link {
+    font-size: 12px;
+  }
 }
 
 /* Plan Route Screen */
@@ -404,7 +495,7 @@ input[type=file] {
 input[type=file]::file-selector-button {
   margin-right: 20px;
   border: none;
-  background: #4582ec;
+  background: #071448;
   padding: 10px 20px;
   border-radius: 10px;
   color: #fff;

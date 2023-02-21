@@ -48,13 +48,14 @@ namespace :db do
       version:   "ESV",
       notation:  "Philippians 4:6-7")
     user_id = User.new_user(email: "user@example.com", password: "1")
+
     # for i in 0..2 do
-    #   User[user_id].add_user_resident(
+    #   user.add_user_resident(
     #     name: names[i],
     #     address: addresses[i],
     #     status: "active"
     #   )
-    # end
+    end
     
   end
 end

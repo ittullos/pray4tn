@@ -4,6 +4,7 @@ import LoadingComponent from './LoadingComponent'
 import axios from 'axios'
 import { useEffect, useState, useContext } from 'react'
 import { APIContext } from '../App';
+import { styles } from '../styles/inlineStyles'
 
 function PrayerScreen(props) {
   const { prayerName,
@@ -45,6 +46,7 @@ function PrayerScreen(props) {
         long:     0,
         user_id:   userId
       }
+      console.log("PrayerScreen:sendPrayerCheckpoint:checkpointData: ", checkpointData)
       axios.post(`${apiEndpoint}/checkpoint`, { checkpointData
       }).then(res => {
         let name = res.data["prayerName"]
@@ -120,7 +122,7 @@ function PrayerScreen(props) {
        
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={rest.onHide}>Close</Button>
+        <Button style={styles.navyButton} className="button" onClick={rest.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );
