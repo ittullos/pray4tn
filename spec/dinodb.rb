@@ -1,8 +1,10 @@
 require 'aws-record'
 
-Aws.config.update(
-  endpoint: 'http://localhost:8000'
-)
+if ENV["RACK_ENV"] != "prod"
+  Aws.config.update(
+    endpoint: 'http://localhost:8000'
+  )
+end
 
 def migrate_model(model)
   cfg = Aws::Record::TableConfig.define do |t|

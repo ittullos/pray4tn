@@ -22,12 +22,14 @@ before do
     require './app/models/checkpoint'
     require './app/models/route'
     require './app/models/user_resident'
+    require './app/models/devotional'
   elsif ENV["RACK_ENV"] == "prod"
     require './models/verse'
     require './models/user'
     require './models/checkpoint'
     require './models/route'
     require './models/user_resident'
+    require './models/devotional'
   end
 end
 
@@ -152,5 +154,22 @@ get '/p4l/settings' do
     region:           ENV["REGION"],
     accessKeyId:      ENV["ACCESS_KEY_ID"],
     secretAccessKey:  ENV["SECRET_ACCESS_KEY"]
+  }.to_json
+end
+
+get '/p4l/devotionals' do
+  devotionals_array = []
+  Devotional.scan.each do |item|
+    devotional = {}
+    devotional["id"] = item.id
+    devotional["title"] = item.title
+    devotional["url"] = item.url
+    devotional["img_url"] = item.img_url
+    devotionals_array.push(devotional)
+  end
+  devotionals_array.sort_by! { |devo| devo["id"] }
+  content_type :json
+  {
+    devotionals: devotionals_array
   }.to_json
 end

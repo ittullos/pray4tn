@@ -9,4 +9,5 @@
 react-app/src/secret/
 app/vendor/
 samconfig.toml
+samconfig2.toml
 *vendor*

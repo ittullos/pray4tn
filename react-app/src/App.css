@@ -523,3 +523,64 @@ input[type=file]::file-selector-button:hover {
 .navy-blue {
   background-color: #071448;
 }
+
+.devotional-image {
+  width: 300px;
+  height: auto;
+}
+
+.track-select-container {
+  margin-top: 15px;
+  height: 150px;
+  overflow-y: scroll;
+
+}
+
+@media screen and (max-width: 460px) {
+
+  .devotional-image {
+    width: 300px;
+    height: auto;
+  }
+
+}
+
+@media screen and (max-width: 360px) {
+
+  .devotional-image {
+    width: 275px;
+    height: auto;
+  }
+
+}
+
+@media screen and (max-width: 330px) {
+
+  .devotional-image {
+    width: 240px;
+    height: auto;
+  }
+
+}
+
+@media screen and (max-width: 300px) {
+
+  .devotional-image {
+    width: 200px;
+    height: auto;
+  }
+
+}
+
+.button-left {
+  text-align: left;
+}
+
+.devotional-select {
+  min-height: 60px;
+}
+
+.pop-up {
+  /* max-width: 500px; */
+  /* max-width: 50vw; */
+}

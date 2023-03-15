@@ -1,8 +1,20 @@
-deploy-aws:
+deploy-build-aws:
 	sam build && sam deploy
+
+deploy-build-aws-2:
+	sam build -t template2.yaml && sam deploy --config-file samconfig2.toml
+
+deploy-aws:
+	sam deploy
+
+deploy-aws-2:
+	sam deploy --config-file samconfig2.toml
 
 deploy-react:
 	aws s3 sync ./react-app/build s3://wpt.bap.tn.react-app
+
+deploy-react-2:
+	aws s3 sync ./react-app/build s3://wpt.bap.tn.react-app.2
 
 build-react:
 	cd react-app/ && npm run build
@@ -10,8 +22,14 @@ build-react:
 refresh-react:
 	cd react-app/ && npm run build && cd .. && aws s3 sync ./react-app/build s3://wpt.bap.tn.react-app && aws cloudfront create-invalidation --distribution-id E18AQ3ZZWHCBWT --paths "/*" --no-cli-pager
 
+refresh-react-2:
+	cd react-app/ && npm run build && cd .. && aws s3 sync ./react-app/build s3://wpt.bap.tn.react-app.2 && aws cloudfront create-invalidation --distribution-id ETIZ36L5JBOK6 --paths "/*" --no-cli-pager
+
 build-aws: 
 	sam build
+
+build-aws-2:
+	sam build -t template2.yaml
 
 list-stacks:
 	aws cloudformation list-stacks
@@ -63,3 +81,27 @@ mysql-dev:
 
 mysql-prod:
 	mysql -h wpt-bap-tn-prod.cnklfpyep1np.us-east-1.rds.amazonaws.com -P 3306 -u admin -p
+
+move-users-1-2:
+	ruby db/move_ddb/1-2/move_users.rb
+
+move-checkpoints-1-2:
+	ruby db/move_ddb/1-2/move_checkpoints.rb
+
+move-routes-1-2:
+	ruby db/move_ddb/1-2/move_routes.rb
+
+move-verses-1-2:
+	ruby db/move_ddb/1-2/move_verses.rb
+
+move-users-2-1:
+	ruby db/move_ddb/2-1/move_users.rb
+
+move-checkpoints-2-1:
+	ruby db/move_ddb/2-1/move_checkpoints.rb
+
+move-routes-2-1:
+	ruby db/move_ddb/2-1/move_routes.rb
+
+move-verses-2-1:
+	ruby db/move_ddb/2-1/move_verses.rb
