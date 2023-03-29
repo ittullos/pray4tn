@@ -11,6 +11,9 @@ require './app/models/user'
 require './app/models/checkpoint'
 require './app/models/route'
 require './app/models/user_resident'
+require './app/models/devotional'
+require './app/models/journey'
+require './app/models/commitment'
 
 def km_to_mi (km)
   mi = km * 0.6214

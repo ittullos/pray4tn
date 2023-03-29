@@ -13,7 +13,7 @@ describe Checkpoint do
                                   "lat"     =>  random_location[0],
                                   "long"    =>  random_location[1],
                                   "type"    =>  "start",
-                                  "user_id" =>  user.email }}
+                                  "user_id" =>  user.email}}
   let(:stop_checkpoint_data) {{ "recorded_at" => 100,
     "lat"     =>  random_location[0],
     "long"    =>  random_location[1],

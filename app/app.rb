@@ -23,6 +23,8 @@ before do
     require './app/models/route'
     require './app/models/user_resident'
     require './app/models/devotional'
+    require './app/models/journey'
+    require './app/models/commitment'
   elsif ENV["RACK_ENV"] == "prod"
     require './models/verse'
     require './models/user'
@@ -30,6 +32,8 @@ before do
     require './models/route'
     require './models/user_resident'
     require './models/devotional'
+    require './models/journey'
+    require './models/commitment'
   end
 end
 
@@ -172,4 +176,40 @@ get '/p4l/devotionals' do
   {
     devotionals: devotionals_array
   }.to_json
+end
+
+post '/p4l/journeys' do
+  user_data = JSON.parse(request.body.read)["userId"]
+  user_id = user_data.delete! '\"'
+  # pry.byebug
+
+  user = User.find(email: user_id)
+  journeys_array = []
+  Journey.scan.each do |item|
+    journey = {}
+    journey["title"] = item.title
+    journey["target_miles"] = item.target_miles
+    journey["graphic_url"] = item.graphic_url
+    journeys_array.push(journey)
+  end
+  journeys_array.sort_by! { |journey| journey["target_miles"] }
+  commitment = "false"
+  if user.commitment_id != 0 
+    commitment = "true"
+  end
+  # pry.byebug
+
+  content_type :json
+  {
+    journeys: journeys_array,
+    commitment: commitment
+  }.to_json
+end
+
+post '/p4l/commitment' do
+  commitment_data = JSON.parse(request.body.read)["commitmentData"]
+  user = User.find(email: commitment_data["user_id"])
+  new_commit = Commitment.new_commitment(commitment_data)
+  user.commitment_id = new_commit.commitment_id
+  user.save!
 end

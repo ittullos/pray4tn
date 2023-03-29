@@ -198,9 +198,13 @@ class Checkpoint
 
   def set_route_id 
     if type == "start"
-      route = Route.new_route
+      route = Route.new_route(user_id)
     else 
       route = Checkpoint.current_route(user_id)
+      if type == "prayer"
+        route.prayer_count += 1
+        route.save!
+      end
     end
     self.route_id = route.id if route
   end

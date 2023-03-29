@@ -76,6 +76,9 @@ test-checkpoint:
 test-user:
 	rspec ./spec/user_spec.rb
 
+test-route:
+	rspec ./spec/route_spec.rb
+
 mysql-dev:
 	mysql --user=root -p
 

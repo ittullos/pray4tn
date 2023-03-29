@@ -11,6 +11,8 @@ require './app/models/checkpoint'
 require './app/models/route'
 require './app/models/user_resident'
 require './app/models/devotional'
+require './app/models/journey'
+require './app/models/commitment'
 
 
 models = [ Verse, 
@@ -18,7 +20,9 @@ models = [ Verse,
            Checkpoint,
            User,
            UserResident,
-           Devotional ]
+           Devotional,
+           Journey,
+           Commitment ]
 
 names       = ["John Stewart", "Stephen Colbert", "Trever Noah"]
 addresses   = ["44 Unknown dr", "431 Canberra dr", "607 Middlebrook pk"]
@@ -37,7 +41,7 @@ namespace :db do
     end
   end
   desc "Seed Database"
-  task :seed do
+  task :seed_verses do
     Verse.new_verse(
       scripture: "Love is patient and kind; love does not envy or boast; it is not arrogant or rude. It does not insist on its own way; it is not irritable or resentful.",
       version:   "ESV",
@@ -90,5 +94,27 @@ namespace :db do
       url: "https://api.spreaker.com/download/episode/52126658/the_walk_justin_warren_final.mp3?dl=true",
       img_url: "https://worshipleader.com/wp-content/uploads/2022/12/Justin-Warren_artwork-1160x1160.jpg"
     )
+  end
+  task :seed_users do
+    User.new_user(
+      email:      "isaac.tullos@gmail.com",
+      password:   "1",
+      commitment_id: 0)
+  end
+  task :seed_journeys do
+    clean_table(Journey)
+    Journey.new_journey(
+      title: "I-65 from Franklin to Nashville",
+      target_miles: 2150,
+      graphic_url: "https://s3.amazonaws.com/wpt.bap.tn.journey-images/franklin_nashville.png"
+    )
+    Journey.new_journey(
+      title: "I-40 accross the entire state",
+      target_miles: 45528,
+      graphic_url: "https://s3.amazonaws.com/wpt.bap.tn.journey-images/I40_across_tn.png"
+    )
+  end
+  task :seed_commits do
+    Commitment.initial_seed
   end
 end

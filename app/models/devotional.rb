@@ -11,8 +11,8 @@ class Devotional
   string_attr   :img_url
 
   def self.new_devotional(data)
-    verse = new(data)
-    verse.save!
-    verse
+    devo = new(data)
+    devo.save!
+    devo
   end
 end

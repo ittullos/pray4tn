@@ -7,6 +7,7 @@ import RouteStats from '../components/RouteStats'
 import PrayerScreen from '../components/PrayerScreen'
 import DevotionalScreen from '../components/DevotionalScreen'
 import StatsScreen from '../components/StatsScreen'
+import CommitmentScreen from '../components/CommitmentScreen'
 import RouteStopScreen from '../components/RouteStopScreen'
 import Loading from '../components/Loading'
 import LocationWarning from '../components/LocationWarning'
@@ -27,6 +28,7 @@ function Home() {
   const [showPrayerScreen, setShowPrayerScreen]             = useState(false)
   const [showDevotionalScreen, setShowDevotionalScreen]     = useState(false)
   const [showStatsScreen, setShowStatsScreen]               = useState(false)
+  const [showCommitmentScreen, setShowCommitmentScreen]     = useState(false)
   const [showRouteStopScreen, setShowRouteStopScreen]       = useState(false)
   const [showLocationWarning, setShowLocationWarning]       = useState(false)
   const [disableLocationWarning, setDisableLocationWarning] = useState(false)
@@ -233,7 +235,11 @@ document.body.style.overflow = "hidden"
         show={showPlanRouteScreen}
         onHide={() => setShowPlanRouteScreen(false)}
         userId={userId} />
+      <CommitmentScreen
+        show={showCommitmentScreen}
+        onHide={() => setShowCommitmentScreen(false)}/>
       <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}
+              showCommitmentScreen={showCommitmentScreen => setShowCommitmentScreen(showCommitmentScreen)}
               showPlanRouteScreen={showPlanRouteScreen => setShowPlanRouteScreen(showPlanRouteScreen)}/>
 
       { isLoading ? (

@@ -5,8 +5,9 @@ class User
   include Aws::Record
   set_table_name ENV['USER_TABLE_NAME']
 
-  string_attr :email, hash_key: true
-  string_attr :password
+  string_attr  :email,     hash_key: true
+  string_attr  :password
+  integer_attr :commitment_id
 
   def reset_password(password)
     self.password = password

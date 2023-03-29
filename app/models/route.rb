@@ -11,11 +11,12 @@ class Route
   integer_attr  :mileage
   integer_attr  :prayer_count
   integer_attr  :seconds
+  integer_attr  :commitment_id
 
   PRECISION = 1000
 
-  def self.new_route
-    route = new(started_at: Time.now.to_i)
+  def self.new_route(user_id)
+    route = new(started_at: Time.now.to_i, prayer_count: 0, commitment_id: User.find(email: user_id).commitment_id)
     route.save!
     route
   end
@@ -45,11 +46,6 @@ class Route
     end   
     super
   end
-
-  # def km_to_mi (km)
-  #   mi = km * 0.6214
-  #   return mi
-  # end
 
   def self.finalize(user_id, route_id)
     route = find(id: route_id)
