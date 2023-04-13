@@ -2,6 +2,7 @@ require "bundler"
 Bundler.require
 require "dotenv"
 require "./spec/dinodb"
+require 'roo'
 
 Dotenv.load
 
@@ -34,13 +35,15 @@ namespace :db do
       migrate_model(model)
     end
   end
+
   desc "Drop Tables"
   task :drop do 
     models.each do |model|
       delete_table(model)
     end
   end
-  desc "Seed Database"
+
+  desc "Seed Verses"
   task :seed_verses do
     Verse.new_verse(
       scripture: "Love is patient and kind; love does not envy or boast; it is not arrogant or rude. It does not insist on its own way; it is not irritable or resentful.",
@@ -56,6 +59,23 @@ namespace :db do
       notation:  "Philippians 4:6-7")
     user_id = User.new_user(email: "user@example.com", password: "1")
   end
+
+  desc "Seed 100 Verses"
+  task :seed_100_verses do
+    clean_table(Verse)
+    # file = Roo::Spreadsheet.open('./db/verses/100_verses.xlsx')
+    # pry.byebug
+    # for i in 2..101
+    #   Verse.new_verse(
+    #     day:       (i +(-2)),
+    #     version:   "CSB",
+    #     notation:  file.cell(i, 1),
+    #     scripture: file.cell(i, 2)
+    #   )
+      # puts "Day: #{(i - 2)}, Version: #{file.cell(i, 2)}"
+    # end
+  end
+
   desc "Seed Devotionals"
   task :seed_devo do
     Devotional.new_devotional(
@@ -95,12 +115,14 @@ namespace :db do
       img_url: "https://worshipleader.com/wp-content/uploads/2022/12/Justin-Warren_artwork-1160x1160.jpg"
     )
   end
+
   task :seed_users do
     User.new_user(
       email:      "isaac.tullos@gmail.com",
       password:   "1",
       commitment_id: 0)
   end
+
   task :seed_journeys do
     clean_table(Journey)
     Journey.new_journey(
@@ -114,6 +136,7 @@ namespace :db do
       graphic_url: "https://s3.amazonaws.com/wpt.bap.tn.journey-images/I40_across_tn.png"
     )
   end
+
   task :seed_commits do
     Commitment.initial_seed
   end

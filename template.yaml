@@ -14,6 +14,12 @@ Parameters:
     Type: String
   VerseTableName:
     Type: String
+  DevotionalTableName:
+    Type: String
+  CommitmentTableName:
+    Type: String
+  JourneyTableName:
+    Type: String
   UserResidentBucketName:
     Type: String
   Region:
@@ -36,12 +42,14 @@ Globals:
         USER_RESIDENT_TABLE_NAME: !Ref UserResidentTableName
         USER_TABLE_NAME:          !Ref UserTableName
         CHECKPOINT_TABLE_NAME:    !Ref CheckpointTableName
+        DEVOTIONAL_TABLE_NAME:    !Ref DevotionalTableName
+        COMMITMENT_TABLE_NAME:    !Ref CommitmentTableName
+        JOURNEY_TABLE_NAME:       !Ref JourneyTableName
         RACK_ENV:                 !Ref DbEnv
         REGION:                   !Ref Region
         ACCESS_KEY_ID:            !Ref AccessKeyId
         SECRET_ACCESS_KEY:        !Ref SecretAccessKey
         RESIDENT_NAMES_BUCKET:    !Ref UserResidentBucketName
-
 
 Resources:
   Pastor4Life:
@@ -60,8 +68,12 @@ Resources:
             TableName: !Ref RouteTableName
         - DynamoDBCrudPolicy:
             TableName: !Ref VerseTableName
-        # - DynamoDBCrudPolicy:
-        #     TableName: !Ref CommitmentTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DevotionalTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CommitmentTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref JourneyTableName
 
       Runtime: ruby2.7
       Architectures:
@@ -97,6 +109,26 @@ Resources:
           Properties:
             Path: /p4l/settings
             Method: get
+        Devotionals:
+          Type: Api
+          Properties:
+            Path: /p4l/devotionals
+            Method: get
+        Journeys:
+          Type: Api
+          Properties:
+            Path: /p4l/journeys
+            Method: post
+        Commitment: 
+          Type: Api
+          Properties:
+            Path: /p4l/commitment
+            Method: post
+        Stats:
+          Type: Api
+          Properties:
+            Path: /p4l/stats
+            Method: post
 
   UserTable:
     Type: AWS::DynamoDB::Table
@@ -158,6 +190,48 @@ Resources:
           KeyType: HASH
         - AttributeName: notation
           KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  DevotionalTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref DevotionalTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  JourneyTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref JourneyTableName
+      AttributeDefinitions:
+        - AttributeName: title
+          AttributeType: S
+      KeySchema:
+        - AttributeName: title
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  CommitmentTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref CommitmentTableName
+      AttributeDefinitions:
+        - AttributeName: commitment_id
+          AttributeType: N
+      KeySchema:
+        - AttributeName: commitment_id
+          KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5

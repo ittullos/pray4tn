@@ -15,10 +15,11 @@ describe "Pastor4Life API -" do
                                                    "long"   => random_location[1],
                                                    "type"   => "prayer",
                                                    "user_id" => user.email }}}
-  let(:journey_data) {{ "journeyData" => { "user_id" => user.email }}}
+  let(:journey_data) {{ "userId" => user.email }}
   let(:commitment_data) {{ "commitmentData" => { "user_id" => user.email ,
                                                  "journey_id" => "I-65 from Franklin to Nashville",
                                                  "target_date" => "2023-12-31" }}}
+  let(:stats_data) {{ "userId" => user.email }}
 
   def app
     Sinatra::Application
@@ -80,12 +81,12 @@ describe "Pastor4Life API -" do
         clean_table(UserResident)
       end
 
-      it 'returns nil when theres no data' do
+      it 'returns nil when there are no names' do
         post '/p4l/checkpoint', prayer_checkpoint.to_json
         expect(JSON.parse(last_response.body)["prayerName"]).to eq("")
       end
 
-      it 'returns a name if there is data' do
+      it 'returns a name if there are names' do
         resident = UserResident.new(name: "Steve", address: "101 Main st", user_id: user.email, match_key: "jhfsdlkhs")
         resident.save
         post '/p4l/checkpoint', prayer_checkpoint.to_json
@@ -123,12 +124,12 @@ describe "Pastor4Life API -" do
         Journey.new_journey(
           title: "I-65 from Franklin to Nashville",
           target_miles: 2150,
-          graphic_url: "FranklinNashville"
+          graphic_url: "https://s3.amazonaws.com/wpt.bap.tn.journey-images/franklin_nashville.png"
         )
         Journey.new_journey(
           title: "I-40 accross the entire state",
           target_miles: 45528,
-          graphic_url: "I40AcrossTN"
+          graphic_url: "https://s3.amazonaws.com/wpt.bap.tn.journey-images/I40_across_tn.png"
         )
       end
       it 'returns all journeys' do
@@ -153,6 +154,53 @@ describe "Pastor4Life API -" do
         post '/p4l/commitment', commitment_data.to_json, "CONTENT_TYPE" => "application/json"
         @user2 = User.find(email: "isaac.tullos@gmail.com")
         expect(@user2.commitment_id).not_to eq 0
+      end
+    end
+
+    context "Stats -" do
+      let(:user) { User.scan.first }
+      # let(:route_1) { Route.new_test_route(20, 10, 100) }
+      # let(:route_2) { Route.new_test_route(40, 20, 200) }
+      # let(:route_3) { Route.new_test_route(80, 40, 400) }
+
+      # def Route.scan
+      #   [route_1, route_2, route_3]
+      # end
+
+      before do
+        clean_table(Route)
+        Route.new_test_route(20, 5, 100)
+        Route.new_test_route(40, 10, 200)
+        Route.new_test_route(80, 20, 400)
+      end
+
+      it "returns users current journey title" do
+        post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
+        expect(JSON.parse(last_response.body)["title"]).to match "Nashville"
+      end
+      it "returns users commitment target miles" do
+        post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
+        expect(JSON.parse(last_response.body)["targetMiles"]).to eq 2150
+      end
+      it "returns users commitment progress miles" do
+        post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
+        expect(JSON.parse(last_response.body)["progressMiles"]).to eq 700
+      end
+      it "returns users commitment seconds" do
+        post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
+        expect(JSON.parse(last_response.body)["seconds"]).to eq 140
+      end
+      it "returns users commitment prayers" do
+        post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
+        expect(JSON.parse(last_response.body)["prayers"]).to eq 35
+      end
+      it "returns users target date" do
+        post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
+        expect(JSON.parse(last_response.body)["targetDate"]).to eq "2023-12-31"
+      end
+      it "returns users commit date" do
+        post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
+        expect(JSON.parse(last_response.body)["commitDate"]).to eq "2023-04-07"
       end
     end
   end

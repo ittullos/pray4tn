@@ -4,9 +4,10 @@ class Verse
   include Aws::Record
   set_table_name ENV["VERSE_TABLE_NAME"]
 
-  string_attr :version,   hash_key:  true
-  string_attr :notation,  range_key: true
-  string_attr :scripture
+  integer_attr :day,      hash_key:  true
+  string_attr  :version,  range_key: true
+  string_attr  :notation  
+  string_attr  :scripture
 
   def self.new_verse(data)
     verse = new(data)

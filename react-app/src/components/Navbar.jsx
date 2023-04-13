@@ -22,12 +22,9 @@ function Navbar(props) {
                                                       handleNavbarClose() }}>
               <h6 className='nav-link'>My Commitment</h6>
             </li>
-            <li className='nav-item' onClick={() => { props.showPlanRouteScreen(true)
+            <li className='nav-item pb-3' onClick={() => { props.showPlanRouteScreen(true)
                                                       handleNavbarClose() }}>
               <h6 className='nav-link'>Plan Route</h6>
-            </li>
-            <li className='nav-item' onClick={handleNavbarClose}>
-              <h6 className='nav-link'>Settings</h6>
             </li>
           </ul>
           <div className="nav-icon" onClick={handleNavbarClose }>

@@ -38,21 +38,19 @@ before do
 end
 
 post '/p4l/home' do
-  puts "HOME!!!"
   user_id = JSON.parse(request.body.read)["userId"]
-  puts "HOME:user_id:#{user_id}"
-  
   Checkpoint.close_last_route(user_id)
   
-  puts "HOME:Start scanning Verse"
-  verse = Verse.scan.first if Verse.table_exists?
-  puts "HOME:Stop scanning Verse"
+  verses = Verse.scan if Verse.table_exists?
+  time = Time.new
+  day = time.yday % 100
+  verse = verses.select {|v| v.day == day}
 
   content_type :json
   { 
-    verse:    verse && verse.scripture,
-    notation: verse && verse.notation,
-    version:  verse && verse.version
+    verse:    verse && verse.first.scripture,
+    notation: verse && verse.first.notation,
+    version:  verse && verse.first.version
   }.to_json
 end
 
@@ -179,9 +177,11 @@ get '/p4l/devotionals' do
 end
 
 post '/p4l/journeys' do
-  user_data = JSON.parse(request.body.read)["userId"]
-  user_id = user_data.delete! '\"'
   # pry.byebug
+  user_id = JSON.parse(request.body.read)["userId"]
+  if user_id.include? '"'
+    user_id.delete! '\"'
+  end
 
   user = User.find(email: user_id)
   journeys_array = []
@@ -212,4 +212,32 @@ post '/p4l/commitment' do
   new_commit = Commitment.new_commitment(commitment_data)
   user.commitment_id = new_commit.commitment_id
   user.save!
+end
+
+post '/p4l/stats' do
+  user_id = JSON.parse(request.body.read)["userId"]
+  if user_id.include? '"'
+    user_id.delete! '\"'
+  end
+
+  user = User.find(email: user_id)
+
+  if user.commitment_id == 0
+    content_type :json
+    {
+      title: "No commitment"
+    }.to_json
+  else
+    stats = user.get_stats
+    content_type :json
+    {
+      title: stats[:title],
+      targetMiles: stats[:target_miles],
+      progressMiles: stats[:progress_miles],
+      prayers: stats[:prayers],
+      seconds: stats[:seconds],
+      targetDate: stats[:target_date],
+      commitDate: stats[:commit_date]
+    }.to_json
+  end
 end

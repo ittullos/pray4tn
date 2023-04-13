@@ -201,7 +201,7 @@ class Checkpoint
       route = Route.new_route(user_id)
     else 
       route = Checkpoint.current_route(user_id)
-      if type == "prayer"
+      if route && type == "prayer"
         route.prayer_count += 1
         route.save!
       end
@@ -214,6 +214,7 @@ class Checkpoint
   end
 
   def save
+    # pry.byebug
     self.route_id = set_route_id unless persisted?
     super
     Route.finalize(user_id, route_id) if type == "stop"

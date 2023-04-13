@@ -21,6 +21,12 @@ class Route
     route
   end
 
+  def self.new_test_route(seconds, prayers, distance)
+    route = new(seconds: seconds, prayer_count: prayers, commitment_id: 1, mileage: distance)
+    route.save!
+    route
+  end
+
   def self.next_route_id
     last_route_id = self.scan.inject(0) { |m, r| r.id > m ? r.id : m }
     return last_route_id + 1

@@ -59,6 +59,9 @@ GEM
     random-location (0.1.0)
     random_name_generator (2.0.1)
     regexp_parser (2.7.0)
+    roo (2.10.0)
+      nokogiri (~> 1)
+      rubyzip (>= 1.3.0, < 3.0.0)
     rspec (3.12.0)
       rspec-core (~> 3.12.0)
       rspec-expectations (~> 3.12.0)
@@ -73,6 +76,7 @@ GEM
       rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
     ruby2_keywords (0.0.5)
+    rubyzip (2.3.2)
     sinatra (3.0.5)
       mustermann (~> 3.0)
       rack (~> 2.2, >= 2.2.4)
@@ -105,6 +109,7 @@ DEPENDENCIES
   rake
   random-location
   random_name_generator
+  roo (~> 2.10.0)
   rspec
   sinatra
   sinatra-contrib
