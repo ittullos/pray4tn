@@ -62,18 +62,18 @@ namespace :db do
 
   desc "Seed 100 Verses"
   task :seed_100_verses do
-    clean_table(Verse)
-    # file = Roo::Spreadsheet.open('./db/verses/100_verses.xlsx')
+    # clean_table(Verse)
+    file = Roo::Spreadsheet.open('./db/verses/100_verses.xlsx')
     # pry.byebug
-    # for i in 2..101
-    #   Verse.new_verse(
-    #     day:       (i +(-2)),
-    #     version:   "CSB",
-    #     notation:  file.cell(i, 1),
-    #     scripture: file.cell(i, 2)
-    #   )
-      # puts "Day: #{(i - 2)}, Version: #{file.cell(i, 2)}"
-    # end
+    for i in 91..101
+      Verse.new_verse(
+        day:       (i +(-2)),
+        version:   "CSB",
+        notation:  file.cell(i, 1),
+        scripture: file.cell(i, 2)
+      )
+      puts "Day: #{(i - 2)}, Version: #{file.cell(i, 2)}"
+    end
   end
 
   desc "Seed Devotionals"
