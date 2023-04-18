@@ -227,7 +227,10 @@ document.body.style.overflow = "hidden"
       <RouteStopScreen 
         show={showRouteStopScreen}
         onHide={() => setShowRouteStopScreen(false)}
-        mileage={routeMileage}/>
+        mileage={routeMileage}
+        prayerCount={prayerCount}
+        setMileage={setRouteMileage}
+        userId={userId}/>
       <LocationWarning 
         show={showLocationWarning && !disableLocationWarning}
         onHide={() => setShowLocationWarning(false)} />

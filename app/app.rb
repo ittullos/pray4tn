@@ -63,7 +63,6 @@ post '/p4l/checkpoint' do
     prayer_name = resident ? resident.name : ""
     checkpoint_data["match_key"] = resident.match_key if resident
   end
-
   checkpoint = Checkpoint.new_checkpoint(checkpoint_data)
 
   if checkpoint
@@ -240,4 +239,20 @@ post '/p4l/stats' do
       commitDate: stats[:commit_date]
     }.to_json
   end
+end
+
+post '/p4l/add_mileage' do
+  mileage_data = JSON.parse(request.body.read)["addMileageData"]
+
+  if mileage_data["userId"].include? '"'
+    mileage_data["userId"].delete! '\"'
+  end
+
+  user = User.find(email: mileage_data["userId"])
+  mileage = mileage_data["mileage"]
+  route = Route.find(id: Checkpoint.last_checkpoint(user.email).route_id)
+  # pry.byebug
+  route.mileage += (mileage * 1000)
+  route.save
+  # pry.byebug
 end

@@ -15,11 +15,25 @@ describe "Pastor4Life API -" do
                                                    "long"   => random_location[1],
                                                    "type"   => "prayer",
                                                    "user_id" => user.email }}}
+
   let(:journey_data) {{ "userId" => user.email }}
   let(:commitment_data) {{ "commitmentData" => { "user_id" => user.email ,
                                                  "journey_id" => "I-65 from Franklin to Nashville",
                                                  "target_date" => "2023-12-31" }}}
   let(:stats_data) {{ "userId" => user.email }}
+  let(:add_mileage_data) {{ "addMileageData" => { "userId" => user.email,
+                                                  "mileage" => 3 }}}
+
+  let(:start_checkpoint_2) {{ "checkpointData" => { "lat"    => 35.962639,
+                                                    "long"   => -83.916718,
+                                                    "type"   => "start",
+                                                    "user_id" => user.email }}}
+
+  let(:stop_checkpoint) {{ "checkpointData" => { "lat"    => 35.962639,
+                                                 "long"   => -83.916718,
+                                                 "type"   => "stop",
+                                                 "user_id" => user.email }}}
+
 
   def app
     Sinatra::Application
@@ -159,13 +173,6 @@ describe "Pastor4Life API -" do
 
     context "Stats -" do
       let(:user) { User.scan.first }
-      # let(:route_1) { Route.new_test_route(20, 10, 100) }
-      # let(:route_2) { Route.new_test_route(40, 20, 200) }
-      # let(:route_3) { Route.new_test_route(80, 40, 400) }
-
-      # def Route.scan
-      #   [route_1, route_2, route_3]
-      # end
 
       before do
         clean_table(Route)
@@ -201,6 +208,24 @@ describe "Pastor4Life API -" do
       it "returns users commit date" do
         post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
         expect(JSON.parse(last_response.body)["commitDate"]).to eq "2023-04-07"
+      end
+    end
+
+    context "Add Mileage -" do
+      before do 
+        # route1 = Route.new_test_route(20, 5, 0)
+        checkpoint = Checkpoint.new_checkpoint(start_checkpoint_2["checkpointData"])
+        @route1 = Route.find(id: checkpoint.route_id)
+        sleep 1
+        Checkpoint.new_checkpoint(stop_checkpoint["checkpointData"])
+        @route1.mileage = 0
+        @route1.save
+        # pry.byebug
+      end
+      it "adds mileage" do
+        post '/p4l/add_mileage', add_mileage_data.to_json, "CONTENT_TYPE" => "application/json"
+        @route1 = Route.find(id: Checkpoint.last_checkpoint(user.email).route_id)
+        expect(@route1.mileage).to be 3000
       end
     end
   end
