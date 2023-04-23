@@ -9,28 +9,17 @@ import Error from './pages/Error'
 import PrivateRoutes from './components/PrivateRoutes'
 import PasswordReset from './pages/PasswordReset'
 
+
 export const LoginContext = createContext()
 export const APIContext   = createContext()
 
 
 function App() {
   const [userId, setUserId] = useState(localStorage.getItem('userId'))
-  const [apiEndpoint, setApiEndpoint] = useState("http://localhost:9292/p4l")
-  // const [apiEndpoint, setApiEndpoint] = useState("https://dh06j3qhhf6jd.cloudfront.net/p4l")
+  // const [apiEndpoint, setApiEndpoint] = useState("http://localhost:9292/p4l")
+  const [apiEndpoint, setApiEndpoint] = useState("https://dh06j3qhhf6jd.cloudfront.net/p4l")
   // const [apiEndpoint, setApiEndpoint] = useState("https://dl3yjbua9axh5.cloudfront.net/p4l")
   // const [apiEndpoint, setApiEndpoint] = useState("https://pastor4life.click/p4l")
-  
-
-  // useEffect(() => {
-  //   let savedUserId = localStorage.getItem('userId')
-  //   console.log("App:savedUserId: ", savedUserId)
-  
-  //   if (savedUserId) {
-  //     setUserId(savedUserId)
-  //   } else {
-  //     setUserId(0)
-  //   }    
-  //   },[])
 
   return (
     <APIContext.Provider value={[apiEndpoint, setApiEndpoint]}>

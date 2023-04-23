@@ -127,12 +127,12 @@ namespace :db do
     clean_table(Journey)
     Journey.new_journey(
       title: "I-65 from Franklin to Nashville",
-      target_miles: 2150,
+      target_miles: 21500,
       graphic_url: "https://s3.amazonaws.com/wpt.bap.tn.journey-images/franklin_nashville.png"
     )
     Journey.new_journey(
       title: "I-40 accross the entire state",
-      target_miles: 45528,
+      target_miles: 455280,
       graphic_url: "https://s3.amazonaws.com/wpt.bap.tn.journey-images/I40_across_tn.png"
     )
   end

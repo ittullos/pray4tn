@@ -108,3 +108,6 @@ move-routes-2-1:
 
 move-verses-2-1:
 	ruby db/move_ddb/2-1/move_verses.rb
+
+move-devotionals-2-1:
+	ruby db/move_ddb/2-1/move_devotionals.rb

@@ -138,7 +138,7 @@ function CommitmentScreen(props) {
                   />
                   <div className="carousel-spacer"></div>
                   <h3>{item.title}</h3> 
-                  <h4 className='mt-3'>Distance: {item.target_miles/100} miles</h4>
+                  <h4 className='mt-3'>Distance: {item.target_miles/1000} miles</h4>
                   
                 </Carousel.Item>
               ))}

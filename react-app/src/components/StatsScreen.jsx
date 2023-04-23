@@ -35,16 +35,17 @@ function StatsScreen(props) {
       setTargetMiles(res.data.targetMiles)
       setPrayerCount(res.data.prayers)
       setSeconds(res.data.seconds)
+      setIsLoading(false)
     }).catch(err => {
       console.log(err)
     })
   }
 
-  useEffect(() => {
-    if (seconds > 0) {
-      setIsLoading(false)
-    }
-  }, [seconds])
+  // useEffect(() => {
+  //   if (seconds > 0) {
+  //     setIsLoading(false)
+  //   }
+  // }, [seconds])
 
   function roundDecimal(float) {
     return Number.parseFloat(float).toFixed(1)
@@ -75,16 +76,26 @@ function StatsScreen(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h6 className='mt-4'>Commitment:</h6>
-        <h5>{journeyTitle}</h5>
-        <hr />
-        <h6 className='my-4'>Target Completion Date:</h6>
-        <h5 className='mt-1'>{targetDate}</h5>
-        <hr />
-        <h6 className='my-4'>Mileage: &nbsp;{roundDecimal(progressMiles/100)} / {roundDecimal(targetMiles/100)}</h6>
-        <ProgressBar animated now={(progressMiles/targetMiles)*100} />
-        <hr />
-        <h6 className='mt-4'>Prayers: &nbsp;{prayerCount}</h6>
+          { (isLoading) ? <LoadingComponent/> : 
+            (journeyTitle === "No commitment") ? (
+              <>
+                <h3>No Commitment</h3>
+                <p>Please see the "My Commitment" section in the menu</p>
+              </>
+            ) : (
+            <>
+              <h6 className='mt-4'>Commitment:</h6>
+              <h5>{journeyTitle}</h5>
+              <hr />
+              <h6 className='my-4'>Target Completion Date:</h6>
+              <h5 className='mt-1'>{targetDate.substring(0, 10)}</h5>
+              <hr />
+              <h6 className='my-4'>Mileage: &nbsp;{roundDecimal(progressMiles/1000)} / {roundDecimal(targetMiles/1000)}</h6>
+              <ProgressBar animated now={(progressMiles/targetMiles)*100} />
+              <hr />
+              <h6 className='mt-4'>Prayers: &nbsp;{prayerCount}</h6>
+            </>
+          )}
       </Modal.Body>
       <Modal.Footer>
         <Button styles={styles.navyButton} onClick={props.onHide}>Close</Button>

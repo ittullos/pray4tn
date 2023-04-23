@@ -221,7 +221,7 @@ post '/p4l/stats' do
 
   user = User.find(email: user_id)
 
-  if user.commitment_id == 0
+  if !user.commitment_id || user.commitment_id == 0
     content_type :json
     {
       title: "No commitment"

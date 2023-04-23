@@ -14,10 +14,18 @@ import LocationWarning from '../components/LocationWarning'
 import PlanRouteScreen from '../components/PlanRouteScreen'
 import { LoginContext, APIContext } from '../App'
 import { styles } from '../styles/inlineStyles'
+import { useWakeLock } from 'react-screen-wake-lock';
+
 
 const CheckpointInterval = 30000
 
 function Home() {
+  // Wake Lock
+  const { isSupported, released, request, release } = useWakeLock({
+    onRequest: () => console.log('Screen Wake Lock: requested!'),
+    onError: () => console.log('An error happened 💥'),
+    onRelease: () => console.log('Screen Wake Lock: released!'),
+  })
 
   // VOTD state
   const [verse, setVerse]            = useState('')
@@ -159,7 +167,6 @@ function Home() {
         setHeartbeatMode(false)
         clearInterval(intervalId)
         setRouteType("stop")
-        setPrayerCount(0)
       }
    }
   }, [routeStarted])
@@ -184,6 +191,7 @@ function Home() {
   useEffect(() => {
     if (!showRouteStopScreen) {
       setRouteMileage(0.0)
+      setPrayerCount(0)
     }
   }, [showRouteStopScreen])
 
@@ -271,7 +279,10 @@ document.body.style.overflow = "hidden"
                             justify-content-start 
                             align-items-center">
                 <Button variant="success" 
-                        onClick={handleRouteButton}
+                        onClick={() =>  <>
+                                          { handleRouteButton() }
+                                          { (released === false ? release() : request()) }
+                                        </>}
                         style={{ backgroundColor: routeStarted ? "#d9534f" : "#02b875" }}
                         className='route-button 
                                   btn-lg

@@ -129,6 +129,11 @@ Resources:
           Properties:
             Path: /p4l/stats
             Method: post
+        AddMileage:
+          Type: Api
+          Properties:
+            Path: /p4l/add_mileage
+            Method: post
 
   UserTable:
     Type: AWS::DynamoDB::Table

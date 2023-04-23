@@ -80,17 +80,21 @@ function RouteStopScreen(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h5>Route Prayers: {prayerCount}</h5>
-        <h5>Route Mileage: {roundDecimal(mileage)}</h5>
+        <h5 className='mb-4 mt-2'>Prayers: {prayerCount}</h5>
+        <h5 className='mb-4'>Mileage: {roundDecimal(mileage)}</h5>
         {showAddMileageButton ? (
-          <Button style={styles.navyButton} onClick={handleAddMileageButton}>
-            Add stationary miles
+          <Button 
+            style={styles.navyButton} 
+            onClick={handleAddMileageButton}
+            className='my-4'
+          >
+              Add stationary miles
           </Button>
           ) : null }
         {showAddMileageButton ? null : (
           <Form 
             onSubmit={handleSubmit}
-            className='rounded'>
+            className='rounded stationary-form'>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Control onChange={handleStationaryMilesChange} size="sm" type="number" placeholder="Enter email" />
               <Form.Text className="text-muted">

@@ -616,3 +616,7 @@ input[type=file]::file-selector-button:hover {
 .date-alert {
   margin-top: 16px;
 }
+
+/* .stationary-form {
+  max-width: 300px;
+} */
