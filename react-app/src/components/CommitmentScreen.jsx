@@ -9,6 +9,7 @@ import axios from 'axios'
 import { APIContext } from '../App';
 import { LoginContext } from '../App';
 import CommitSuccessModal from './CommitSuccessModal';
+import ErrorModal from './ErrorModal';
 import Alert from 'react-bootstrap/Alert';
 
 
@@ -24,6 +25,7 @@ function CommitmentScreen(props) {
   const [targetDate, setTargetDate]   = useState(new Date())
   const [currentDate, setCurrentDate]   = useState(new Date())
   const [showCommitSuccess, setShowCommitSuccess] = useState(false)
+  const [showCommitError, setShowCommitError] = useState(false)
   const [showCommitDateFailure, setShowCommitDateFailure] = useState(false)
 
   // const [activeSlideTitle, setActiveSlideTitle] = useState(journeyData[0].title)
@@ -69,6 +71,7 @@ function CommitmentScreen(props) {
         setShowCommitSuccess(true)
       }).catch(err => {
         console.log(err)
+        setShowCommitError(true)
       })
     }
     else {
@@ -99,6 +102,9 @@ function CommitmentScreen(props) {
       <CommitSuccessModal 
       show={showCommitSuccess}
       onHide={() => setShowCommitSuccess(false)} />
+      <ErrorModal 
+      show={showCommitError}
+      onHide={() => setShowCommitError(false)} />
 
       <Modal
         {...props}

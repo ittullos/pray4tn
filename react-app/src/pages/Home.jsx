@@ -15,17 +15,18 @@ import PlanRouteScreen from '../components/PlanRouteScreen'
 import { LoginContext, APIContext } from '../App'
 import { styles } from '../styles/inlineStyles'
 import { useWakeLock } from 'react-screen-wake-lock';
+import NoSleep from 'nosleep.js'
 
 
 const CheckpointInterval = 30000
 
 function Home() {
   // Wake Lock
-  const { isSupported, released, request, release } = useWakeLock({
-    onRequest: () => console.log('Screen Wake Lock: requested!'),
-    onError: () => console.log('An error happened 💥'),
-    onRelease: () => console.log('Screen Wake Lock: released!'),
-  })
+  // const { isSupported, released, request, release } = useWakeLock({
+  //   onRequest: () => console.log('Screen Wake Lock: requested!'),
+  //   onError: () => console.log('An error happened 💥'),
+  //   onRelease: () => console.log('Screen Wake Lock: released!'),
+  // })
 
   // VOTD state
   const [verse, setVerse]            = useState('')
@@ -63,6 +64,10 @@ function Home() {
   const [userId, setUserId] = useContext(LoginContext)
   const [apiEndpoint, setApiEndpoint] = useContext(APIContext)
 
+  // NoSleep
+  var noSleep = new NoSleep();
+  const [noSleepActive, setNoSleepActive] = useState(false)
+
   useEffect(() => {
     console.log("prayerCount: ", prayerCount)
 
@@ -73,6 +78,7 @@ function Home() {
   const handleRouteButton = () => {
     // Set route start
     setRouteStarted(!routeStarted)
+    setNoSleepActive(!noSleepActive)
   }
 
   const updateLocation = () => {
@@ -281,7 +287,9 @@ document.body.style.overflow = "hidden"
                 <Button variant="success" 
                         onClick={() =>  <>
                                           { handleRouteButton() }
-                                          { (released === false ? release() : request()) }
+                                          {/* { (released === false ? release() : request()) } */}
+                                          { noSleepActive ? noSleep.disable() : noSleep.enable() }
+
                                         </>}
                         style={{ backgroundColor: routeStarted ? "#d9534f" : "#02b875" }}
                         className='route-button 

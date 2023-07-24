@@ -2,6 +2,7 @@ import React , { useState, useEffect, useContext } from 'react';
 import AWS from 'aws-sdk'
 import Button from 'react-bootstrap/Button'
 import UploadSuccessModal from './UploadSuccessModal'
+import ErrorModal from './ErrorModal';
 import { APIContext } from '../App';
 import axios from 'axios';
 
@@ -9,6 +10,7 @@ const Uploader = (props) => {
 
     const [selectedFile, setSelectedFile]           = useState(null)
     const [showUploadSuccess, setShowUploadSuccess] = useState(false)
+    const [showUploadError, setShowUploadError]     = useState(false)
     const [apiEndpoint, setApiEndpoint]             = useContext(APIContext)
     const [s3BucketName, setS3BucketName]           = useState("")
     const [region, setRegion]                       = useState("")
@@ -88,7 +90,11 @@ const Uploader = (props) => {
                 setShowUploadSuccess(true)
             })
             .send((err) => {
-                if (err) console.log(err)
+                if (err) {
+                    console.log(err)
+                    setShowUploadError(true)
+                }
+
             })
     }
 
@@ -100,6 +106,9 @@ const Uploader = (props) => {
         <UploadSuccessModal 
             show={showUploadSuccess}
             onHide={() => setShowUploadSuccess(false)} />
+        <ErrorModal
+            show={showUploadError}
+            onHide={() => setShowUploadError(false)} />
 
         <label htmlFor="files" className="drop-container my-4">
             <div className="upload-text"><span className="drop-title">Drop file here</span><br />

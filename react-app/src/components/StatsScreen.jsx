@@ -41,12 +41,6 @@ function StatsScreen(props) {
     })
   }
 
-  // useEffect(() => {
-  //   if (seconds > 0) {
-  //     setIsLoading(false)
-  //   }
-  // }, [seconds])
-
   function roundDecimal(float) {
     return Number.parseFloat(float).toFixed(1)
   }
@@ -98,7 +92,7 @@ function StatsScreen(props) {
           )}
       </Modal.Body>
       <Modal.Footer>
-        <Button styles={styles.navyButton} onClick={props.onHide}>Close</Button>
+        <Button style={styles.navyButton} onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );
