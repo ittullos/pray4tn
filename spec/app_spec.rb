@@ -63,6 +63,7 @@ describe "Pastor4Life API -" do
       it "returns the correct verse" do
         post '/p4l/home', @home_data.to_json, "CONTENT_TYPE" => "application/json"
         expect(last_response.status).to eq(200)
+        # pry.byebug
         expect last_response.body.include?(votd)
       end
     end
@@ -207,7 +208,7 @@ describe "Pastor4Life API -" do
       end
       it "returns users commit date" do
         post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
-        expect(JSON.parse(last_response.body)["commitDate"]).to eq "2023-04-07"
+        expect(JSON.parse(last_response.body)["commitDate"]).to eq Time.now.strftime('%Y-%m-%d')
       end
     end
 

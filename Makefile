@@ -1,3 +1,4 @@
+# DEPLOY=================================================================
 deploy-build-aws:
 	sam build && sam deploy
 
@@ -31,12 +32,14 @@ build-aws:
 build-aws-2:
 	sam build -t template2.yaml
 
+# STACK==================================================================
 list-stacks:
 	aws cloudformation list-stacks
 
 nuke-stack:
 	aws cloudformation delete-stack --stack-name wpt-bap-tn
 
+# REACT==================================================================
 nuke-react:
 	aws s3 rm s3://wpt.bap.tn.react-app --recursive && aws s3 rm s3://wpt.bap.tn.logs --recursive && aws s3 rb s3://wpt.bap.tn.react-app --force && aws s3 rb s3://wpt.bap.tn.logs --force
 
@@ -46,9 +49,11 @@ empty-react:
 run-react:
 	cd react-app && npm start
 
+# SINATRA=================================================================
 run-dev:
 	RACK_ENV=dev rackup
 
+# SEED====================================================================
 seed-dev:
 	RACK_ENV=dev rake db:seed
 
@@ -58,6 +63,7 @@ seed-test:
 seed-prod:
 	RACK_ENV=prod rake db:seed
 
+# MIGRATE=================================================================
 migrate-dev:
 	RACK_ENV=dev rake db:migrate
 
@@ -67,24 +73,29 @@ migrate-test:
 migrate-prod:
 	RACK_ENV=prod rake db:migrate
 
+# TEST=================================================================
 test-app:
-	rspec ./spec/app_spec.rb
+	RACK_ENV=test rspec ./spec/app_spec.rb
 
-test-checkpoint:
-	rspec ./spec/checkpoint_spec.rb
+test-checkpoints:
+	RACK_ENV=test rspec ./spec/checkpoint_spec.rb
 
-test-user:
-	rspec ./spec/user_spec.rb
+test-routes:
+	RACK_ENV=test rspec ./spec/route_spec.rb
 
-test-route:
-	rspec ./spec/route_spec.rb
+# test-stats:
+# 	RACK_ENV=test rspec ./spec/stats_spec.rb
 
-mysql-dev:
-	mysql --user=root -p
+test-user-residents:
+	RACK_ENV=test rspec ./spec/user_resident_spec.rb
 
-mysql-prod:
-	mysql -h wpt-bap-tn-prod.cnklfpyep1np.us-east-1.rds.amazonaws.com -P 3306 -u admin -p
+test-users:
+	RACK_ENV=test rspec ./spec/user_spec.rb
 
+test-verses:
+	RACK_ENV=test rspec ./spec/verse_spec.rb
+
+# MOVE_DB=================================================================
 move-users-1-2:
 	ruby db/move_ddb/1-2/move_users.rb
 
@@ -111,3 +122,38 @@ move-verses-2-1:
 
 move-devotionals-2-1:
 	ruby db/move_ddb/2-1/move_devotionals.rb
+
+# SCAN_DB=================================================================
+scan-checkpoints:
+	aws dynamodb scan --table-name wpt.bap.tn.checkpoint --endpoint-url http://localhost:8000
+
+scan-commitments:
+	aws dynamodb scan --table-name wpt.bap.tn.commitment --endpoint-url http://localhost:8000
+
+scan-devotionals:
+	aws dynamodb scan --table-name wpt.bap.tn.devotional --endpoint-url http://localhost:8000
+
+scan-journeys:
+	aws dynamodb scan --table-name wpt.bap.tn.journey --endpoint-url http://localhost:8000
+
+scan-routes:
+	aws dynamodb scan --table-name wpt.bap.tn.route --endpoint-url http://localhost:8000
+
+scan-user-residents:
+	aws dynamodb scan --table-name wpt.bap.tn.resident --endpoint-url http://localhost:8000
+
+scan-users:
+	aws dynamodb scan --table-name wpt.bap.tn.user --endpoint-url http://localhost:8000
+
+scan-verses:
+	aws dynamodb scan --table-name wpt.bap.tn.verse --endpoint-url http://localhost:8000
+
+# DATABASE=================================================================
+run-local-db:
+	java -Djava.library.path=~/Documents/database/dynamodb_local_latest/DynamoDBLocal_lib -jar ~/Documents/database/dynamodb_local_latest/DynamoDBLocal.jar -sharedDb
+
+list-tables:
+	aws dynamodb list-tables --endpoint-url http://localhost:8000
+
+
+  # aws dynamodb delete-table --table-name UserResident --endpoint-url http://localhost:8000

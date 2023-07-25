@@ -45,7 +45,9 @@ post '/p4l/home' do
   time = Time.new
   day = time.yday % 100
   verse = verses.select {|v| v.day == day}
-
+  
+  verse = verses.select {|v| v.day == 1} if verse.empty?
+  # pry.byebug
   content_type :json
   { 
     verse:    verse && verse.first.scripture,

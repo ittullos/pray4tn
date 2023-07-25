@@ -2,7 +2,7 @@ require './spec/spec_helper'
 
 describe "User model - " do
   let(:valid_user_data) {
-    { email: "validuser", password: "Frank" }
+    { email: "validuser", password: "Frank", commitment_id: 1 }
   }
   before do
     clean_table(User)
