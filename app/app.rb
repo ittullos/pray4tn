@@ -186,8 +186,7 @@ post '/p4l/journeys' do
   Journey.scan.each do |item|
     journey = {}
     journey["title"] = item.title
-    journey["target_miles"] = item.target_miles
-    journey["graphic_url"] = item.graphic_url
+    journey["target_miles"] = item.annual_miles
     journeys_array.push(journey)
   end
   journeys_array.sort_by! { |journey| journey["target_miles"] }

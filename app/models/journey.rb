@@ -6,8 +6,11 @@ class Journey
   set_table_name ENV["JOURNEY_TABLE_NAME"]
 
   string_attr  :title,       hash_key: true       
-  integer_attr :target_miles
-  string_attr  :graphic_url
+  # integer_attr :target_miles
+  # string_attr  :graphic_url
+  integer_attr :annual_miles
+  integer_attr :monthly_miles
+  integer_attr :weekly_miles
 
   def self.new_journey(data)
     journey = new(data)

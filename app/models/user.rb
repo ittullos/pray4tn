@@ -29,7 +29,7 @@ class User
     title = journey.title
     target_date = commit.target_date
     commit_date = commit.commit_date
-    target_miles = journey.target_miles
+    target_miles = journey.annual_miles
 
     Route.scan.each do |route|
       if route.commitment_id == commitment_id
