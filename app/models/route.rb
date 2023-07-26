@@ -16,7 +16,6 @@ class Route
   PRECISION = 1000
 
   def self.new_route(user_id)
-    # pry.byebug
     route = new(started_at: Time.now.to_i, prayer_count: 0, commitment_id: User.find(email: user_id).commitment_id)
     route.save!
     route

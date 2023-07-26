@@ -63,7 +63,6 @@ describe "Pastor4Life API -" do
       it "returns the correct verse" do
         post '/p4l/home', @home_data.to_json, "CONTENT_TYPE" => "application/json"
         expect(last_response.status).to eq(200)
-        # pry.byebug
         expect last_response.body.include?(votd)
       end
     end
@@ -214,14 +213,12 @@ describe "Pastor4Life API -" do
 
     context "Add Mileage -" do
       before do 
-        # route1 = Route.new_test_route(20, 5, 0)
         checkpoint = Checkpoint.new_checkpoint(start_checkpoint_2["checkpointData"])
         @route1 = Route.find(id: checkpoint.route_id)
         sleep 1
         Checkpoint.new_checkpoint(stop_checkpoint["checkpointData"])
         @route1.mileage = 0
         @route1.save
-        # pry.byebug
       end
       it "adds mileage" do
         post '/p4l/add_mileage', add_mileage_data.to_json, "CONTENT_TYPE" => "application/json"

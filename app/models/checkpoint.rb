@@ -60,7 +60,6 @@ class Checkpoint
         return current_route(checkpoint_data["user_id"])
         puts "Checkpoint:is_valid?:Invalid Checkpoint: trailing heartbeats"
       elsif checkpoint_data["type"] == "prayer"
-        # pry.byebug
         return checkpoint_data["match_key"] != ""
         puts "Checkpoint:is_valid?:Invalid Checkpoint: no resident match key given"
       else
@@ -83,7 +82,6 @@ class Checkpoint
         data["recorded_at"] = Time.now.to_i
         puts "TIME!!!: #{Time.now.to_i}"
         checkpoint = new(data)
-        # pry.byebug
         checkpoint.save
         checkpoint
       else
@@ -142,11 +140,6 @@ class Checkpoint
           ":s" => 0
         }
       )
-
-      # query = query(
-      #   key_condition_expression: "user_id = :id",
-      #   expression_attribute_values: { ":id" => user_id })
-
       query.to_a.last
     end
 
@@ -214,7 +207,6 @@ class Checkpoint
   end
 
   def save
-    # pry.byebug
     self.route_id = set_route_id unless persisted?
     super
     Route.finalize(user_id, route_id) if type == "stop"

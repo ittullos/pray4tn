@@ -3,7 +3,6 @@ require 'sinatra'
 require "sinatra/cors"
 # require "./spec/dinodb"
 
-
 set :allow_origin, "*"
 set :allow_methods, "GET,POST,DELETE,PATCH,OPTIONS"
 set :allow_headers, "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since"
@@ -47,7 +46,6 @@ post '/p4l/home' do
   verse = verses.select {|v| v.day == day}
   
   verse = verses.select {|v| v.day == 1} if verse.empty?
-  # pry.byebug
   content_type :json
   { 
     verse:    verse && verse.first.scripture,
@@ -178,7 +176,6 @@ get '/p4l/devotionals' do
 end
 
 post '/p4l/journeys' do
-  # pry.byebug
   user_id = JSON.parse(request.body.read)["userId"]
   if user_id.include? '"'
     user_id.delete! '\"'
@@ -198,7 +195,6 @@ post '/p4l/journeys' do
   if user.commitment_id != 0 
     commitment = "true"
   end
-  # pry.byebug
 
   content_type :json
   {
@@ -253,8 +249,6 @@ post '/p4l/add_mileage' do
   user = User.find(email: mileage_data["userId"])
   mileage = mileage_data["mileage"]
   route = Route.find(id: Checkpoint.last_checkpoint(user.email).route_id)
-  # pry.byebug
   route.mileage += (mileage * 1000)
   route.save
-  # pry.byebug
 end

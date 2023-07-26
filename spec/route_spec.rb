@@ -62,7 +62,6 @@ describe Route do
     end
 
     it "saves correct commitment_id" do
-      # pry.byebug
       expect(Route.find(id: @checkpoint.route_id).commitment_id).to eq 1
     end
   end
