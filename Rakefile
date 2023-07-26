@@ -126,14 +126,64 @@ namespace :db do
   task :seed_journeys do
     clean_table(Journey)
     Journey.new_journey(
-      title: "I-65 from Franklin to Nashville",
-      target_miles: 21500,
-      graphic_url: "https://s3.amazonaws.com/wpt.bap.tn.journey-images/franklin_nashville.png"
+      title: "I-65 Corridor",
+      annual_miles: 120000,
+      monthly_miles: 10000,
+      weekly_miles: 2500
     )
     Journey.new_journey(
-      title: "I-40 accross the entire state",
-      target_miles: 455280,
-      graphic_url: "https://s3.amazonaws.com/wpt.bap.tn.journey-images/I40_across_tn.png"
+      title: "I-75 Corridor",
+      annual_miles: 160000,
+      monthly_miles: 13000,
+      weekly_miles: 3000
+    )
+    Journey.new_journey(
+      title: "I-24 Corridor",
+      annual_miles: 185000,
+      monthly_miles: 15000,
+      weekly_miles: 3500
+    )
+    Journey.new_journey(
+      title: "I-65 Corridor, Roundtrip",
+      annual_miles: 240000,
+      monthly_miles: 20000,
+      weekly_miles: 5000
+    )
+    Journey.new_journey(
+      title: "I-24 Corridor, Roundtrip",
+      annual_miles: 360000,
+      monthly_miles: 30000,
+      weekly_miles: 7500
+    )
+    Journey.new_journey(
+      title: "I-40 Corridor",
+      annual_miles: 455000,
+      monthly_miles: 38000,
+      weekly_miles: 9000
+    )
+    Journey.new_journey(
+      title: "Memphis to Mountain City",
+      annual_miles: 520000,
+      monthly_miles: 43000,
+      weekly_miles: 10000
+    )
+    Journey.new_journey(
+      title: "Crisscross Tennessee",
+      annual_miles: 1040000,
+      monthly_miles: 85000,
+      weekly_miles: 20000
+    )
+    Journey.new_journey(
+      title: "Tennessee State Lines (perimeter of the state)",
+      annual_miles: 1300000,
+      monthly_miles: 108000,
+      weekly_miles: 25000
+    )
+    Journey.new_journey(
+      title: "Courthouses of Tennessee (zigzag across the state)",
+      annual_miles: 2400000,
+      monthly_miles: 200000,
+      weekly_miles: 48000
     )
   end
 
