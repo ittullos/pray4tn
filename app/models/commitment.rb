@@ -15,6 +15,7 @@ class Commitment
     time = Time.new
     data["commitment_id"] = next_commit_id
     data["commit_date"]   = "#{time.year}-#{time.strftime("%m")}-#{time.strftime("%d")}"
+    data["target_date"]   = "#{time.year + 1}-#{time.strftime("%m")}-#{time.strftime("%d")}"
     commitment = new(data)
     commitment.save!
     commitment

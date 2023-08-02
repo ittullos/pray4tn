@@ -2,7 +2,7 @@ require './spec/spec_helper'
 
 describe "User model - " do
   let(:valid_user_data) {
-    { email: "validuser", password: "Frank", commitment_id: 1 }
+    { email: "valid@user.com", password: "Frank", commitment_id: 0 }
   }
   before do
     clean_table(User)
@@ -18,7 +18,7 @@ describe "User model - " do
   context "Password Reset -" do
     it "resets the password" do
       User.new(valid_user_data).save
-      user = User.find({email: "validuser"})
+      user = User.find({email: "valid@user.com"})
       user.reset_password("new_password")
       expect(user.password).to eq("new_password")
     end
@@ -35,7 +35,7 @@ describe "User model - " do
     context "When the user exists -" do
       it "return the correct user" do
         User.new(valid_user_data).save
-        user = User.find({email: "validuser"})
+        user = User.find({email: "valid@user.com"})
         expect(user.password).to eq("Frank")
       end
     end

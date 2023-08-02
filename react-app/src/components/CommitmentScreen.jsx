@@ -26,6 +26,7 @@ function CommitmentScreen(props) {
   const [showCommitSuccess, setShowCommitSuccess] = useState(false)
   const [showCommitError, setShowCommitError] = useState(false)
   const [showCommitDateFailure, setShowCommitDateFailure] = useState(false)
+  const [selectedJourney, setSelectedJourney] = useState(null)
 
   const jumpToDescription = useRef(null)
   const jumpToTop         = useRef(null)
@@ -106,6 +107,34 @@ function CommitmentScreen(props) {
   const handleJumpToTop = () => {
     jumpToTop.current?.scrollIntoView({ behavior: 'smooth' })
   }
+
+  const handleJourneySelect = e => {
+    e.persist()
+    console.log("JourneySelect: ", e.target.value)
+    setSelectedJourney(e.target.value)
+  }
+
+  const handleCommitSubmit = (selectedJourney, userId) => {
+    // console.log(selectedJourney, userId)
+    if (selectedJourney) {
+      let commitData = {
+        user_id: userId,
+        journey_id: selectedJourney
+      }
+      axios.post(`${apiEndpoint}/commitment`, { commitData 
+      }).then(res => {
+        console.log("sendCommit response: ", res)
+        setShowCommitSuccess(true)
+      }).catch(err => {
+        console.log(err)
+        setShowCommitError(true)
+      })
+    }
+    else {
+      alert("Please select a Journey")
+    }
+
+  }
   
   return (
     <>
@@ -146,39 +175,49 @@ function CommitmentScreen(props) {
           { isLoading ? (
             <LoadingComponent /> 
             ) : (
-              <Form className='d-flex justify-content-center'>
-                <span>
-                {journeyData.map((item) => (
-                <div className='my-4' key={item.title}>
-                  <Form.Check
-                    label={item.title}
-                    name="group1"
-                    type='radio'
-                    id={`reverse-radio-2`}
-                    key={item.title}
-                    className="radio-box"
-                  />
-                  <div className='d-flex align-items-start annual-miles'>
-                    - {item.annual_miles/1000} miles
-                  </div>
-                  <div className='d-flex align-items-start monthly-miles'>
-                    - {item.monthly_miles/1000} mi/month
-                  </div>
-                  <div className='d-flex align-items-start weekly-miles'>
-                    - {item.weekly_miles/1000} mi/week
-                  </div>
-                </div>
-                ))}
-                <div>*some mileage rounded for ease of measurement</div>
-                </span>
-              </Form>
+              <>
+                <Form 
+                  className='d-flex justify-content-center'>
+                  <span>
+                    <Form.Group controlId='selectedJourney'>
+                      {journeyData.map((item) => (
+                        <div className='my-4' key={item.title}>
+                          <Form.Check
+                            label={item.title}
+                            value={item.title}
+                            name="group1"
+                            type='radio'
+                            // id={`reverse-radio-2`}
+                            key={item.title}
+                            className="radio-box"
+                            onChange={handleJourneySelect}
+                            // checked={selectedJourney === item.title}
+                          />
+                          <div className='d-flex align-items-start annual-miles'>
+                            - {item.annual_miles/1000} miles
+                          </div>
+                          <div className='d-flex align-items-start monthly-miles'>
+                            - {item.monthly_miles/1000} mi/month
+                          </div>
+                          <div className='d-flex align-items-start weekly-miles'>
+                            - {item.weekly_miles/1000} mi/week
+                          </div>
+                        </div>
+                      ))}
+                    </Form.Group>
+                    <div>*some mileage rounded for ease of measurement</div>
+                  </span>
+                </Form>
+                <Button 
+                  className='mt-4 mb-4 commit-button'
+                  // type='submit'
+                  onClick={() => handleCommitSubmit(selectedJourney, userId.replace(/['"]+/g, ''))}
+                  style={styles.navyButton}>
+                    Commit
+                </Button>
+              </>
             )}
-          <Button 
-            className='mt-4 mb-4 commit-button' 
-            onClick={() => sendCommit(targetDate, currentDate, journeyData[activeSlide].title, userId.replace(/['"]+/g, ''))} 
-            style={styles.navyButton}>
-              Commit
-          </Button>
+
           <div className="commit-description" ref={jumpToDescription}>
             <Button className='mt-3 mb-2' onClick={handleJumpToTop}>Back to Top</Button>
             <h3 className='my-4'>How it Works</h3>

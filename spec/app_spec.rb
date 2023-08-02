@@ -17,7 +17,7 @@ describe "Pastor4Life API -" do
                                                    "user_id" => user.email }}}
 
   let(:journey_data) {{ "userId" => user.email }}
-  let(:commitment_data) {{ "commitmentData" => { "user_id" => user.email ,
+  let(:commitment_data) {{ "commitData" => { "user_id" => user.email ,
                                                  "journey_id" => "I-65 from Franklin to Nashville",
                                                  "target_date" => "2023-12-31" }}}
   let(:stats_data) {{ "userId" => user.email }}
@@ -206,7 +206,7 @@ describe "Pastor4Life API -" do
       end
       it "returns users target date" do
         post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
-        expect(JSON.parse(last_response.body)["targetDate"]).to eq "2023-12-31"
+        expect(JSON.parse(last_response.body)["targetDate"]).to eq "#{Time.now.year + 1}-#{sprintf('%02i', Time.now.month)}-#{sprintf('%02i', Time.now.day)}"
       end
       it "returns users commit date" do
         post '/p4l/stats', stats_data.to_json, "CONTENT_TYPE" => "application/json"
@@ -216,6 +216,7 @@ describe "Pastor4Life API -" do
 
     context "Add Mileage -" do
       before do 
+        sleep 1
         checkpoint = Checkpoint.new_checkpoint(start_checkpoint_2["checkpointData"])
         @route1 = Route.find(id: checkpoint.route_id)
         sleep 1
@@ -224,7 +225,9 @@ describe "Pastor4Life API -" do
         @route1.save
       end
       it "adds mileage" do
+        sleep 1
         post '/p4l/add_mileage', add_mileage_data.to_json, "CONTENT_TYPE" => "application/json"
+        sleep 1
         @route1 = Route.find(id: Checkpoint.last_checkpoint(user.email).route_id)
         expect(@route1.mileage).to be 3000
       end

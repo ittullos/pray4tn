@@ -115,7 +115,7 @@ post '/p4l/signup' do
   elsif password != confirm_password
     response_status = "Passwords do not match"
   else
-    User.new_user(email: email, password: password)
+    User.new_user(email: email, password: password, commitment_id: 0)
     response_status = "success"
   end
 
@@ -205,11 +205,17 @@ post '/p4l/journeys' do
 end
 
 post '/p4l/commitment' do
-  commitment_data = JSON.parse(request.body.read)["commitmentData"]
+  commitment_data = JSON.parse(request.body.read)["commitData"]
   user = User.find(email: commitment_data["user_id"])
-  new_commit = Commitment.new_commitment(commitment_data)
-  user.commitment_id = new_commit.commitment_id
-  user.save!
+  if user.commitment_id == 0
+    new_commit = Commitment.new_commitment(commitment_data)
+    user.commitment_id = new_commit.commitment_id
+    user.save!
+  else
+    current_commit = Commitment.find(commitment_id: user.commitment_id)
+    current_commit.journey_id = commitment_data["journey_id"]
+    current_commit.save!
+  end
 end
 
 post '/p4l/stats' do

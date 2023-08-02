@@ -62,7 +62,7 @@ describe Route do
     end
 
     it "saves correct commitment_id" do
-      expect(Route.find(id: @checkpoint.route_id).commitment_id).to eq 1
+      expect(Route.find(id: @checkpoint.route_id).commitment_id).to eq 0
     end
   end
 end
