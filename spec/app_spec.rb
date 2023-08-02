@@ -152,6 +152,7 @@ describe "Pastor4Life API -" do
         post '/p4l/journeys', journey_data.to_json, "CONTENT_TYPE" => "application/json"
         expect(JSON.parse(last_response.body)).not_to be_empty
         expect last_response.body.include?("Franklin to Nashville")
+        # pry.byebug
         expect(JSON.parse(last_response.body)["commitment"]).to eq "true"
       end
     end

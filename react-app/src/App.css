@@ -620,3 +620,31 @@ input[type=file]::file-selector-button:hover {
 /* .stationary-form {
   max-width: 300px;
 } */
+
+/* Radios */
+div.radio-box.form-check {
+  text-align: left;
+  max-width: 300px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.annual-miles {
+  font-weight: bold;
+  padding-left: 30px;
+}
+
+.monthly-miles {
+  font-weight: 500;
+  padding-left: 50px;
+}
+
+.weekly-miles {
+  font-weight: 500;
+  padding-left: 50px;
+}
+
+.commit-description-text {
+  font-size: large;
+  font-weight: 500;
+}

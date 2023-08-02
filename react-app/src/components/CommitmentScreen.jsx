@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { styles } from '../styles/inlineStyles'
 import Carousel from 'react-bootstrap/Carousel'
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import Calendar from './Calendar';
 import LoadingComponent from './LoadingComponent';
 import axios from 'axios'
@@ -11,8 +11,7 @@ import { LoginContext } from '../App';
 import CommitSuccessModal from './CommitSuccessModal';
 import ErrorModal from './ErrorModal';
 import Alert from 'react-bootstrap/Alert';
-
-
+import Form from 'react-bootstrap/Form';
 
 function CommitmentScreen(props) {
   
@@ -27,6 +26,9 @@ function CommitmentScreen(props) {
   const [showCommitSuccess, setShowCommitSuccess] = useState(false)
   const [showCommitError, setShowCommitError] = useState(false)
   const [showCommitDateFailure, setShowCommitDateFailure] = useState(false)
+
+  const jumpToDescription = useRef(null)
+  const jumpToTop         = useRef(null)
 
   // const [activeSlideTitle, setActiveSlideTitle] = useState(journeyData[0].title)
 
@@ -96,6 +98,14 @@ function CommitmentScreen(props) {
   useEffect(() => {
     console.log("targetDate: ", targetDate)
   }, [targetDate])
+
+  const handleJumpToDescription = () => {
+    jumpToDescription.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const handleJumpToTop = () => {
+    jumpToTop.current?.scrollIntoView({ behavior: 'smooth' })
+  }
   
   return (
     <>
@@ -130,37 +140,77 @@ function CommitmentScreen(props) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <h6 ref={jumpToTop}>Annual Commitment, Walk/Run/Cycle*</h6>
+          <Button className='mt-3 mb-2' onClick={handleJumpToDescription}>How does this work?</Button>
+          <h4 className='mt-3'>Select a Journey:</h4>
           { isLoading ? (
             <LoadingComponent /> 
             ) : (
-            <Carousel onSlide={setActiveSlide}>
-              {journeyData.map((item) => (   
-                <Carousel.Item interval={600000} key={item.title}>
-                  <img
-                    className="d-block w-100"
-                    src={item.graphic_url}
-                    alt=""
-                    key={item.graphic_url}
+              <Form className='d-flex justify-content-center'>
+                <span>
+                {journeyData.map((item) => (
+                <div className='my-4' key={item.title}>
+                  <Form.Check
+                    label={item.title}
+                    name="group1"
+                    type='radio'
+                    id={`reverse-radio-2`}
+                    key={item.title}
+                    className="radio-box"
                   />
-                  <div className="carousel-spacer"></div>
-                  <h3>{item.title}</h3> 
-                  <h4 className='mt-3'>Distance: {item.target_miles/1000} miles</h4>
-                  
-                </Carousel.Item>
-              ))}
-            </Carousel>
-          )}
-          <h6 className='mt-4'>Target Completion Date: </h6>
-          <Calendar setTargetDate={setTargetDate} targetDate={targetDate} />
-          <div className="alert-container">
-            <Alert variant="danger" show={showCommitDateFailure} className="date-alert">
-              Please choose a valid completion date
-            </Alert>
-          </div>
+                  <div className='d-flex align-items-start annual-miles'>
+                    - {item.annual_miles/1000} miles
+                  </div>
+                  <div className='d-flex align-items-start monthly-miles'>
+                    - {item.monthly_miles/1000} mi/month
+                  </div>
+                  <div className='d-flex align-items-start weekly-miles'>
+                    - {item.weekly_miles/1000} mi/week
+                  </div>
+                </div>
+                ))}
+                <div>*some mileage rounded for ease of measurement</div>
+                </span>
+              </Form>
+            )}
           <Button 
             className='mt-4 mb-4 commit-button' 
             onClick={() => sendCommit(targetDate, currentDate, journeyData[activeSlide].title, userId.replace(/['"]+/g, ''))} 
-            style={styles.navyButton}>Commit</Button>
+            style={styles.navyButton}>
+              Commit
+          </Button>
+          <div className="commit-description" ref={jumpToDescription}>
+            <Button className='mt-3 mb-2' onClick={handleJumpToTop}>Back to Top</Button>
+            <h3 className='my-4'>How it Works</h3>
+            <div className="commit-description-text mx-4">
+              <div className='my-4'>
+                - Pastor4Life is a spiritual wellness app that keeps track of
+                walking / running / cycling distances and uses TN landmarks 
+                to benchmark success
+              </div>
+              <div className='my-4'>
+                - Creating a new commitment is essentially setting a personal
+                goal. All commitments run on an annual cycle, meaning the 
+                goal must be completed within a year of the commit date.
+              </div>
+              <div className='my-4'>
+                - To make a new commitment select a journey from the list at
+                the top of this page and press the commit button.
+              </div>
+              <div className='my-4'>
+                - To log mileage go back to the home screen and press the 
+                "Start Route" button. Distance is automatically recorded 
+                while in a route. Don't forget to use the Prayer Screen
+                to pray for people in your area!
+              </div>
+              <div className='my-4'>
+                - To see your commitment progress go to the "My Stats"
+                screen using the hamburger menu. Here you can see the
+                mileage logged against your commitment as well as how
+                much time you have left to complete your commitment.
+              </div>
+            </div>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button style={styles.navyButton} onClick={props.onHide}>Close</Button>

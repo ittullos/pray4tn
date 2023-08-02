@@ -186,10 +186,12 @@ post '/p4l/journeys' do
   Journey.scan.each do |item|
     journey = {}
     journey["title"] = item.title
-    journey["target_miles"] = item.annual_miles
+    journey["annual_miles"] = item.annual_miles
+    journey["monthly_miles"] = item.monthly_miles
+    journey["weekly_miles"] = item.weekly_miles
     journeys_array.push(journey)
   end
-  journeys_array.sort_by! { |journey| journey["target_miles"] }
+  journeys_array.sort_by! { |journey| journey["annual_miles"] }
   commitment = "false"
   if user.commitment_id != 0 
     commitment = "true"
