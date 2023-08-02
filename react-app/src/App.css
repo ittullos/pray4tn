@@ -648,3 +648,7 @@ div.radio-box.form-check {
   font-size: large;
   font-weight: 500;
 }
+
+.check-box {
+  margin-right: 35px;
+}

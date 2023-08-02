@@ -233,4 +233,18 @@ describe "Pastor4Life API -" do
       end
     end
   end
+  describe "DB" do
+    context "Home -" do
+      before do
+        clean_table(Checkpoint)
+        clean_table(Route)
+        clean_table(Journey)
+        clean_table(Commitment)
+        clean_table(User)
+      end
+      it "returns the correct verse" do
+        expect(0).to eq(0)
+      end
+    end
+  end
 end

@@ -54,15 +54,22 @@ run-dev:
 	RACK_ENV=dev rackup
 
 # SEED====================================================================
-seed-dev:
-	RACK_ENV=dev rake db:seed
-
-seed-test:
-	RACK_ENV=test rake db:seed
-
+# prod----------------------------
 seed-prod:
 	RACK_ENV=prod rake db:seed
 
+# dev/test------------------------
+seed-dev:
+	RACK_ENV=dev rake db:seed
+
+seed-users:
+	RACK_ENV=dev rake db:seed_users
+
+seed-journeys:
+	RACK_ENV=dev rake db:seed_journeys
+
+seed-test:
+	RACK_ENV=test rake db:seed
 
 # MIGRATE=================================================================
 migrate-dev:
