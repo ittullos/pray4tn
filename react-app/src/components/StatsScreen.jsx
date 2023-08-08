@@ -90,7 +90,15 @@ function StatsScreen(props) {
         </div>
           { (isLoading) ? <LoadingComponent/> : 
               (statSwitch) ? (
-                <h2>All-Time Stats</h2>
+                <>
+                  <h3 className='my-4'>Mileage:</h3>
+                  <hr/>
+                  <h3 className='my-4'>Prayers:</h3>
+                  <hr/>
+                  <h3 className='my-4'>Route Time:</h3>
+                  <hr/>
+                  <h3 className='my-4'>My Accomplishments:</h3>
+                </>
               ) : 
 
                 (journeyTitle === "No commitment") ? (
@@ -100,16 +108,16 @@ function StatsScreen(props) {
                   </>
                 ) : (
                 <>
-                  <h6 className='mt-4'>Commitment:</h6>
+                  <h6 className='mt-4'>My Commitment:</h6>
                   <h5>{journeyTitle}</h5>
-                  <hr />
-                  <h6 className='my-4'>Target Completion Date:</h6>
-                  <h5 className='mt-1'>{targetDate.substring(0, 10)}</h5>
                   <hr />
                   <h6 className='my-4'>Mileage: &nbsp;{roundDecimal(progressMiles/1000)} / {(targetMiles/1000)}</h6>
                   <ProgressBar animated now={(progressMiles/targetMiles)*100} />
                   <hr />
                   <h6 className='mt-4'>Prayers: &nbsp;{prayerCount}</h6>
+                  <hr />
+                  <h6 className='my-4'>Commitment End Date:</h6>
+                  <h5 className='mt-1'>{targetDate.substring(0, 10)}</h5>     
                 </>
           )}
       </Modal.Body>

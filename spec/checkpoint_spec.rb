@@ -178,4 +178,28 @@ describe Checkpoint do
       end
     end
   end
+
+  describe 'user_checkpoints -' do
+    before do
+      clean_table(User)
+      clean_table(Checkpoint)
+      clean_table(Route)
+      clean_table(UserResident)
+    end
+    context "when there are checkpoints" do
+      it "returns the correct number of checkpoints" do
+        Checkpoint.new_checkpoint(start_checkpoint_data)
+        sleep 1
+        Checkpoint.new_checkpoint(heartbeat_checkpoint_data)
+        sleep 1
+        Checkpoint.new_checkpoint(heartbeat_checkpoint_data)
+        sleep 1
+        Checkpoint.new_checkpoint(heartbeat_checkpoint_data)
+        sleep 1
+        Checkpoint.new_checkpoint(start_checkpoint_data)
+        expect(Checkpoint.user_checkpoints(user.email).count).to eq 5
+      end
+    end
+    
+  end
 end

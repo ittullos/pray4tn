@@ -176,11 +176,26 @@ class Checkpoint
         }
       )
     end
+
+    def user_checkpoints(user_id)
+      query = Checkpoint.query(
+        key_condition_expression: "#U = :u AND #R > :r",
+        # filter_expression: "#R = :r",
+        expression_attribute_names: {
+          "#U" => "user_id",
+          "#R" => "recorded_at"
+        },
+        expression_attribute_values: {
+          ":u" => user_id,
+          ":r" => 0
+        }
+      )
+    end
   end #END OF CLASS METHODS
 
   def distance(checkpoint = nil)
     previous_checkpoint = checkpoint || Checkpoint.previous_checkpoint(self).to_a.last
-    if (lat != "0" && long != "0" && previous_checkpoint.lat != "0" && previous_checkpoint.long != "0")
+    if (previous_checkpoint && lat != "0" && long != "0" && previous_checkpoint.lat != "0" && previous_checkpoint.long != "0")
       delta_x = ((self.long.to_f - previous_checkpoint.long.to_f) * 55)
       delta_y = ((self.lat.to_f - previous_checkpoint.lat.to_f) * 69)
       Math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
