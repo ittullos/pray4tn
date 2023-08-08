@@ -16,14 +16,32 @@ function StatsScreen(props) {
   const [currentDate, setCurrentDate] = useState(new Date())
 
   const [journeyTitle, setJourneyTitle]   = useState()
-  const [commitDate, setCommitDate]       = useState("")
   const [targetDate, setTargetDate]       = useState("")
   const [progressMiles, setProgressMiles] = useState(0)
   const [targetMiles, setTargetMiles]     = useState(0)
   const [prayerCount, setPrayerCount]     = useState(0)
   const [seconds, setSeconds]             = useState(0)
+  const [allTimeMiles, setAllTimeMiles] = useState(0)
+  const [allTimeDuration, setAllTimeDuration] = useState(0)
+  const [allTimePrayers, setAllTimePrayers] = useState(0)
+
+  const [allTimeSeconds, setAllTimeSeconds] = useState(0)
+  const [allTimeMinutes, setAllTimeMinutes] = useState(0)
+  const [allTimeHours, setAllTimeHours] = useState(0)
+
 
   const [statSwitch, setStatSwitch] = useState(false)
+
+  useEffect(() => {
+    formatDuration(allTimeDuration)
+  }, [allTimeDuration])
+  
+
+  const formatDuration = (time) => {
+    setAllTimeHours(Math.floor(time / 3600))
+    setAllTimeMinutes(Math.floor(time % 3600 / 60))
+    setAllTimeSeconds(Math.floor(time % 3600 % 60))
+  }
 
 
   const handleModalOpen = () => {
@@ -31,12 +49,15 @@ function StatsScreen(props) {
     }).then(res => {
       console.log("fetchStats: ", res.data)
       setJourneyTitle(res.data.title)
-      setCommitDate(res.data.commitDate)
       setTargetDate(res.data.targetDate)
       setProgressMiles(res.data.progressMiles)
       setTargetMiles(res.data.targetMiles)
       setPrayerCount(res.data.prayers)
       setSeconds(res.data.seconds)
+      setAllTimeMiles(res.data.allTimeMiles)
+      setAllTimeDuration(res.data.allTimeDuration)
+      setAllTimePrayers(res.data.allTimePrayers)
+      // formatDuration(allTimeDuration)
       setIsLoading(false)
     }).catch(err => {
       console.log(err)
@@ -92,12 +113,19 @@ function StatsScreen(props) {
               (statSwitch) ? (
                 <>
                   <h3 className='my-4'>Mileage:</h3>
+                  <h3 className="my-3">{roundDecimal(allTimeMiles)}</h3>
                   <hr/>
                   <h3 className='my-4'>Prayers:</h3>
+                  <h3 className="my-3">{allTimePrayers}</h3>
                   <hr/>
                   <h3 className='my-4'>Route Time:</h3>
+                  {(allTimeDuration >= 3600) ? (<h3 className="my-3">{allTimeHours}:{(allTimeMinutes < 10) ? 0 : null}{allTimeMinutes}:{(allTimeSeconds < 10) ? 0 : null}{allTimeSeconds}</h3>) :
+                  (allTimeDuration < 60) ? (<h3 className="my-3">0:{(allTimeSeconds < 10) ? 0 : null}{allTimeSeconds}</h3>) :
+                  (<h3 className="my-3">{allTimeMinutes}:{(allTimeSeconds < 10) ? 0 : null}{allTimeSeconds}</h3>)}
+                  
                   <hr/>
                   <h3 className='my-4'>My Accomplishments:</h3>
+                  
                 </>
               ) : 
 

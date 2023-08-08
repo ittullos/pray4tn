@@ -241,7 +241,10 @@ post '/p4l/stats' do
       prayers: stats[:prayers],
       seconds: stats[:seconds],
       targetDate: stats[:target_date],
-      commitDate: stats[:commit_date]
+      commitDate: stats[:commit_date],
+      allTimeMiles: stats[:all_time_miles],
+      allTimeDuration: stats[:all_time_duration],
+      allTimePrayers: stats[:all_time_prayers]
     }.to_json
   end
 end
