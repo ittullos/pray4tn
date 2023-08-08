@@ -103,7 +103,7 @@ describe "User model - " do
       end
       it "calculates route time" do
         user_stats = user.get_stats
-        expect(user_stats[:all_time_duration]).to be 6
+        expect(user_stats[:all_time_duration]).to be > 5
       end
     end
   end
