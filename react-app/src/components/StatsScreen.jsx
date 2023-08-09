@@ -73,6 +73,10 @@ function StatsScreen(props) {
     })
   }
 
+  const handleModalClose = () => {
+    setStatSwitch(false)
+  }
+
   function roundDecimal(float) {
     return Number.parseFloat(float).toFixed(1)
   }
@@ -89,6 +93,7 @@ function StatsScreen(props) {
       centered
       className='text-center'
       onEntered={handleModalOpen}
+      onExited={handleModalClose}
     >
       <Modal.Header 
         closeButton 

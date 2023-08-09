@@ -11,6 +11,7 @@ import CommitmentScreen from '../components/CommitmentScreen'
 import RouteStopScreen from '../components/RouteStopScreen'
 import Loading from '../components/Loading'
 import LocationWarning from '../components/LocationWarning'
+import LockWarning from '../components/LockWarning'
 import PlanRouteScreen from '../components/PlanRouteScreen'
 import { LoginContext, APIContext } from '../App'
 import { styles } from '../styles/inlineStyles'
@@ -40,7 +41,9 @@ function Home() {
   const [showCommitmentScreen, setShowCommitmentScreen]     = useState(false)
   const [showRouteStopScreen, setShowRouteStopScreen]       = useState(false)
   const [showLocationWarning, setShowLocationWarning]       = useState(false)
+  const [showLockWarning, setShowLockWarning]               = useState(false)
   const [disableLocationWarning, setDisableLocationWarning] = useState(false)
+  const [disableLockWarning, setDisableLockWarning]         = useState(false)
   const [showPlanRouteScreen, setShowPlanRouteScreen]       = useState(false)
 
   // Route state
@@ -132,11 +135,11 @@ function Home() {
         navigator.geolocation.getCurrentPosition(function(position) {
           setLocationEnabled(true)
         }, function(error) {
-          alert('This page needs location services enabled to be fully functional')
+          // alert('This page needs location services enabled to be fully functional')
           setLocationEnabled(false)
         })
       } else {
-        alert('This page needs location services enabled to be fully functional')
+        // alert('This page needs location services enabled to be fully functional')
         setLocationEnabled(false)
       }
     }
@@ -157,12 +160,16 @@ function Home() {
     // Change route button text
     setRouteButtonText(routeStarted ? "Stop" : "Start")
     if (routeStarted) {
-      if (!locationEnabled) {
-        if (localStorage.getItem('disableLocationWarning') === "true") {
-          setDisableLocationWarning(true)
-        }
-        setShowLocationWarning(true)
+      // if (!locationEnabled) {
+      //   if (localStorage.getItem('disableLocationWarning') === "true") {
+      //     setDisableLocationWarning(true)
+      //   }
+      //   setShowLocationWarning(true)
+      // }
+      if (localStorage.getItem('disableLockWarning') === "true") {
+        setDisableLockWarning(true)
       }
+      setShowLockWarning(true)
       // Update start location
       setRouteType("start")
       delay(CheckpointInterval).then(() => setRouteType("heartbeat"))
@@ -216,6 +223,16 @@ function Home() {
     }
   }, [verse, locationEnabled])
 
+  useEffect(() => {
+    if (!locationEnabled && !isLoading) {
+      if (localStorage.getItem('disableLocationWarning') === "true") {
+        setDisableLocationWarning(true)
+      }
+      setShowLocationWarning(true)
+    }
+  }, [isLoading])
+  
+
   // disable scroll on document body
 document.body.style.overflow = "hidden"
 
@@ -248,6 +265,9 @@ document.body.style.overflow = "hidden"
       <LocationWarning 
         show={showLocationWarning && !disableLocationWarning}
         onHide={() => setShowLocationWarning(false)} />
+      <LockWarning 
+        show={showLockWarning && !disableLockWarning}
+        onHide={() => setShowLockWarning(false)} />
       <PlanRouteScreen 
         show={showPlanRouteScreen}
         onHide={() => setShowPlanRouteScreen(false)}
