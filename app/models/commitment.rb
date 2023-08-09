@@ -5,7 +5,7 @@ class Commitment
   include Aws::Record
   set_table_name ENV["COMMITMENT_TABLE_NAME"]
 
-  integer_attr  :commitment_id, hash_key: true
+  integer_attr  :commitment_id, hash_key:  true
   string_attr   :user_id
   string_attr   :journey_id
   string_attr   :commit_date

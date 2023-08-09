@@ -652,3 +652,13 @@ div.radio-box.form-check {
 .check-box {
   margin-right: 35px;
 }
+
+.achievement {
+  font-weight: medium;
+  font-size: large;
+}
+
+.atta-boy {
+  font-size: 20px;
+  font-weight: 400;
+}

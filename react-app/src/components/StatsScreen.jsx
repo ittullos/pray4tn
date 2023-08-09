@@ -28,6 +28,8 @@ function StatsScreen(props) {
   const [allTimeSeconds, setAllTimeSeconds] = useState(0)
   const [allTimeMinutes, setAllTimeMinutes] = useState(0)
   const [allTimeHours, setAllTimeHours] = useState(0)
+  const [achievements, setAchievements] = useState()
+  const [commitAchievement, setCommitAchievement] = useState()
 
 
   const [statSwitch, setStatSwitch] = useState(false)
@@ -35,6 +37,11 @@ function StatsScreen(props) {
   useEffect(() => {
     formatDuration(allTimeDuration)
   }, [allTimeDuration])
+
+  useEffect(() => {
+    console.log("achievements: ", achievements)
+  }, [achievements])
+  
   
 
   const formatDuration = (time) => {
@@ -57,6 +64,8 @@ function StatsScreen(props) {
       setAllTimeMiles(res.data.allTimeMiles)
       setAllTimeDuration(res.data.allTimeDuration)
       setAllTimePrayers(res.data.allTimePrayers)
+      setAchievements(res.data.achievement)
+      setCommitAchievement(res.data.commit_achievement)
       // formatDuration(allTimeDuration)
       setIsLoading(false)
     }).catch(err => {
@@ -125,7 +134,9 @@ function StatsScreen(props) {
                   
                   <hr/>
                   <h3 className='my-4'>My Accomplishments:</h3>
-                  
+                  {achievements.map((item) => (
+                    <p className="my-4 achievement" key={item[0]}>- {item[0]} ({item[1]/1000} miles)</p>
+                  ))}
                 </>
               ) : 
 
@@ -136,16 +147,28 @@ function StatsScreen(props) {
                   </>
                 ) : (
                 <>
-                  <h6 className='mt-4'>My Commitment:</h6>
+                  <h4 className='mt-4'>My Commitment:</h4>
                   <h5>{journeyTitle}</h5>
-                  <hr />
-                  <h6 className='my-4'>Mileage: &nbsp;{roundDecimal(progressMiles/1000)} / {(targetMiles/1000)}</h6>
+                  <hr className='my-4'/>
+                  <h5 className='my-5'>Mileage: &nbsp;{roundDecimal(progressMiles/1000)} / {(targetMiles/1000)}</h5>
                   <ProgressBar animated now={(progressMiles/targetMiles)*100} />
-                  <hr />
-                  <h6 className='mt-4'>Prayers: &nbsp;{prayerCount}</h6>
-                  <hr />
-                  <h6 className='my-4'>Commitment End Date:</h6>
-                  <h5 className='mt-1'>{targetDate.substring(0, 10)}</h5>     
+                  <hr className='my-4'/>
+                  <div className="mx-4">
+                    <p className='atta-boy'>{commitAchievement}</p>
+                  </div>
+                  
+                  {(roundDecimal(progressMiles/1000) > 120) ? 
+                    (
+                    <>
+                      <h4>Congratulations!!</h4>
+                      <h3>Keep it up!!!</h3>
+                    </>
+                     ) : null}
+                     <hr className='my-4'/>
+                  <h5 className='mt-4'>Prayers: &nbsp;{prayerCount}</h5>
+                  <hr className='my-4'/>
+                  <h5 className='my-4'>Commitment End Date:</h5>
+                  <h4 className='mt-1'>{targetDate.substring(0, 10)}</h4>     
                 </>
           )}
       </Modal.Body>

@@ -46,6 +46,8 @@ post '/p4l/home' do
   verse = verses.select {|v| v.day == day}
   
   verse = verses.select {|v| v.day == 1} if verse.empty?
+  
+
   content_type :json
   { 
     verse:    verse && verse.first.scripture,
@@ -244,7 +246,9 @@ post '/p4l/stats' do
       commitDate: stats[:commit_date],
       allTimeMiles: stats[:all_time_miles],
       allTimeDuration: stats[:all_time_duration],
-      allTimePrayers: stats[:all_time_prayers]
+      allTimePrayers: stats[:all_time_prayers],
+      achievement: stats[:achievement],
+      commit_achievement: stats[:commit_achievement]
     }.to_json
   end
 end

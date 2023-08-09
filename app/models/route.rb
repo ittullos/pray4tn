@@ -5,7 +5,7 @@ class Route
   include Aws::Record
   set_table_name ENV["ROUTE_TABLE_NAME"]
 
-  integer_attr  :id,         hash_key: true
+  integer_attr  :id,            hash_key: true
   integer_attr  :started_at
   integer_attr  :stopped_at
   integer_attr  :mileage
@@ -56,6 +56,19 @@ class Route
   def self.finalize(user_id, route_id)
     route = find(id: route_id)
     route.finalize(user_id)
+    user = User.find(email: user_id)
+    if user.commitment_id != 0
+      mileage_total = 0
+      Route.scan.each do |route|
+        if route.commitment_id == user.commitment_id
+          mileage_total += route.mileage
+        end
+      end
+      if user.achievement < mileage_total
+        user.achievement = mileage_total
+        user.save
+      end
+    end
   end
 
   def finalize(user_id)
