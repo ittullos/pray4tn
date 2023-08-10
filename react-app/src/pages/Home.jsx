@@ -160,12 +160,6 @@ function Home() {
     // Change route button text
     setRouteButtonText(routeStarted ? "Stop" : "Start")
     if (routeStarted) {
-      // if (!locationEnabled) {
-      //   if (localStorage.getItem('disableLocationWarning') === "true") {
-      //     setDisableLocationWarning(true)
-      //   }
-      //   setShowLocationWarning(true)
-      // }
       if (localStorage.getItem('disableLockWarning') === "true") {
         setDisableLockWarning(true)
       }

@@ -248,7 +248,9 @@ post '/p4l/stats' do
       allTimeDuration: stats[:all_time_duration],
       allTimePrayers: stats[:all_time_prayers],
       achievement: stats[:achievement],
-      commit_achievement: stats[:commit_achievement]
+      commit_achievement: stats[:commit_achievement],
+      next_journey: stats[:next_journey],
+      next_journey_miles:stats[:next_journey_miles]
     }.to_json
   end
 end

@@ -60,6 +60,7 @@ class User
     end
 
     achievement_array = []
+    next_journey_array = []
     commit_achievement = "No journey achieved yet. Keep at it!!"
     top_journey = 0
 
@@ -67,6 +68,8 @@ class User
       
       if achievement >= journey.annual_miles
         achievement_array.push([journey.title, journey.annual_miles])
+      else
+        next_journey_array.push([journey.title, journey.annual_miles])
       end
       if commit_mileage >= journey.annual_miles && journey.annual_miles > top_journey
         top_journey = journey.annual_miles if journey.annual_miles > top_journey
@@ -82,6 +85,7 @@ class User
     end
     # pry.byebug
     achievement_array.sort_by! { |x,y| y }
+    next_journey_array.sort_by! { |x,y| y}
     
     {
       title:          title || "",
@@ -94,7 +98,9 @@ class User
       all_time_duration: all_time_duration,
       all_time_prayers: all_time_prayers,
       achievement: achievement_array || "",
-      commit_achievement: commit_achievement
+      commit_achievement: commit_achievement,
+      next_journey: next_journey_array[0][0] || "",
+      next_journey_miles: next_journey_array[0][1] || 0
     }
   end
 end
