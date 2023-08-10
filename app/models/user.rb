@@ -33,6 +33,7 @@ class User
     # pry.byebug
     if commitment_id && commitment_id != 0
       commit = Commitment.find(commitment_id: commitment_id)
+      # pry.byebug
       journey = Journey.find(title: commit.journey_id)
       title = journey.title
       target_date = commit.target_date
@@ -61,6 +62,7 @@ class User
 
     achievement_array = []
     next_journey_array = []
+    commit_achievement_array = []
     commit_achievement = "No journey achieved yet. Keep at it!!"
     top_journey = 0
 
@@ -71,8 +73,13 @@ class User
       else
         next_journey_array.push([journey.title, journey.annual_miles])
       end
+
+      if commit_mileage >= journey.annual_miles
+        commit_achievement_array.push([journey.title, journey.annual_miles])
+      end
       if commit_mileage >= journey.annual_miles && journey.annual_miles > top_journey
         top_journey = journey.annual_miles if journey.annual_miles > top_journey
+        
         # pry.byebug
         if journey.title.include? 'I-' 
           commit_achievement = "So far you have traveled the distance of the #{journey.title} (#{journey.annual_miles/1000} miles)"
@@ -83,9 +90,13 @@ class User
         end
       end
     end
-    # pry.byebug
     achievement_array.sort_by! { |x,y| y }
-    next_journey_array.sort_by! { |x,y| y}
+    next_journey_array.sort_by! { |x,y| y }
+    commit_achievement_array.sort_by! { |x,y| y }
+    if !commit_achievement_array.empty?
+      commit_achievement_title = commit_achievement_array.last[0]
+      commit_achievement_mileage = commit_achievement_array.last[1]
+    end
     
     {
       title:          title || "",
@@ -99,6 +110,8 @@ class User
       all_time_prayers: all_time_prayers,
       achievement: achievement_array || "",
       commit_achievement: commit_achievement,
+      commit_achievement_title: commit_achievement_title || "",
+      commit_achievement_mileage: commit_achievement_mileage || 0,
       next_journey: next_journey_array[0][0] || "",
       next_journey_miles: next_journey_array[0][1] || 0
     }

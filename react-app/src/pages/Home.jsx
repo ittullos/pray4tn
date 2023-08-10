@@ -17,6 +17,7 @@ import { LoginContext, APIContext } from '../App'
 import { styles } from '../styles/inlineStyles'
 import { useWakeLock } from 'react-screen-wake-lock';
 import NoSleep from 'nosleep.js'
+import CommitmentEnd from '../components/CommitmentEnd'
 
 
 const CheckpointInterval = 30000
@@ -71,6 +72,9 @@ function Home() {
   var noSleep = new NoSleep();
   const [noSleepActive, setNoSleepActive] = useState(false)
 
+  const [commitEnd, setCommitEnd] = useState()
+  const [showCommitmentEnd, setShowCommitmentEnd] = useState(false)
+
   useEffect(() => {
     console.log("prayerCount: ", prayerCount)
 
@@ -117,10 +121,33 @@ function Home() {
       console.log("getVerse: ", res)
       setVerse(res.data.verse)
       setNotation(res.data.notation)
+      setCommitEnd(res.data.commitEnd)
     }).catch(err => {
       console.log(err)
     })
   }
+
+  useEffect(() => {
+    
+    if (commitEnd && commitEnd != "") {
+      let d = new Date(),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    let currentDate = [year, month, day].join('-');
+
+    if (commitEnd > currentDate) {
+      setShowCommitmentEnd(true)
+    }
+    }
+  }, [commitEnd])
+  
 
   function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
@@ -269,6 +296,9 @@ document.body.style.overflow = "hidden"
       <CommitmentScreen
         show={showCommitmentScreen}
         onHide={() => setShowCommitmentScreen(false)}/>
+      <CommitmentEnd
+        show={showCommitmentEnd}
+        onHide={() => setShowCommitmentEnd(false)}/>
       <Navbar showStatsScreen={showStatsScreen => setShowStatsScreen(showStatsScreen)}
               showCommitmentScreen={showCommitmentScreen => setShowCommitmentScreen(showCommitmentScreen)}
               showPlanRouteScreen={showPlanRouteScreen => setShowPlanRouteScreen(showPlanRouteScreen)}/>

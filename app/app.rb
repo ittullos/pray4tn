@@ -44,21 +44,34 @@ post '/p4l/home' do
   time = Time.new
   day = time.yday % 100
   verse = verses.select {|v| v.day == day}
-  
   verse = verses.select {|v| v.day == 1} if verse.empty?
   
-
+  if user_id.include? '"'
+    user_id.delete! '\"'
+  end
+  user = User.find(email: user_id)
+  # pry.byebug
+  if user.commitment_id != 0
+    commit_end = Commitment.query(
+      key_condition_expression: "commitment_id = :id",
+      expression_attribute_values: { ":id" => user.commitment_id }).first.target_date
+  end
+  
   content_type :json
   { 
     verse:    verse && verse.first.scripture,
     notation: verse && verse.first.notation,
-    version:  verse && verse.first.version
+    version:  verse && verse.first.version,
+    commitEnd: commit_end || ""
   }.to_json
 end
 
 post '/p4l/checkpoint' do
   checkpoint_data = JSON.parse(request.body.read)["checkpointData"]
   user_id         = checkpoint_data["user_id"]
+  if user_id.include? '"'
+    user_id.delete! '\"'
+  end
 
   if checkpoint_data["type"] == "prayer"
     resident = UserResident.next_resident(user_id)
@@ -208,7 +221,11 @@ end
 
 post '/p4l/commitment' do
   commitment_data = JSON.parse(request.body.read)["commitData"]
-  user = User.find(email: commitment_data["user_id"])
+  user_id = commitment_data["user_id"]
+  if user_id.include? '"'
+    user_id.delete! '\"'
+  end
+  user = User.find(email: user_id)
   if user.commitment_id == 0
     new_commit = Commitment.new_commitment(commitment_data)
     user.commitment_id = new_commit.commitment_id
@@ -234,6 +251,7 @@ post '/p4l/stats' do
       title: "No commitment"
     }.to_json
   else
+    # pry.byebug
     stats = user.get_stats
     content_type :json
     {
@@ -249,6 +267,8 @@ post '/p4l/stats' do
       allTimePrayers: stats[:all_time_prayers],
       achievement: stats[:achievement],
       commit_achievement: stats[:commit_achievement],
+      commit_achievement_title: stats[:commit_achievement_title],
+      commit_achievement_mileage: stats[:commit_achievement_mileage],
       next_journey: stats[:next_journey],
       next_journey_miles:stats[:next_journey_miles]
     }.to_json
@@ -267,4 +287,18 @@ post '/p4l/add_mileage' do
   route = Route.find(id: Checkpoint.last_checkpoint(user.email).route_id)
   route.mileage += (mileage * 1000)
   route.save
+end
+
+post '/p4l/commitment_end' do
+  commitment_data = JSON.parse(request.body.read)["commitData"]
+  user_id = commitment_data["user_id"]
+  if user_id.include? '"'
+    user_id.delete! '\"'
+  end
+  user = User.find(email: user_id)
+  # pry.byebug
+  new_commit = Commitment.new_commitment(commitment_data)
+  
+  user.commitment_id = new_commit.commitment_id
+  user.save!
 end

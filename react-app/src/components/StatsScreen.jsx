@@ -153,21 +153,23 @@ function StatsScreen(props) {
                 (statSwitch) ? (
                   <>
                     <h3 className='my-4'>Mileage:</h3>
-                    <h3 className="my-3">{roundDecimal(allTimeMiles)}</h3>
+                    <h3 className="my-3">{roundDecimal(allTimeMiles || 0)}</h3>
                     <hr/>
                     <h3 className='my-4'>Prayers:</h3>
-                    <h3 className="my-3">{allTimePrayers}</h3>
+                    <h3 className="my-3">{allTimePrayers || 0}</h3>
                     <hr/>
                     <h3 className='my-4'>Route Time:</h3>
                     {(allTimeDuration >= 3600) ? (<h3 className="my-3">{allTimeHours}:{(allTimeMinutes < 10) ? 0 : null}{allTimeMinutes}:{(allTimeSeconds < 10) ? 0 : null}{allTimeSeconds}</h3>) :
                     (allTimeDuration < 60) ? (<h3 className="my-3">0:{(allTimeSeconds < 10) ? 0 : null}{allTimeSeconds}</h3>) :
-                    (<h3 className="my-3">{allTimeMinutes}:{(allTimeSeconds < 10) ? 0 : null}{allTimeSeconds}</h3>)}
+                    (<h3 className="my-3">{allTimeMinutes || 0}:{(allTimeSeconds < 10) ? 0 : null}{allTimeSeconds || "00"}</h3>)}
                     
                     <hr/>
                     <h3 className='my-4'>My Accomplishments:</h3>
-                    {achievements.map((item) => (
+                    {(achievements === undefined || achievements.length == 0) ? ( <p>No accomplishments yet. Keep at it!!</p>)
+                    : (achievements.map((item) => (
                       <p className="my-4 achievement" key={item[0]}>- {item[0]} ({item[1]/1000} miles)</p>
-                    ))}
+                    )))
+                    }
                   </>
                 ) : 
 
