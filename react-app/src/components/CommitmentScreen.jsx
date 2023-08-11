@@ -230,7 +230,7 @@ function CommitmentScreen(props) {
               <div className='my-4'>
                 - Creating a new commitment is essentially setting a personal
                 goal. All commitments run on an annual cycle, meaning the 
-                goal must be completed within a year of the commit date.
+                goal is designed to be completed within a year of the commit date.
               </div>
               <div className='my-4'>
                 - To make a new commitment select a journey from the list at

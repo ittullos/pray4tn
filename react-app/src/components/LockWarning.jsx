@@ -43,9 +43,9 @@ function LockWarning(props) {
       </Modal.Header>
       <Modal.Body>
         <p>
-          Pastor4Life works best with your device unlocked and the browser open.
+          Pastor4Life works best with your device unlocked and the app open.
           While logging mileage, Pastor4Life will override your device's auto-lock feature.
-          If you lock your device or leave the browser, Pastor4Life will resume logging mileage when you return.
+          If you lock your device or leave the app, Pastor4Life will resume logging mileage when you return.
           Don't forget to use the Prayer and Devotional features while you log mileage!
         </p>
       </Modal.Body>

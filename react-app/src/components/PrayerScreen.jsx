@@ -110,7 +110,10 @@ function PrayerScreen(props) {
       { isLoading ? (
         <LoadingComponent />
       ) : (!prayerListLoaded) ? (
-        <h3>No prayer list loaded</h3>
+        <>
+          <h3>No prayer list loaded</h3>
+          <h6 className='my-3'>Visit the "Plan Route" Screen to download your prayer list.</h6>
+        </>
       ) : (
       // )
         <div>

@@ -54,7 +54,7 @@ function LocationWarning(props) {
         <Form>
           <Form.Group controlId="formBasicCheckbox">
             <Form.Check type="checkbox" 
-                        label="Don't show this message again"
+                        label="If your primary use for Pastor4Life is stationary (treadmill, etc.) check here to block this message"
                         onChange={handleDisableChange} />   
             <Button onClick={() => {
               props.onHide() 

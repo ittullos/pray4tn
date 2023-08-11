@@ -53,7 +53,9 @@ class User
       all_time_miles += point.distance(Checkpoint.previous_checkpoint(point).to_a.last)
 
       if point.type != "start"
-        all_time_duration += point.recorded_at - Checkpoint.previous_checkpoint(point).to_a.last.recorded_at
+        if Checkpoint.previous_checkpoint(point)
+          all_time_duration += point.recorded_at - Checkpoint.previous_checkpoint(point).to_a.last.recorded_at
+        end
         if point.type == "prayer"
           all_time_prayers += 1
         end
