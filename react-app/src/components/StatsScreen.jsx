@@ -102,6 +102,11 @@ function StatsScreen(props) {
     setStatSwitch(!statSwitch)
   }
 
+  useEffect(() => {
+    console.log("journeyTitle has changed")
+  }, [journeyTitle])
+  
+
   return (
     <>
       <JourneyComplete 

@@ -162,6 +162,5 @@ run-local-db:
 
 list-tables:
 	aws dynamodb list-tables --endpoint-url http://localhost:8000
-
-
+	 
   # aws dynamodb delete-table --table-name UserResident --endpoint-url http://localhost:8000

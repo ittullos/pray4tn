@@ -25,6 +25,7 @@ function JourneyComplete(props) {
     axios.post(`${apiEndpoint}/commitment`, { commitData 
     }).then(res => {
       console.log("sendCommit response: ", res)
+      console.log("nextJourney: ", nextJourney, "nextJourneyMiles: ", nextJourneyMiles)
       setJourneyTitle(nextJourney)
       setTargetMiles(nextJourneyMiles)
       // setShowCommitSuccess(true)

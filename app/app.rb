@@ -287,6 +287,18 @@ post '/p4l/add_mileage' do
   route = Route.find(id: Checkpoint.last_checkpoint(user.email).route_id)
   route.mileage += (mileage * 1000)
   route.save
+  if user.commitment_id != 0
+    mileage_total = 0
+    Route.scan.each do |route|
+      if route.commitment_id == user.commitment_id
+        mileage_total += route.mileage
+      end
+    end
+    if user.achievement < mileage_total
+      user.achievement = mileage_total
+      user.save
+    end
+  end
 end
 
 post '/p4l/commitment_end' do

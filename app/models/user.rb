@@ -97,6 +97,10 @@ class User
       commit_achievement_title = commit_achievement_array.last[0]
       commit_achievement_mileage = commit_achievement_array.last[1]
     end
+
+    # next_journey_array.delete_if { |x,y| x === title}
+
+    # pry.byebug
     
     {
       title:          title || "",

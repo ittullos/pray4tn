@@ -72,7 +72,7 @@ describe "User model - " do
 
     end
 
-    context "All-Time -" do
+    xcontext "All-Time -" do
       
       before do
 

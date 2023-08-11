@@ -19,6 +19,7 @@ function CommitmentEnd(props) {
   const [commitMinutes, setCommitMinutes] = useState(0)
   const [commitSeconds, setCommitSeconds] = useState(0)
   const [commitHours, setCommitHours] = useState(0)
+  const [journeyTitle, setJourneyTitle] = useState()
 
   // const { userId,
   //         nextJourney,
@@ -30,7 +31,7 @@ function CommitmentEnd(props) {
   const handleCommitChange = () => {
     let commitData = {
       user_id: userId,
-      journey_id: commitAchievementTitle
+      journey_id: journeyTitle
     }
     axios.post(`${apiEndpoint}/commitment_end`, { commitData 
     }).then(res => {
@@ -45,7 +46,7 @@ function CommitmentEnd(props) {
     axios.post(`${apiEndpoint}/stats`, { userId 
     }).then(res => {
       console.log("fetchStats: ", res.data)
-      // setJourneyTitle(res.data.title)
+      setJourneyTitle(res.data.title)
       // setTargetDate(res.data.targetDate)
       setProgressMiles(res.data.progressMiles)
       // setTargetMiles(res.data.targetMiles)

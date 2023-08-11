@@ -142,7 +142,7 @@ function Home() {
 
     let currentDate = [year, month, day].join('-');
 
-    if (commitEnd > currentDate) {
+    if (commitEnd < currentDate) {
       setShowCommitmentEnd(true)
     }
     }
