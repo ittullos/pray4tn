@@ -49,6 +49,7 @@ class User
     end
     
     user_checkpoints = Checkpoint.user_checkpoints(email).to_a
+    # pry.byebug
     user_checkpoints.each do |point|
       if point.type != "start"
         if point.type == "add_mileage"
@@ -107,8 +108,8 @@ class User
 
     # pry.byebug
 
-    next_journey = next_journey_array[0][0] if next_journey_array[0][0]
-    next_journey_miles = next_journey_array[0][1] if next_journey_array[0][1]
+    next_journey = next_journey_array[0][0] if !next_journey_array.empty?
+    next_journey_miles = next_journey_array[0][1] if !next_journey_array.empty?
     {
       title:          title || "",
       target_miles:   target_miles || "",

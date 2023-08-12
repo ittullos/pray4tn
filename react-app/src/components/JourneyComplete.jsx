@@ -18,22 +18,27 @@ function JourneyComplete(props) {
           ...rest } = props
 
   const handleCommitChange = () => {
-    let commitData = {
-      user_id: userId,
-      journey_id: nextJourney
-    }
-    axios.post(`${apiEndpoint}/commitment`, { commitData 
-    }).then(res => {
-      console.log("sendCommit response: ", res)
-      console.log("nextJourney: ", nextJourney, "nextJourneyMiles: ", nextJourneyMiles)
-      setJourneyTitle(nextJourney)
-      setTargetMiles(nextJourneyMiles)
-      // setShowCommitSuccess(true)
+    if (!nextJourney.includes('Nice Work!!!')) {
+      let commitData = {
+        user_id: userId,
+        journey_id: nextJourney
+      }
+      axios.post(`${apiEndpoint}/commitment`, { commitData 
+      }).then(res => {
+        console.log("sendCommit response: ", res)
+        console.log("nextJourney: ", nextJourney, "nextJourneyMiles: ", nextJourneyMiles)
+        setJourneyTitle(nextJourney)
+        setTargetMiles(nextJourneyMiles)
+        // setShowCommitSuccess(true)
 
-    }).catch(err => {
-      console.log(err)
-      // setShowCommitError(true)
-    })
+      }).catch(err => {
+        console.log(err)
+        // setShowCommitError(true)
+      })
+    }
+    else {
+      localStorage.setItem('disableJourneyComplete', "true")
+    }
   }
 
   return (

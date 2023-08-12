@@ -245,15 +245,19 @@ post '/p4l/stats' do
   end
 
   user = User.find(email: user_id)
+  stats = user.get_stats
 
   if !user.commitment_id || user.commitment_id == 0
     content_type :json
     {
-      title: "No commitment"
+      title: "No commitment",
+      allTimeMiles: stats[:all_time_miles],
+      allTimeDuration: stats[:all_time_duration],
+      allTimePrayers: stats[:all_time_prayers]
     }.to_json
   else
     # pry.byebug
-    stats = user.get_stats
+    
     content_type :json
     {
       title: stats[:title],

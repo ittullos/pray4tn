@@ -80,12 +80,26 @@ function StatsScreen(props) {
   }
 
   useEffect(() => {
+    console.log("nextJourney: ", nextJourney)
     if (nextJourney === "") {
-      setNextJourney(journeyTitle)
-      setNextJourneyMiles(targetMiles)
+      setNextJourney("All Journeys Completed!! Nice Work!!!")
+      setNextJourneyMiles(2400000)
+      setJourneyTitle("All Journeys Completed!! Nice Work!!!")
+      setTargetMiles(2400000)
+      console.log("Made it hereeeee")
+    }
+    else if (nextJourney) {
+      if (!nextJourney.includes('Nice Work!!!')) {
+        localStorage.setItem('disableJourneyComplete', "false")
+      }
     }
   
   }, [nextJourney])
+
+  useEffect(() => {
+    console.log("diableJourneyComplete", localStorage.getItem('disableJourneyComplete'))
+  }, [localStorage.getItem('disableJourneyComplete')])
+  
   
 
   useEffect(() => {
@@ -93,6 +107,7 @@ function StatsScreen(props) {
     if (targetMiles > 0) {
       console.log("Made it hereeeee")
       if (progressMiles >= targetMiles) {
+        if (localStorage.getItem('disableJourneyComplete') !== "true")
         setShowJourneyComplete(true)
       }
     }
@@ -194,7 +209,7 @@ function StatsScreen(props) {
                     </>
                   ) : (
                   <>
-                    <h4 className='mt-4'>My Commitment:</h4>
+                    {journeyTitle.includes('Nice Work!!!') ? <div className='mt-3'></div> : <h4 className='mt-4'>My Commitment:</h4>}
                     <h5>{journeyTitle}</h5>
                     <hr className='my-4'/>
                     <h5 className='my-5'>Mileage: &nbsp;{roundDecimal(progressMiles/1000)} / {(targetMiles/1000)}</h5>
