@@ -32,6 +32,13 @@
   overflow-y: scroll;
 }
 
+.journey-container {
+  height: 50vh;
+  width: 100vw;
+  max-width: 675px;
+  overflow-y: scroll;
+}
+
 .route {
   min-height: 28vh;
   max-height: 35vh;
@@ -404,6 +411,18 @@
   .form-hero-text {
     font-size: 50px;
   }
+}
+
+@media screen and (min-height: 680px) {
+
+  .journey-container {
+    height: 62vh;
+  }
+
+}
+
+@media screen and (min-width: 400px) {
+
 }
 
 @media screen and (min-width: 500px) {

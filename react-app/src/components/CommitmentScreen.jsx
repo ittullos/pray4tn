@@ -156,20 +156,21 @@ function CommitmentScreen(props) {
         <Modal.Header 
           closeButton 
           className='text-center'
+          ref={jumpToTop}
           style={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
           }}>
           <Modal.Title 
-            id="contained-modal-title-vcenter" 
+            id="contained-modal-title-vcenter"          
             className="ms-auto ps-3"
             style={{fontSize:28}}>
               My Commitment
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h6 ref={jumpToTop}>Annual Commitment, Walk/Run/Cycle*</h6>
+          <h6>Annual Commitment, Walk/Run/Cycle*</h6>
           <Button className='mt-3 mb-2' onClick={handleJumpToDescription}>How does this work?</Button>
           <h4 className='mt-3'>Select a Journey:</h4>
           { isLoading ? (
@@ -177,7 +178,7 @@ function CommitmentScreen(props) {
             ) : (
               <>
                 <Form 
-                  className='d-flex justify-content-center'>
+                  className='d-flex justify-content-center journey-container'>
                   <span>
                     <Form.Group controlId='selectedJourney'>
                       {journeyData.map((item) => (
@@ -205,7 +206,10 @@ function CommitmentScreen(props) {
                         </div>
                       ))}
                     </Form.Group>
-                    <div>*some mileage rounded for ease of measurement</div>
+                    <div className='me-4'>
+                      <div>*some mileage rounded for </div>
+                      <div>ease of measurement</div>
+                    </div>
                   </span>
                 </Form>
                 <Button 
