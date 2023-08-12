@@ -54,12 +54,14 @@ class Route
   end
 
   def self.finalize(user_id, route_id)
+    # pry.byebug
     route = find(id: route_id)
     route.finalize(user_id)
     user = User.find(email: user_id)
     if user.commitment_id != 0
       mileage_total = 0
       Route.scan.each do |route|
+        # pry.byebug
         if route.commitment_id == user.commitment_id
           mileage_total += route.mileage
         end

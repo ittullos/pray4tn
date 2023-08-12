@@ -29,6 +29,7 @@ function CommitmentEnd(props) {
   //         ...rest } = props
 
   const handleCommitChange = () => {
+    
     let commitData = {
       user_id: userId,
       journey_id: journeyTitle
@@ -41,6 +42,14 @@ function CommitmentEnd(props) {
       console.log(err)
     })
   }
+
+  useEffect(() => {
+    console.log("journeyTitle Commit End: ", journeyTitle)
+      if (journeyTitle && journeyTitle.includes('Nice Work!!!')) {
+        console.log("Changing journeyTitle to last journey")
+      }
+  }, [journeyTitle])
+  
 
   const handleModalOpen = () => {
     axios.post(`${apiEndpoint}/stats`, { userId 

@@ -79,6 +79,7 @@ post '/p4l/checkpoint' do
     prayer_name = resident ? resident.name : ""
     checkpoint_data["match_key"] = resident.match_key if resident
   end
+  # pry.byebug
   checkpoint = Checkpoint.new_checkpoint(checkpoint_data)
 
   if checkpoint

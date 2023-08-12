@@ -81,7 +81,7 @@ function StatsScreen(props) {
 
   useEffect(() => {
     console.log("nextJourney: ", nextJourney)
-    if (nextJourney === "") {
+    if (nextJourney === "" && progressMiles >= 2400) {
       setNextJourney("All Journeys Completed!! Nice Work!!!")
       setNextJourneyMiles(2400000)
       setJourneyTitle("All Journeys Completed!! Nice Work!!!")
@@ -127,7 +127,10 @@ function StatsScreen(props) {
   }
 
   useEffect(() => {
-    console.log("journeyTitle has changed")
+    console.log("journeyTitle has changed: ", journeyTitle)
+    // if (journeyTitle.includes('Nice Work!!!') && progressMiles < 2400000) {
+
+    // }
   }, [journeyTitle])
   
 
@@ -203,10 +206,10 @@ function StatsScreen(props) {
                 ) : 
 
                   (journeyTitle === "No commitment") ? (
-                    <>
+                    <div className="no-commitment">
                       <h3>No Commitment</h3>
                       <p>Please see the "My Commitment" section in the menu</p>
-                    </>
+                    </div>
                   ) : (
                   <>
                     {journeyTitle.includes('Nice Work!!!') ? <div className='mt-3'></div> : <h4 className='mt-4'>My Commitment:</h4>}
