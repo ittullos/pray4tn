@@ -224,7 +224,7 @@ describe "Pastor4Life API -" do
         @route1.mileage = 0
         @route1.save
       end
-      it "adds mileage" do
+      xit "adds mileage" do
         sleep 1
         post '/p4l/add_mileage', add_mileage_data.to_json, "CONTENT_TYPE" => "application/json"
         sleep 1

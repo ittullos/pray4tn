@@ -80,6 +80,15 @@ function StatsScreen(props) {
   }
 
   useEffect(() => {
+    if (nextJourney === "") {
+      setNextJourney(journeyTitle)
+      setNextJourneyMiles(targetMiles)
+    }
+  
+  }, [nextJourney])
+  
+
+  useEffect(() => {
     console.log("TargetMiles: ", targetMiles)
     if (targetMiles > 0) {
       console.log("Made it hereeeee")

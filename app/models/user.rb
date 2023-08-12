@@ -50,14 +50,17 @@ class User
     
     user_checkpoints = Checkpoint.user_checkpoints(email).to_a
     user_checkpoints.each do |point|
-      all_time_miles += point.distance(Checkpoint.previous_checkpoint(point).to_a.last)
-
       if point.type != "start"
-        if Checkpoint.previous_checkpoint(point)
-          all_time_duration += point.recorded_at - Checkpoint.previous_checkpoint(point).to_a.last.recorded_at
-        end
-        if point.type == "prayer"
-          all_time_prayers += 1
+        if point.type == "add_mileage"
+          all_time_miles += (point.lat.to_f / 1000)
+        else
+          all_time_miles += point.distance(Checkpoint.previous_checkpoint(point).to_a.last)
+          if Checkpoint.previous_checkpoint(point)
+            all_time_duration += point.recorded_at - Checkpoint.previous_checkpoint(point).to_a.last.recorded_at
+          end
+          if point.type == "prayer"
+            all_time_prayers += 1
+          end
         end
       end
     end
@@ -103,7 +106,9 @@ class User
     # next_journey_array.delete_if { |x,y| x === title}
 
     # pry.byebug
-    
+
+    next_journey = next_journey_array[0][0] if next_journey_array[0][0]
+    next_journey_miles = next_journey_array[0][1] if next_journey_array[0][1]
     {
       title:          title || "",
       target_miles:   target_miles || "",
@@ -118,8 +123,8 @@ class User
       commit_achievement: commit_achievement,
       commit_achievement_title: commit_achievement_title || "",
       commit_achievement_mileage: commit_achievement_mileage || 0,
-      next_journey: next_journey_array[0][0] || "",
-      next_journey_miles: next_journey_array[0][1] || 0
+      next_journey: next_journey || "",
+      next_journey_miles: next_journey_miles || 0
     }
   end
 end

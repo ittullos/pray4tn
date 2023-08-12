@@ -38,6 +38,10 @@ end
 
 post '/p4l/home' do
   user_id = JSON.parse(request.body.read)["userId"]
+  if user_id.include? '"'
+    user_id.delete! '\"'
+  end
+
   Checkpoint.close_last_route(user_id)
   
   verses = Verse.scan if Verse.table_exists?
@@ -45,10 +49,7 @@ post '/p4l/home' do
   day = time.yday % 100
   verse = verses.select {|v| v.day == day}
   verse = verses.select {|v| v.day == 1} if verse.empty?
-  
-  if user_id.include? '"'
-    user_id.delete! '\"'
-  end
+
   user = User.find(email: user_id)
   # pry.byebug
   if user.commitment_id != 0
@@ -287,6 +288,12 @@ post '/p4l/add_mileage' do
   route = Route.find(id: Checkpoint.last_checkpoint(user.email).route_id)
   route.mileage += (mileage * 1000)
   route.save
+  point = Checkpoint.new_checkpoint(user_id: user.email, 
+                                    lat: (mileage * 1000), 
+                                    long: 0, 
+                                    type: "add_mileage")
+  point.route_id = route.id
+  point.save
   if user.commitment_id != 0
     mileage_total = 0
     Route.scan.each do |route|

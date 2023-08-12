@@ -25,7 +25,9 @@ class Checkpoint
       puts "CHECKPOINT#clost_last_route"
       checkpoint = last_checkpoint(user_id)
       puts "CHECKPOINT#close_last_route:checkpoint:#{checkpoint}"
-      if checkpoint && checkpoint.type != "stop"
+      # pry.byebug
+      if checkpoint && checkpoint.type != "stop" && checkpoint.type != "add_mileage"
+        puts "CHECKPOINT#close_last_route:checkpoint:end_route#{checkpoint}"
         end_route(checkpoint) if checkpoint.route_id
       end
     end
@@ -218,7 +220,7 @@ class Checkpoint
   end
 
   def save!
-    save
+    save :force
   end
 
   def save
