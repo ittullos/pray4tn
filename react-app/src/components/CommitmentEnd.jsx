@@ -29,7 +29,7 @@ function CommitmentEnd(props) {
   //         ...rest } = props
 
   const handleCommitChange = () => {
-    
+    localStorage.setItem('disableJourneyComplete', "false")
     let commitData = {
       user_id: userId,
       journey_id: journeyTitle

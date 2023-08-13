@@ -106,12 +106,24 @@ function StatsScreen(props) {
     console.log("TargetMiles: ", targetMiles)
     if (targetMiles > 0) {
       console.log("Made it hereeeee")
+      console.log("progressMiles >= targetMiles ?: ", progressMiles, ">=", targetMiles)
       if (progressMiles >= targetMiles) {
         if (localStorage.getItem('disableJourneyComplete') !== "true")
         setShowJourneyComplete(true)
       }
     }
   }, [nextJourneyMiles])
+
+  useEffect(() => {
+    if (journeyTitle) {
+          if (progressMiles >= targetMiles) {
+      if (localStorage.getItem('disableJourneyComplete') !== "true")
+      setShowJourneyComplete(true)
+    }
+    }    
+
+  }, [journeyTitle])
+  
   
 
   const handleModalClose = () => {
@@ -128,6 +140,7 @@ function StatsScreen(props) {
 
   useEffect(() => {
     console.log("journeyTitle has changed: ", journeyTitle)
+    console.log("diableJourneyComplete", localStorage.getItem('disableJourneyComplete'))
     // if (journeyTitle.includes('Nice Work!!!') && progressMiles < 2400000) {
 
     // }
@@ -141,6 +154,7 @@ function StatsScreen(props) {
         nextJourney={nextJourney}
         nextJourneyMiles={nextJourneyMiles}
         userId={userId}
+        progressMiles={progressMiles}
         setTargetMiles={setTargetMiles}
         setJourneyTitle={setJourneyTitle}
         onHide={() => setShowJourneyComplete(false)} />

@@ -43,6 +43,7 @@ function CommitmentScreen(props) {
     if (modalOpen) {
       fetchJourneys()
     }
+    console.log("disableJourneyComplete", localStorage.getItem('disableJourneyComplete'))
   }, [modalOpen])
 
   const fetchJourneys = () => {
@@ -61,6 +62,8 @@ function CommitmentScreen(props) {
     console.log("currentDate: ", currentDate)
     console.log("title: ", title)
     console.log("userId: ", userId)
+
+    localStorage.setItem('disableJourneyComplete', "false")
 
     if (targetDate > currentDate) {
       const commitmentData = { 

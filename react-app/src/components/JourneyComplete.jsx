@@ -15,6 +15,7 @@ function JourneyComplete(props) {
           nextJourneyMiles,
           setJourneyTitle,
           setTargetMiles,
+          progressMiles,
           ...rest } = props
 
   const handleCommitChange = () => {
@@ -37,6 +38,7 @@ function JourneyComplete(props) {
       })
     }
     else {
+      console.log("progressMiles inside: ", progressMiles)
       localStorage.setItem('disableJourneyComplete', "true")
     }
   }

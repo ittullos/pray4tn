@@ -76,7 +76,9 @@ class User
       
       if achievement >= journey.annual_miles
         achievement_array.push([journey.title, journey.annual_miles])
-      else
+      end
+
+      if commit_mileage < journey.annual_miles
         next_journey_array.push([journey.title, journey.annual_miles])
       end
 

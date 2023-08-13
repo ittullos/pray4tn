@@ -63,7 +63,9 @@ class Route
       Route.scan.each do |route|
         # pry.byebug
         if route.commitment_id == user.commitment_id
-          mileage_total += route.mileage
+          if route.mileage 
+            mileage_total += route.mileage
+          end
         end
       end
       if user.achievement < mileage_total
