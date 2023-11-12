@@ -1,21 +1,21 @@
 source 'https://rubygems.org'
 
+gem 'aws-record'
+gem 'json'
+gem 'pry-byebug'
 gem 'rack'
 gem 'sinatra'
-gem 'pry-byebug'
-gem "sinatra-contrib", require: false
-gem 'json'
-gem 'sinatra-cross_origin'
+gem 'sinatra-contrib', require: false
 gem 'sinatra-cors'
-gem 'aws-record'
+gem 'sinatra-cross_origin'
 
 group :development, :test do
-  gem 'random_name_generator'
-  gem "roo", "~> 2.10.0"
-  gem 'dotenv'
-  gem 'rake'
-  gem 'rack-test'
-  gem 'rspec'
   gem 'capybara'
+  gem 'dotenv'
+  gem 'rack-test'
+  gem 'rake'
   gem 'random-location'
+  gem 'random_name_generator'
+  gem 'roo', '~> 2.10.0'
+  gem 'rspec'
 end
