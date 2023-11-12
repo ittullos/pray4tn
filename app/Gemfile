@@ -1,8 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'rack'
-gem 'sinatra'
-gem 'sinatra-cors'
-gem 'aws-sdk-kms'
-gem 'base64'
-gem 'aws-record'
