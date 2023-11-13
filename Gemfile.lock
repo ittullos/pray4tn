@@ -25,6 +25,7 @@ GEM
     multi_json (1.15.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
+    nio4r (2.5.9)
     nokogiri (1.14.1-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.14.1-x86_64-linux)
@@ -35,6 +36,8 @@ GEM
     pry-byebug (3.10.1)
       byebug (~> 11.0)
       pry (>= 0.13, < 0.15)
+    puma (6.4.0)
+      nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.6.2)
     rack-protection (3.0.5)
@@ -86,6 +89,7 @@ DEPENDENCIES
   dotenv
   json
   pry-byebug
+  puma (~> 6.4.0)
   rack
   rack-test
   rake

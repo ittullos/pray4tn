@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'aws-record'
 gem 'json'
-gem 'pry-byebug'
+gem 'puma', '~> 6.4.0'
 gem 'rack'
 gem 'sinatra'
 gem 'sinatra-contrib', require: false
@@ -11,6 +11,7 @@ gem 'sinatra-cross_origin'
 
 group :development, :test do
   gem 'dotenv'
+  gem 'pry-byebug'
   gem 'rack-test'
   gem 'rake'
   gem 'random-location'
