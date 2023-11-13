@@ -1,5 +1,5 @@
-require "./config/environment"
+# frozen_string_literal: true
 
-$app ||= Sinatra::Application
+require './config/environment'
 
-run $app
+run Sinatra::Application

@@ -1,13 +1,10 @@
-require 'dotenv'
+# frozen_string_literal: true
 
-Dotenv.load
+$LOAD_PATH.unshift(File.expand_path('app', __dir__))
 
-ENV['RACK_ENV'] ||= "dev"
 require 'bundler/setup'
 Bundler.require(:default, ENV['RACK_ENV'])
 
-require 'rubygems'
-require 'sinatra'
-require 'pry-byebug'
-require 'random_name_generator'
+Dotenv.load
+
 require './app/app'
