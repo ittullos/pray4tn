@@ -2,7 +2,8 @@ require './spec/spec_helper'
 
 describe "Pastor4Life API -" do
   include Rack::Test::Methods
-  let(:user) { User.scan.first }
+
+  # let(:user) { User.scan.first }
   let(:start_checkpoint) {{ "checkpointData" => { "lat"    => random_location[0],
                                                   "long"   => random_location[1],
                                                   "type"   => "start",
@@ -73,7 +74,7 @@ describe "Pastor4Life API -" do
         clean_table(Route)
         clean_table(UserResident)
       end
-        
+
       it "logs a start checkpoint" do
         route_count = Route.scan.count
         post '/p4l/checkpoint', start_checkpoint.to_json, "CONTENT_TYPE" => "application/json"
@@ -212,7 +213,7 @@ describe "Pastor4Life API -" do
     end
 
     context "Add Mileage -" do
-      before do 
+      before do
         checkpoint = Checkpoint.new_checkpoint(start_checkpoint_2["checkpointData"])
         @route1 = Route.find(id: checkpoint.route_id)
         sleep 1
