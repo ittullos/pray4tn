@@ -10,7 +10,6 @@ gem 'sinatra-cors'
 gem 'sinatra-cross_origin'
 
 group :development, :test do
-  gem 'capybara'
   gem 'dotenv'
   gem 'rack-test'
   gem 'rake'
