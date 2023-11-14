@@ -5,6 +5,7 @@ require 'sinatra'
 require 'sinatra/cors'
 
 require_relative './models'
+require_relative '../config/database'
 
 set :allow_origin, '*'
 set :allow_methods, 'GET,POST,DELETE,PATCH,OPTIONS'
