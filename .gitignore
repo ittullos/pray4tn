@@ -10,3 +10,7 @@ app/vendor/
 samconfig.toml
 samconfig2.toml
 *vendor*
+
+# RSpec state file
+spec/examples.txt
+
