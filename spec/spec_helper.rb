@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'pry-byebug'
 
 ENV['RACK_ENV'] = 'test'
@@ -31,6 +32,13 @@ RSpec.configure do |config|
     DatabaseCleaner.cleaning do
       example.run
     end
+  end
+
+  # FactoryBot
+  config.include FactoryBot::Syntax::Methods
+
+  config.before(:suite) do
+    FactoryBot.find_definitions
   end
 
   # rspec-expectations config goes here. You can use an alternate

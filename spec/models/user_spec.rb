@@ -3,33 +3,28 @@ require 'spec_helper'
 require './app/models/user'
 
 RSpec.describe User, :model do
-  let(:valid_attributes) do
-    {
-      first_name: 'Steven',
-      last_name: 'Colbert',
-      email: "sco'-lbert@gmail.com"
-    }
-  end
+  let(:valid_attributes) { attributes_for(:user) }
 
   describe 'validations' do
     it 'is valid from the factory' do
       expect(described_class.new(valid_attributes)).to be_valid
     end
 
+    it 'creates a valid list' do
+      expect(create_list(:user, 2).last).to be_valid
+    end
+
     it 'requires a first_name' do
-      attrs = valid_attributes.merge!(first_name: '')
-      user = described_class.new(attrs)
+      user = build(:user, first_name: '')
 
       expect(user).not_to be_valid
-
       expect(user.errors.messages).to include(
         { first_name: ['can\'t be blank'] }
       )
     end
 
     it 'requires a last_name' do
-      attrs = valid_attributes.merge!(last_name: '')
-      user = described_class.new(attrs)
+      user = build(:user, last_name: '')
 
       expect(user).not_to be_valid
       expect(user.errors.messages).to include(
@@ -38,8 +33,7 @@ RSpec.describe User, :model do
     end
 
     it 'requires an email' do
-      attrs = valid_attributes.merge!(email: '')
-      user = described_class.new(attrs)
+      user = build(:user, email: '')
 
       expect(user).not_to be_valid
       expect(user.errors.messages).to include(
@@ -48,11 +42,11 @@ RSpec.describe User, :model do
     end
 
     it 'requires email to be unique' do
-      described_class.new(valid_attributes).save
-      second_user = described_class.new(valid_attributes)
+      first_user = create(:user)
+      user = build(:user, email: first_user.email)
 
-      expect(second_user).not_to be_valid
-      expect(second_user.errors.messages).to include(
+      expect(user).not_to be_valid
+      expect(user.errors.messages).to include(
         { email: ['has already been taken'] }
       )
     end

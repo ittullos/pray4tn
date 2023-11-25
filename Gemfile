@@ -15,6 +15,7 @@ gem 'sinatra-cross_origin'
 
 group :development, :test do
   gem 'dotenv'
+  gem 'factory_bot'
   gem 'pry-byebug'
   gem 'rake'
   gem 'random-location'
