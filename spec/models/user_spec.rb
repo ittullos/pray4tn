@@ -57,4 +57,12 @@ RSpec.describe User, :model do
       )
     end
   end
+
+  describe 'attributes' do
+    subject { described_class.new(valid_attributes) }
+
+    it 'has timestamps' do
+      expect(subject.attributes).to include('created_at', 'updated_at')
+    end
+  end
 end
