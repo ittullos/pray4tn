@@ -16,10 +16,14 @@ gem 'sinatra-cross_origin'
 group :development, :test do
   gem 'dotenv'
   gem 'pry-byebug'
-  gem 'rack-test'
   gem 'rake'
   gem 'random-location'
   gem 'random_name_generator'
   gem 'roo', '~> 2.10.0'
+end
+
+group :test do
+  gem 'database_cleaner-active_record'
+  gem 'rack-test'
   gem 'rspec'
 end

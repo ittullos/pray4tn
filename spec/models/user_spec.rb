@@ -11,14 +11,6 @@ RSpec.describe User, :model do
     }
   end
 
-  before(:each) do
-    User.destroy_all
-  end
-
-  after(:each) do
-    User.destroy_all
-  end
-
   describe 'validations' do
     it 'is valid from the factory' do
       expect(described_class.new(valid_attributes)).to be_valid
