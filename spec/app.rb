@@ -57,9 +57,9 @@ describe "Pastor4Life API -" do
     context "Home -" do
       before do
         @home_data = { "userId" => "1"}
-        clean_table(Checkpoint)
-        clean_table(Route)
-        clean_table(UserResident)
+        # clean_table(Checkpoint)
+        # clean_table(Route)
+        # clean_table(UserResident)
       end
       it "returns the correct verse" do
         post '/p4l/home', @home_data.to_json, "CONTENT_TYPE" => "application/json"
@@ -70,9 +70,9 @@ describe "Pastor4Life API -" do
 
     context "Checkpoint -" do
       before do
-        clean_table(Checkpoint)
-        clean_table(Route)
-        clean_table(UserResident)
+        # clean_table(Checkpoint)
+        # clean_table(Route)
+        # clean_table(UserResident)
       end
 
       it "logs a start checkpoint" do
@@ -91,9 +91,9 @@ describe "Pastor4Life API -" do
 
     context "Prayer -" do
       before do
-        clean_table(Checkpoint)
-        clean_table(Route)
-        clean_table(UserResident)
+        # clean_table(Checkpoint)
+        # clean_table(Route)
+        # clean_table(UserResident)
       end
 
       it 'returns nil when there are no names' do
@@ -111,7 +111,7 @@ describe "Pastor4Life API -" do
 
     context 'Devotionals -' do
       before do
-        clean_table(Devotional)
+        # clean_table(Devotional)
         devo = Devotional.new_devotional(
           id: 1,
           title: "Solid Joys Daily Devotional - Finally and Totally Justified (2/28)",
@@ -135,7 +135,7 @@ describe "Pastor4Life API -" do
 
     context 'Journeys -' do
       before do
-        clean_table(Journey)
+        # clean_table(Journey)
         Journey.new_journey(
           title: "I-65 from Franklin to Nashville",
           target_miles: 2150,
@@ -157,8 +157,8 @@ describe "Pastor4Life API -" do
 
     context 'Commitment -' do
       before do
-        clean_table(User)
-        clean_table(Commitment)
+        # clean_table(User)
+        # clean_table(Commitment)
         @user2 = User.new_user(email:      "isaac.tullos@gmail.com",
                               password:   "1",
                               commitment_id: 0)
@@ -176,7 +176,7 @@ describe "Pastor4Life API -" do
       let(:user) { User.scan.first }
 
       before do
-        clean_table(Route)
+        # clean_table(Route)
         Route.new_test_route(20, 5, 100)
         Route.new_test_route(40, 10, 200)
         Route.new_test_route(80, 20, 400)

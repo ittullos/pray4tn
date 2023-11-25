@@ -2,17 +2,16 @@ source 'https://rubygems.org'
 
 ruby '3.1.4'
 
-gem 'aws-record'
+gem 'activerecord'
 gem 'json'
 gem 'pg'
 gem 'puma', '~> 6.4.0'
 gem 'rack'
-gem 'sequel'
 gem 'sinatra'
+gem 'sinatra-activerecord'
 gem 'sinatra-contrib', require: false
 gem 'sinatra-cors'
 gem 'sinatra-cross_origin'
-gem 'sinatra-sequel'
 
 group :development, :test do
   gem 'dotenv'
