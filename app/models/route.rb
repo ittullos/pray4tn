@@ -1,17 +1,18 @@
-require 'aws-record'
+# require 'aws-record'
 
 class RouteNoIdError < StandardError; end
-class Route
-  include Aws::Record
-  set_table_name ENV["ROUTE_TABLE_NAME"]
 
-  integer_attr  :id,         hash_key: true
-  integer_attr  :started_at
-  integer_attr  :stopped_at
-  integer_attr  :mileage
-  integer_attr  :prayer_count
-  integer_attr  :seconds
-  integer_attr  :commitment_id
+class Route
+  # include Aws::Record
+  # set_table_name ENV['ROUTE_TABLE_NAME']
+
+  # integer_attr  :id, hash_key: true
+  # integer_attr  :started_at
+  # integer_attr  :stopped_at
+  # integer_attr  :mileage
+  # integer_attr  :prayer_count
+  # integer_attr  :seconds
+  # integer_attr  :commitment_id
 
   PRECISION = 1000
 
@@ -28,14 +29,14 @@ class Route
   end
 
   def self.next_route_id
-    last_route_id = self.scan.inject(0) { |m, r| r.id > m ? r.id : m }
-    return last_route_id + 1
+    last_route_id = scan.inject(0) { |m, r| r.id > m ? r.id : m }
+    last_route_id + 1
   end
 
   def self.query
     q = Route.build_query.key_expr(
-        ":id > ?", 0
-      ).scan_ascending(false).complete!
+      ':id > ?', 0
+    ).scan_ascending(false).complete!
     q.to_a # You can use this like any other query result in aws-record
   end
 
@@ -44,12 +45,9 @@ class Route
   end
 
   def save
-    unless persisted?
-      self.id = Route.next_route_id
-    end
-    if self.id.nil? 
-      raise RouteNoIdError, "Tried to save route with no ID"
-    end   
+    self.id = Route.next_route_id unless persisted?
+    raise RouteNoIdError, 'Tried to save route with no ID' if id.nil?
+
     super
   end
 
@@ -64,9 +62,9 @@ class Route
     self.stopped_at = Time.now.to_i
     mileage_count = 0.0
     if checkpoints.count > 1
-      for i in 1..((checkpoints.count) - 1) do
-        if checkpoints[i].type == "heartbeat" || checkpoints[i].type == "stop"
-          mileage_count += checkpoints[i].distance(checkpoints[i-1])
+      for i in 1..(checkpoints.count - 1) do
+        if checkpoints[i].type == 'heartbeat' || checkpoints[i].type == 'stop'
+          mileage_count += checkpoints[i].distance(checkpoints[i - 1])
         end
       end
       self.mileage = (mileage_count * PRECISION).round(0)

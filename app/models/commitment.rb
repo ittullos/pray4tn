@@ -1,15 +1,15 @@
-require 'aws-record'
+# require 'aws-record'
 
 class CommitmentNoIdError < StandardError; end
 class Commitment
-  include Aws::Record
-  set_table_name ENV["COMMITMENT_TABLE_NAME"]
+  # include Aws::Record
+  # set_table_name ENV["COMMITMENT_TABLE_NAME"]
 
-  integer_attr  :commitment_id, hash_key: true
-  string_attr   :user_id
-  string_attr   :journey_id
-  string_attr   :commit_date
-  string_attr   :target_date
+  # integer_attr  :commitment_id, hash_key: true
+  # string_attr   :user_id
+  # string_attr   :journey_id
+  # string_attr   :commit_date
+  # string_attr   :target_date
 
   def self.new_commitment(data)
     time = Time.new

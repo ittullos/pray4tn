@@ -15,7 +15,7 @@ set :expose_headers, 'location,link'
 puts "RACK_ENV: #{ENV['RACK_ENV']}"
 
 post '/p4l/home' do
-  user_id = JSON.parse(request.body.read)["userId"]
+  user_id = JSON.parse(request.body.read)['userId']
   Checkpoint.close_last_route(user_id)
 
   verses = Verse.scan if Verse.table_exists?
