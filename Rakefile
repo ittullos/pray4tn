@@ -1,12 +1,13 @@
-require 'bundler'
-Bundler.require
-require 'dotenv'
-require 'roo'
-puts ENV['RACK_ENV']
-Dotenv.load
+# frozen_string_literal: true
+
+# require 'bundler'
+# Bundler.require
+# require 'dotenv'
+# require 'roo'
+# puts ENV['RACK_ENV']
+# Dotenv.load
 
 require 'sinatra/activerecord/rake'
-require 'pry-byebug'
 
 namespace :db do
   desc 'loads application'
