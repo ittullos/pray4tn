@@ -14,6 +14,7 @@ gem 'sinatra-cors'
 gem 'sinatra-cross_origin'
 
 group :development, :test do
+  gem 'activesupport'
   gem 'dotenv'
   gem 'factory_bot'
   gem 'pry-byebug'

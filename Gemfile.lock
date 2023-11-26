@@ -110,6 +110,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  activesupport
   database_cleaner-active_record
   dotenv
   factory_bot
