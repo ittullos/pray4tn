@@ -1,8 +1,6 @@
 # pray4tn
 
-## Development
-
-### Installation
+## Installation
 
 You need Bundler installed, then simply run:
 `bundler install`
@@ -22,6 +20,22 @@ https://postgresapp.com/
 In your terminal, use Rake to create the development and test databases:
 `bundle exec rake db:create`
 
+## Development
+### Running the app
+
+The app runs on `http://localhost:9292` by default.
+Run it on port 8000 using:
+`bundle exec rackup -p 8000`
+
+### Creating new migrations
+
+ActiveRecord gives us a rake task that can be used to generate a migration,
+similar to how you would in Rails:
+
+`$ bundle exec rake db:create_migration NAME=create_users`
+
+<!-- TODO: discuss the naming convention of the migrations, do we even -->
+
 ### Running migrations
 
 We're using ActiveRecord, so you can run and rollback migrations in the standard way:
@@ -32,8 +46,7 @@ $ be rake db:migrate
 $ be rake db:rollback
 ```
 
-### Running the app
+### Tests
+Run the tests with:
 
-The app runs on `http://localhost:9292` by default.
-Run it on port 8000 using:
-`bundle exec rackup -p 8000`
+`$ be rspec`
