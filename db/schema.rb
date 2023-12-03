@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_26_171757) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_02_161457) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,6 +23,19 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_26_171757) do
     t.index ["user_id"], name: "index_commitments_on_user_id"
   end
 
+  create_table "routes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "commitment_id"
+    t.datetime "started_at"
+    t.datetime "stopped_at"
+    t.integer "step_count", default: 0, null: false
+    t.integer "seconds", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commitment_id"], name: "index_routes_on_commitment_id"
+    t.index ["user_id"], name: "index_routes_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name", null: false
     t.string "last_name", null: false
@@ -33,4 +46,6 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_26_171757) do
   end
 
   add_foreign_key "commitments", "users"
+  add_foreign_key "routes", "commitments"
+  add_foreign_key "routes", "users"
 end
