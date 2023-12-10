@@ -20,6 +20,14 @@ RSpec.describe Route, :model do
     let(:yesterday) { today - 1.day }
     let(:attributes) { attributes_for(:route).merge!(started_at: today) }
 
+    it 'validates step_count is an integer' do
+      expect(build(:route, step_count: 'one hundred steps')).not_to be_valid
+    end
+
+    it 'validates seconds is an integer' do
+      expect(build(:route, seconds: 'some')).not_to be_valid
+    end
+
     it 'is valid from the factory' do
       expect(create(:route)).to be_valid
     end

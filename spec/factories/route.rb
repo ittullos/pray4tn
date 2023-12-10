@@ -4,8 +4,9 @@ FactoryBot.define do
   factory :route do
     user
     commitment
-    # start_date { Date.current }
-    # end_date { Date.current + 1.year }
-
+    started_at { DateTime.current }
+    stopped_at { DateTime.current + 1.year }
+    step_count { 120 }
+    seconds { 10 }
   end
 end
