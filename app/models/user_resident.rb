@@ -1,17 +1,17 @@
-require 'aws-record'
+# require 'aws-record'
 
 class UserResident
-  include Aws::Record
-  set_table_name ENV['USER_RESIDENT_TABLE_NAME']
+  # include Aws::Record
+  # set_table_name ENV['USER_RESIDENT_TABLE_NAME']
 
-  string_attr  :user_id,   hash_key:   true
-  string_attr  :match_key, range_key:  true
-  string_attr  :geohash
-  string_attr  :latitude
-  string_attr  :longitude
-  string_attr  :name
-  string_attr  :address
-  string_attr  :loaded_at
+  # string_attr  :user_id,   hash_key:   true
+  # string_attr  :match_key, range_key:  true
+  # string_attr  :geohash
+  # string_attr  :latitude
+  # string_attr  :longitude
+  # string_attr  :name
+  # string_attr  :address
+  # string_attr  :loaded_at
 
   def self.all(user_id)
     UserResident.query(
@@ -28,7 +28,7 @@ class UserResident
   end
 
   def self.find_next(residents, match_key)
-    resident_count = residents.count  
+    resident_count = residents.count
     return nil if resident_count == 0
 
     if match_key
@@ -36,7 +36,7 @@ class UserResident
     end
 
     if index.nil?
-      index = 0 
+      index = 0
     else
       index += 1
       index = index - resident_count if index == resident_count

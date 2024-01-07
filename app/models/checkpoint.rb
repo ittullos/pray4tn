@@ -1,18 +1,18 @@
-require 'aws-record'
+# require 'aws-record'
 require_relative 'route'
 
 class Checkpoint
-  include Aws::Record
-  set_table_name ENV["CHECKPOINT_TABLE_NAME"]
+  # include Aws::Record
+  # set_table_name ENV["CHECKPOINT_TABLE_NAME"]
 
-  string_attr  :user_id,   hash_key: true
-  integer_attr :recorded_at, range_key: true
-  integer_attr :route_id
-  string_attr  :lat
-  string_attr  :long
-  string_attr  :type
-  string_attr  :match_key
-  
+  # string_attr  :user_id,   hash_key: true
+  # integer_attr :recorded_at, range_key: true
+  # integer_attr :route_id
+  # string_attr  :lat
+  # string_attr  :long
+  # string_attr  :type
+  # string_attr  :match_key
+
   class << self
     def end_route(checkpoint)
       new_checkpoint(lat:       checkpoint.lat,
@@ -71,7 +71,7 @@ class Checkpoint
       if is_valid?(data)
         if data["lat"] == 0 || data["long"] == 0
           if current_route = Checkpoint.current_route(data["user_id"])
-            puts "Checkpoint:new_checkpoint:user_id: #{data["user_id"]}:current_route: #{current_route.id}"         
+            puts "Checkpoint:new_checkpoint:user_id: #{data["user_id"]}:current_route: #{current_route.id}"
             prev_checkpoint = last_route_checkpoint(data["user_id"], current_route.id)
             puts "Checkpoint:new_checkpoint:prev_checkpoint: #{prev_checkpoint}"
             data["lat"]     = prev_checkpoint.lat
@@ -189,10 +189,10 @@ class Checkpoint
     end
   end
 
-  def set_route_id 
+  def set_route_id
     if type == "start"
       route = Route.new_route(user_id)
-    else 
+    else
       route = Checkpoint.current_route(user_id)
       if route && type == "prayer"
         route.prayer_count += 1
