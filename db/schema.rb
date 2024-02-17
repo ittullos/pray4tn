@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_02_161457) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_20_155434) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,6 +21,14 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_02_161457) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_commitments_on_user_id"
+  end
+
+  create_table "residents", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "loaded_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_residents_on_name", unique: true
   end
 
   create_table "routes", force: :cascade do |t|
