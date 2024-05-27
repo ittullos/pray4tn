@@ -5,32 +5,51 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'sinatra/cors'
 require_relative './models'
+register Sinatra::Cors # Add this line.
 
 set :database_file, '../config/database.yml'
 
 set :allow_origin, '*'
 set :allow_methods, 'GET,POST,DELETE,PATCH,OPTIONS'
-set :allow_headers, 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since'
+set :allow_headers,
+    'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since, P4L-email'
 set :expose_headers, 'location,link'
 
 puts "RACK_ENV: #{ENV['RACK_ENV']}"
+require 'pry-byebug'
+get '/user' do
+  email = request.fetch_header('P4L-email')
+  user = User.find_by_email(email)
+  # content_type :json
+  [200, {}, user.to_json]
+end
 
 post '/p4l/home' do
-  user_id = JSON.parse(request.body.read)['userId']
-  Checkpoint.close_last_route(user_id)
+  # get the verse of the day
+  # content_type :json
+  # {
 
-  verses = Verse.scan if Verse.table_exists?
-  time = Time.new
-  day = time.yday % 100
-  verse = verses.select { |v| v.day == day }
+  #   verse: verse&.scripture,
+  #   notation: verse && verse.first.notation,
+  # #   version: verse && verse.first.version
+  # }.to_json
 
-  verse = verses.select { |v| v.day == 1 } if verse.empty?
-  content_type :json
-  {
-    verse: verse && verse.first.scripture,
-    notation: verse && verse.first.notation,
-    version: verse && verse.first.version
-  }.to_json
+  # user_id = JSON.parse(request.body.read)['userId']
+
+  # Checkpoint.close_last_route(user_id)
+
+  # verses = Verse.scan if Verse.table_exists?
+  # time = Time.new
+  # day = time.yday % 100
+  # verse = verses.select { |v| v.day == day }
+
+  # verse = verses.select { |v| v.day == 1 } if verse.empty?
+  # content_type :json
+  # {
+  #   verse: verse && verse.first.scripture,
+  #   notation: verse && verse.first.notation,
+  #   version: verse && verse.first.version
+  # }.to_json
 end
 
 post '/p4l/checkpoint' do
@@ -59,9 +78,9 @@ post '/p4l/login' do
   email           = login_form_data['email']
   password        = login_form_data['password']
 
-  if User.find(email: email)
+  if User.find(email:)
     puts 'App:login:before User.find'
-    user = User.find(email: email)
+    user = User.find(email:)
     puts 'App:login:after User.find'
     response_status = if user.password == password
                         'success'
@@ -85,12 +104,12 @@ post '/p4l/signup' do
   password         = signup_form_data['password']
   confirm_password = signup_form_data['confirmPassword']
 
-  if User.find(email: email)
+  if User.find(email:)
     response_status = 'Email already in use'
   elsif password != confirm_password
     response_status = 'Passwords do not match'
   else
-    User.new_user(email: email, password: password)
+    User.new_user(email:, password:)
     response_status = 'success'
   end
 
@@ -170,7 +189,7 @@ post '/p4l/journeys' do
   content_type :json
   {
     journeys: journeys_array,
-    commitment: commitment
+    commitment:
   }.to_json
 end
 
