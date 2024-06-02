@@ -20,5 +20,12 @@ RSpec.describe 'User endpoints', :request do
 
       expect(parsed_response).to match(data_object_for(user))
     end
+
+    it 'returns an error when the email is not sent' do
+      get '/user', {}, {}
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to be_empty
+    end
   end
 end
