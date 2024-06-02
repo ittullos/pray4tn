@@ -23,6 +23,10 @@ get '/user' do
 
   content_type :json
   user.to_json
+
+rescue KeyError
+  status 400
+  body {}
 end
 
 post '/p4l/home' do
