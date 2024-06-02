@@ -16,12 +16,13 @@ set :allow_headers,
 set :expose_headers, 'location,link'
 
 puts "RACK_ENV: #{ENV['RACK_ENV']}"
-require 'pry-byebug'
+
 get '/user' do
   email = request.fetch_header('P4L-email')
   user = User.find_by_email(email)
-  # content_type :json
-  [200, {}, user.to_json]
+
+  content_type :json
+  user.to_json
 end
 
 post '/p4l/home' do

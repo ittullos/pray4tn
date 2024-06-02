@@ -2,6 +2,7 @@ require 'spec_helper'
 
 RSpec.describe 'User endpoints', :request do
   include Rack::Test::Methods
+  include ApiSpecHelpers
 
   let(:app) { Sinatra::Application }
   let(:user) { create(:user) }
@@ -17,16 +18,7 @@ RSpec.describe 'User endpoints', :request do
 
       expect(last_response.status).to eq(200)
 
-      parsed_json = JSON.parse(last_response.body)
-
-      expect(parsed_json).to match(
-        user.attributes.merge(
-          { 'created_at' => user.created_at.in_time_zone("UTC").to_s,
-            'updated_at' => user.updated_at.in_time_zone("UTC").to_s }
-          # { 'created_at' => be_within(1.second).of(user.created_at.to_s),
-          #   'updated_at' => be_within(1.second).of(user.updated_at.to_s) }
-        )
-      )
+      expect(parsed_response).to match(data_object_for(user))
     end
   end
 end
