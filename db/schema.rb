@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_17_202631) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_22_224806) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,6 +21,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_17_202631) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_commitments_on_user_id"
+  end
+
+  create_table "prayers", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "resident_id", null: false
+    t.bigint "route_id"
+    t.datetime "recorded_at", null: false
+    t.index ["resident_id"], name: "index_prayers_on_resident_id"
+    t.index ["route_id"], name: "index_prayers_on_route_id"
+    t.index ["user_id"], name: "index_prayers_on_user_id"
   end
 
   create_table "residents", force: :cascade do |t|
@@ -62,6 +72,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_17_202631) do
   end
 
   add_foreign_key "commitments", "users"
+  add_foreign_key "prayers", "residents"
+  add_foreign_key "prayers", "routes"
+  add_foreign_key "prayers", "users"
   add_foreign_key "routes", "commitments"
   add_foreign_key "routes", "users"
 end
