@@ -29,6 +29,24 @@ rescue KeyError
   body {}
 end
 
+get '/user/resident-list/:id' do
+  email = request.fetch_header('P4L-email')
+  user = User.find_by_email(email)
+
+  resident_list = ResidentList.find_by(user_id: user&.id, id: params[:id])
+
+  if resident_list.nil?
+    halt 404, JSON.dump({'message' => 'Not found'})
+  end
+
+  content_type :json
+  resident_list.to_json
+
+rescue KeyError
+  status 400
+  body {}
+end
+
 post '/p4l/home' do
   # get the verse of the day
   # content_type :json

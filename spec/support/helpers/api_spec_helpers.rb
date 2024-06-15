@@ -11,8 +11,15 @@ module ApiSpecHelpers
 
   def data_object_for(entity)
     entity.attributes.tap do |attributes|
-      attributes['created_at'] = attributes['created_at'].utc.iso8601(3)
-      attributes['updated_at'] = attributes['updated_at'].utc.iso8601(3)
+      if attributes.include?('created_at')
+        attributes['created_at'] = attributes['created_at']&.utc.iso8601(3)
+      end
+      if attributes.include?('updated_at')
+        attributes['updated_at'] = attributes['updated_at']&.utc.iso8601(3)
+      end
+      if attributes.include?('loaded_at')
+        attributes['loaded_at'] = attributes['loaded_at']&.utc.iso8601(3)
+      end
     end
   end
 
