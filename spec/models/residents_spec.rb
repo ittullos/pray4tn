@@ -23,5 +23,9 @@ RSpec.describe Resident, :model do
 
       expect(resident.loaded_at).not_to be_nil
     end
+
+    it 'has a User' do
+      expect(create(:resident).user).to be_a(User)
+    end
   end
 end
