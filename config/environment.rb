@@ -7,4 +7,4 @@ Bundler.require(:default, ENV['RACK_ENV'])
 
 Dotenv.load
 
-require './app/app'
+require_relative '../app/app'
