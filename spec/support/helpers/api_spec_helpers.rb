@@ -11,12 +11,19 @@ module ApiSpecHelpers
 
   def data_object_for(entity)
     entity.attributes.tap do |attributes|
-      attributes['created_at'] = attributes['created_at'].utc.iso8601(3)
-      attributes['updated_at'] = attributes['updated_at'].utc.iso8601(3)
+      convert_timestamps(attributes)
     end
   end
 
   def data_objects_for_multiple(entities)
     entities.map { |entity| data_object_for(entity) }
+  end
+
+  def convert_timestamps(attributes)
+    attributes.each do |key, value|
+      if value.kind_of?(Time)
+        attributes[key] = value.utc.iso8601(3)
+      end
+    end
   end
 end
