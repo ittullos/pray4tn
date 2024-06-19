@@ -7,5 +7,6 @@ FactoryBot.define do
     sequence :name do |n|
       "Resident#{n}"
     end
+    sequence(:position) { |n| n }
   end
 end
