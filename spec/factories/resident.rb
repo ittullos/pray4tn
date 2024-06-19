@@ -2,9 +2,11 @@
 
 FactoryBot.define do
   factory :resident do
-    loaded_at { Date.current }
+    user
+    loaded_at { Time.current }
     sequence :name do |n|
       "Resident#{n}"
     end
+    sequence(:position) { |n| n }
   end
 end

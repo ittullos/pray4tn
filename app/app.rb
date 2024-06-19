@@ -27,3 +27,54 @@ rescue KeyError
   status 400
   body {}
 end
+
+get '/user/residents' do
+  email = request.fetch_header('P4L-email')
+  user = User.find_by_email(email)
+
+  residents = Resident.where(user_id: user&.id)
+
+  content_type :json
+  residents.to_json
+
+rescue KeyError
+  status 400
+  body {}
+end
+
+get '/user/residents/next-resident' do
+  email = request.fetch_header('P4L-email')
+  user = User.find_by_email(email)
+
+  # TODO: Look at eager loading here. We might be able to grab the resident for
+  # the last Prayer at the same time, or use a plain AR query to grab the next
+  # Resident without instantiating the objects in between:
+  # user.residents.where('position > ?', last_prayer.resident.position).limit(1).first
+  last_prayer = Prayer.where(user_id: user&.id).order(recorded_at: :desc).limit(1).first
+  next_resident = if last_prayer.nil?
+                    user.residents.limit(1).first
+                  else
+                    last_prayer.resident.next_resident
+                  end
+
+  content_type :json
+  next_resident.to_json
+
+rescue KeyError
+  status 400
+  body {}
+end
+
+get '/user/residents/:id' do
+  email = request.fetch_header('P4L-email')
+  user = User.find_by_email(email)
+
+  resident = Resident.find_by(id: params[:id], user_id: user&.id)
+
+  content_type :json
+  resident.to_json
+
+rescue KeyError
+  status 400
+  body {}
+end
