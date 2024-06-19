@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 ruby '3.1.4'
 
 gem 'activerecord'
+gem 'acts_as_list'
 gem 'json'
 gem 'pg'
 gem 'puma', '~> 6.4.0'
