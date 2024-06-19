@@ -23,5 +23,20 @@ RSpec.describe Resident, :model do
 
       expect(resident.loaded_at).not_to be_nil
     end
+
+    it 'has a User' do
+      expect(create(:resident).user).to be_a(User)
+    end
+
+    it 'acts as a list' do
+      alice = create(:resident, name: 'Alice the first')
+      bob = create(:resident, name: 'Bob the second')
+      chad = create(:resident, name: 'Chad the third')
+      create(:user, residents: [alice, bob, chad])
+
+      expect(alice.next_resident).to eq(bob)
+      expect(bob.next_resident).to eq(chad)
+      expect(chad.next_resident).to eq(alice)
+    end
   end
 end
