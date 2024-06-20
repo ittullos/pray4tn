@@ -1,18 +1,5 @@
-# require 'aws-record'
-
-class DevotionalNoIdError < StandardError; end
-class Devotional
-  # include Aws::Record
-  # set_table_name ENV['DEVOTIONAL_TABLE_NAME']
-
-  # integer_attr  :id,   hash_key: true
-  # string_attr   :title
-  # string_attr   :url
-  # string_attr   :img_url
-
-  def self.new_devotional(data)
-    devo = new(data)
-    devo.save!
-    devo
-  end
+class Devotional < ActiveRecord::Base
+  validates :title, presence: true, uniqueness: true
+  validates :url, presence: true
+  validates :img_url, presence: true
 end
