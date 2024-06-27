@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Devotional < ActiveRecord::Base
   validates :title, presence: true, uniqueness: true
   validates :url, presence: true
