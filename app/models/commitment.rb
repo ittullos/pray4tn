@@ -2,6 +2,7 @@
 
 class Commitment < ActiveRecord::Base
   belongs_to :user
+  belongs_to :journey
 
   validates :end_date, comparison: { greater_than: :start_date }
 

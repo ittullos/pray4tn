@@ -10,6 +10,12 @@ RSpec.describe Commitment, :model do
         build(:commitment, user: nil).save!
       end.to raise_error(ActiveRecord::NotNullViolation)
     end
+
+    it 'belongs to a journey' do
+      expect do
+        build(:commitment, journey: nil).save!
+      end.to raise_error(ActiveRecord::NotNullViolation)
+    end
   end
 
   describe 'validations' do
