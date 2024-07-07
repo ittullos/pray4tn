@@ -8,14 +8,23 @@ RSpec.describe Resident, :model do
       expect(create(:resident)).to be_valid
     end
 
-    it 'validates a unique name' do
-      create(:resident, name: 'Re-Pete')
-      repeater = build(:resident, name: 're-pete')
+    it 'validates a unique name per User' do
+      a_user = create(:user)
+
+      create(:resident, name: 'Re-Pete', user: a_user )
+      repeater = build(:resident, name: 're-pete', user: a_user)
 
       expect(repeater).not_to be_valid
       expect(repeater.errors.messages).to include(
         { name: ['has already been taken'] }
       )
+
+      another_user = create(:user)
+      repeater_of_another_user =
+        build(:resident, name: 're-pete', user: another_user)
+
+      expect(repeater_of_another_user).to be_valid
+      expect(repeater_of_another_user.errors.messages).to eq({})
     end
 
     it 'sets default value for loaded_at' do
