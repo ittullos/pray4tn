@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :commitment do
     user
+    journey
     start_date { Date.current }
     end_date { Date.current + 1.year }
   end
