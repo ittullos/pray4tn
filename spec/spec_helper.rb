@@ -41,6 +41,11 @@ RSpec.configure do |config|
     FactoryBot.find_definitions
   end
 
+  # Require spec helpers
+  Dir[File.join(__dir__, 'support', 'helpers', '**', '*.rb')].each do |file|
+    require file
+  end
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
