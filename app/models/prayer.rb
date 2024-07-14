@@ -6,4 +6,5 @@ class Prayer < ActiveRecord::Base
   belongs_to :route, optional: true
 
   validates :recorded_at, presence: true
+  validates :resident, presence: true
 end
