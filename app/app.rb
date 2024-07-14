@@ -78,3 +78,29 @@ rescue KeyError
   status 400
   body {}
 end
+
+post '/prayers' do
+  email = request.fetch_header('P4L-email')
+  user = User.find_by_email(email)
+
+  resident_id = params.fetch('resident_id')
+  prayer = Prayer.new(resident_id:, user_id: user&.id, recorded_at: Time.current)
+  prayer.save!
+
+  next_resident = prayer.resident.next_resident
+
+
+  content_type :json
+  status 201
+  prayer.attributes.merge(
+    { 'next_resident_id' => next_resident.id }
+  ).to_json
+rescue KeyError => e
+  status 400
+  body [{ errors: ["Missing param: #{e.key}"] }.to_json]
+end
+
+error ActiveRecord::RecordInvalid do |error|
+  status 422
+  body [{ errors: error.message.to_s }.to_json]
+end
