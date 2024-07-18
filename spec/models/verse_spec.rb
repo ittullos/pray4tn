@@ -58,4 +58,22 @@ RSpec.describe Verse, :model do
       )
     end
   end
+
+  describe '.verse_of_the_day' do
+    include ActiveSupport::Testing::TimeHelpers
+    it 'returns the correct verse' do
+      # year, month, day, hour, minute, second
+      travel_to Time.local(2024, 4, 9, 1, 0, 0) do
+        verse = create(:verse, day: 1)
+
+        expect(Verse.verse_of_the_day.scripture).to eq(verse.scripture)
+      end
+
+      travel_to Time.local(2024, 4, 10, 1, 0, 0) do
+        verse = create(:verse, day: 2)
+
+        expect(Verse.verse_of_the_day).to eq(verse)
+      end
+    end
+  end
 end
