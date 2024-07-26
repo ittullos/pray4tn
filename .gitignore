@@ -14,3 +14,4 @@ samconfig2.toml
 # RSpec state file
 spec/examples.txt
 
+*DS_Store
