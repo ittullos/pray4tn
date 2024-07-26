@@ -1,15 +1,24 @@
-require './spec/spec_helper'
+# frozen_string_literal: true
 
-describe "Pastor4Life API -" do
+require 'spec_helper'
+
+describe 'Pastor4Life API -' do
   include Rack::Test::Methods
   include ApiSpecHelpers
+  include AuthenticationSpecHelpers
 
   let(:app) { Sinatra::Application }
-  let(:user) { create(:user) }
+  let!(:user) { authenticated }
+  let!(:verse) do
+    create(:verse, day: (Time.now.yday % 100) + 1, version: 'CSB')
+  end
 
-  let(:headers) do
-    {
-      'P4L-email' => user.email
-    }
+  describe 'GET /home' do
+    it 'returns a verse' do
+      get '/home', {}, headers
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_response).to eq(data_object_for(verse))
+    end
   end
 end
