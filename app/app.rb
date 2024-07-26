@@ -23,6 +23,17 @@ before do
   content_type :json
 end
 
+get '/home' do
+  verse = Verse.verse_of_the_day("CSB")
+
+  content_type :json
+  verse.to_json
+
+rescue KeyError
+  status 400
+  body {}
+end
+
 get '/user' do
   user_from_token.to_json
 end
