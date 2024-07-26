@@ -78,3 +78,16 @@ rescue KeyError
   status 400
   body {}
 end
+
+get '/home' do
+  email = request.get_header('HTTP_P4L_EMAIL')
+  user = User.find_by_email(email)
+  verse = Verse.verse_of_the_day
+
+  content_type :json
+  verse.to_json
+
+rescue KeyError
+  status 400
+  body {}
+end
