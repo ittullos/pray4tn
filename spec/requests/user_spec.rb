@@ -11,7 +11,7 @@ RSpec.describe 'User endpoints', :request do
   let(:chad) { create(:resident, name: 'Chad the third', position: 3) }
   let(:headers) do
     {
-      'P4L-email' => user.email
+      'HTTP_P4L_EMAIL' => user.email
     }
   end
 
@@ -27,8 +27,8 @@ RSpec.describe 'User endpoints', :request do
     it 'returns an error when the email is not sent' do
       get '/user', {}, {}
 
-      expect(last_response.status).to eq(400)
-      expect(last_response.body).to be_empty
+      expect(last_response.status).to eq(401)
+      expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
     end
   end
 
@@ -60,16 +60,16 @@ RSpec.describe 'User endpoints', :request do
       it 'returns an error response when the email is not sent' do
         get '/user/residents', {}, {}
 
-        expect(last_response.status).to eq(400)
-        expect(last_response.body).to be_empty
+        expect(last_response.status).to eq(401)
+        expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
       end
 
-      it 'returns an empty response if the wrong email is sent' do
-        not_the_user_email = { 'P4L-email' => 'vladimir@hacking.ru' }
+      it 'returns an unauthorized response if the wrong email is sent' do
+        not_the_user_email = { 'HTTP_P4L_EMAIL' => 'vladimir@hacking.ru' }
         get '/user/residents', {}, not_the_user_email
 
-        expect(last_response.status).to eq(200)
-        expect(parsed_response).to match([])
+        expect(last_response.status).to eq(401)
+        expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
       end
     end
   end
@@ -80,8 +80,8 @@ RSpec.describe 'User endpoints', :request do
     it 'requires the email header' do
       get "/user/residents/#{alice.id}", {}, {}
 
-      expect(last_response.status).to eq(400)
-      expect(last_response.body).to be_empty
+      expect(last_response.status).to eq(401)
+      expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
     end
 
     it 'returns the resident' do
