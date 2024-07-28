@@ -8,7 +8,7 @@ RSpec.describe 'Prayer endpoints', :request do
   let(:user) { create(:user) }
   let(:headers) do
     {
-      'P4L-email' => user.email
+      'HTTP_P4L_EMAIL' => user.email
     }
   end
 
@@ -24,8 +24,8 @@ RSpec.describe 'Prayer endpoints', :request do
     it 'requires the email header' do
       post '/prayers', valid_params, {}
 
-      expect(last_response.status).to eq(400)
-      expect(parsed_response['errors']).to include('Missing param: P4L-email')
+      expect(last_response.status).to eq(401)
+      expect(parsed_response['errors']).to include('Unauthorized')
     end
 
     it 'creates a Prayer' do
