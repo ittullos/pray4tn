@@ -5,7 +5,7 @@
 require 'sinatra/activerecord/rake'
 
 # This is the change I made when changing to a .rb file instead of .rake
-require './lib/tasks/db_seed_users'
+require_relative 'lib/db_seed_users'
 
 
 namespace :db do
@@ -16,7 +16,7 @@ namespace :db do
 
   namespace :seed do
     desc "Seed users from /db/seeds/users.yml"
-    task :users => :environment do
+    task :users => :load_config do
       SeedUsers.run
     end
   end
