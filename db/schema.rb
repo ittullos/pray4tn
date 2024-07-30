@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_07_023028) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_01_164542) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -89,7 +89,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_023028) do
     t.text "scripture", null: false
     t.string "notation", null: false
     t.string "version", null: false
-    t.index ["day"], name: "index_verses_on_day", unique: true
+    t.index ["day", "version"], name: "index_verses_on_day_and_version", unique: true
   end
 
   add_foreign_key "commitments", "journeys"
