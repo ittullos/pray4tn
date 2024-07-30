@@ -66,13 +66,13 @@ RSpec.describe Verse, :model do
       travel_to Time.local(2024, 4, 9, 1, 0, 0) do
         verse = create(:verse, day: 1)
 
-        expect(Verse.verse_of_the_day.scripture).to eq(verse.scripture)
+        expect(Verse.verse_of_the_day("NIV").scripture).to eq(verse.scripture)
       end
 
       travel_to Time.local(2024, 4, 10, 1, 0, 0) do
         verse = create(:verse, day: 2)
 
-        expect(Verse.verse_of_the_day).to eq(verse)
+        expect(Verse.verse_of_the_day("NIV")).to eq(verse)
       end
     end
   end
