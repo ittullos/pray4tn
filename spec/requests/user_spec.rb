@@ -3,6 +3,7 @@ require 'spec_helper'
 RSpec.describe 'User endpoints', :request do
   include Rack::Test::Methods
   include ApiSpecHelpers
+  include AuthenticationSpecHelpers
 
   let(:app) { Sinatra::Application }
   let(:user) { create(:user) }
@@ -28,7 +29,7 @@ RSpec.describe 'User endpoints', :request do
       get '/user', {}, {}
 
       expect(last_response.status).to eq(401)
-      expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
+      expect(parsed_response).to eq(unauthorized_response)
     end
   end
 
@@ -61,7 +62,7 @@ RSpec.describe 'User endpoints', :request do
         get '/user/residents', {}, {}
 
         expect(last_response.status).to eq(401)
-        expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
+        expect(parsed_response).to eq(unauthorized_response)
       end
 
       it 'returns an unauthorized response if the wrong email is sent' do
@@ -69,7 +70,7 @@ RSpec.describe 'User endpoints', :request do
         get '/user/residents', {}, not_the_user_email
 
         expect(last_response.status).to eq(401)
-        expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
+        expect(parsed_response).to eq(unauthorized_response)
       end
     end
   end
@@ -81,7 +82,7 @@ RSpec.describe 'User endpoints', :request do
       get "/user/residents/#{alice.id}", {}, {}
 
       expect(last_response.status).to eq(401)
-      expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
+      expect(parsed_response).to eq(unauthorized_response)
     end
 
     it 'returns the resident' do
