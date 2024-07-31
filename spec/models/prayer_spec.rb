@@ -11,7 +11,7 @@ RSpec.describe Prayer, :model do
     it "must have a resident" do
       expect do
         build(:prayer, resident: nil).save!
-      end.to raise_error(ActiveRecord::NotNullViolation)
+      end.to raise_error(ActiveRecord::RecordInvalid)
     end
 
     it "may have a route" do
