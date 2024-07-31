@@ -1,14 +1,19 @@
 # frozen_string_literal: true
 
 module AuthenticationSpecHelpers
-  def authenticated_user(user)
-    # authenticate a user
-    # create one if you need to
-    # return the user
+  def authenticated(user = FactoryBot.create(:user))
+    headers.merge!(user_token_header(user))
+    user
   end
 
-  def is_authenticated?(user)
-    # tell me if this user has been authenticated
+  def headers
+    @headers ||= {}
+  end
+
+  def user_token_header(user)
+    {
+      'HTTP_P4L_EMAIL' => user.email
+    }
   end
 
   def unauthorized_response
