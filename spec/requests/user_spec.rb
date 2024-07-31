@@ -3,17 +3,14 @@ require 'spec_helper'
 RSpec.describe 'User endpoints', :request do
   include Rack::Test::Methods
   include ApiSpecHelpers
+  include AuthenticationSpecHelpers
 
   let(:app) { Sinatra::Application }
-  let(:user) { create(:user) }
+  let!(:user) { authenticated(create(:user, residents:)) }
   let(:alice) { create(:resident, name: 'Alice the first', position: 1) }
   let(:bob) { create(:resident, name: 'Bob the second', position: 2) }
   let(:chad) { create(:resident, name: 'Chad the third', position: 3) }
-  let(:headers) do
-    {
-      'HTTP_P4L_EMAIL' => user.email
-    }
-  end
+  let(:residents) { [alice, bob, chad] }
 
   describe 'GET /user' do
     it 'returns the User with the given email' do
@@ -28,12 +25,14 @@ RSpec.describe 'User endpoints', :request do
       get '/user', {}, {}
 
       expect(last_response.status).to eq(401)
-      expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
+      expect(parsed_response).to eq(unauthorized_response)
     end
   end
 
   describe 'GET /user/residents' do
     context 'when there are no Residents' do
+      let(:residents) { [] }
+
       it 'returns an empty response' do
         get '/user/residents', {}, headers
 
@@ -43,8 +42,6 @@ RSpec.describe 'User endpoints', :request do
     end
 
     context 'when the User owns the Residents' do
-      let!(:residents) { create_list(:resident, 3, user:) }
-
       it 'returns the Residents ordered by position' do
         get '/user/residents', {}, headers
 
@@ -61,7 +58,7 @@ RSpec.describe 'User endpoints', :request do
         get '/user/residents', {}, {}
 
         expect(last_response.status).to eq(401)
-        expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
+        expect(parsed_response).to eq(unauthorized_response)
       end
 
       it 'returns an unauthorized response if the wrong email is sent' do
@@ -69,19 +66,17 @@ RSpec.describe 'User endpoints', :request do
         get '/user/residents', {}, not_the_user_email
 
         expect(last_response.status).to eq(401)
-        expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
+        expect(parsed_response).to eq(unauthorized_response)
       end
     end
   end
 
   describe 'GET /user/residents/' do
-    let!(:user) { create(:user, residents: [alice, bob, chad]) }
-
     it 'requires the email header' do
       get "/user/residents/#{alice.id}", {}, {}
 
       expect(last_response.status).to eq(401)
-      expect(parsed_response).to eq({ 'data' => '', 'errors' => 'Unauthorized' })
+      expect(parsed_response).to eq(unauthorized_response)
     end
 
     it 'returns the resident' do
@@ -93,8 +88,6 @@ RSpec.describe 'User endpoints', :request do
   end
 
   describe 'GET /user/residents/next-resident' do
-    let(:user) { create(:user, residents: [alice, bob, chad]) }
-
     it 'returns the first Resident if there are no Prayers' do
       get '/user/residents/next-resident', {}, headers
 
