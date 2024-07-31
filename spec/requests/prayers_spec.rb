@@ -3,14 +3,10 @@ require 'spec_helper'
 RSpec.describe 'Prayer endpoints', :request do
   include Rack::Test::Methods
   include ApiSpecHelpers
+  include AuthenticationSpecHelpers
 
   let(:app) { Sinatra::Application }
-  let(:user) { create(:user) }
-  let(:headers) do
-    {
-      'HTTP_P4L_EMAIL' => user.email
-    }
-  end
+  let(:user) { authenticated }
 
   describe 'POST /prayers' do
     let!(:resident) { create(:resident, user:) }
