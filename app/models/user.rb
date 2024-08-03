@@ -5,4 +5,5 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :email
 
   has_many :residents, -> { order(position: :asc) }
+  attr_accessor :sub
 end

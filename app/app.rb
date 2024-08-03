@@ -6,6 +6,7 @@ require 'sinatra/activerecord'
 require 'sinatra/cors'
 require_relative './models'
 require_relative './middleware/authentication'
+require_relative './lib/json_web_token'
 
 set :database_file, '../config/database.yml'
 
