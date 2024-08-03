@@ -42,6 +42,8 @@ GEM
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     json (2.6.3)
+    jwt (2.8.2)
+      base64
     method_source (1.0.0)
     minitest (5.20.0)
     multi_json (1.15.0)
@@ -134,6 +136,7 @@ DEPENDENCIES
   dotenv
   factory_bot
   json
+  jwt
   pdf-reader
   pg
   pry-byebug
