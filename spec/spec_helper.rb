@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pry-byebug'
+require 'webmock/rspec'
 
 ENV['RACK_ENV'] = 'test'
 
@@ -126,4 +127,7 @@ RSpec.configure do |config|
   # test failures related to randomization by passing the same `--seed` value
   # as the one that triggered the failure.
   Kernel.srand config.seed
+
+  # Webmock settings
+  WebMock.disable_net_connect!(allow_localhost: true)
 end

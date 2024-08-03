@@ -21,6 +21,8 @@ GEM
     acts_as_list (1.2.1)
       activerecord (>= 6.1)
       activesupport (>= 6.1)
+    addressable (2.8.7)
+      public_suffix (>= 2.0.2, < 7.0)
     afm (0.2.2)
     base64 (0.2.0)
     bigdecimal (3.1.4)
@@ -28,6 +30,9 @@ GEM
     coderay (1.1.3)
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
+    crack (1.0.0)
+      bigdecimal
+      rexml
     database_cleaner-active_record (2.1.0)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
@@ -38,6 +43,7 @@ GEM
       ruby2_keywords
     factory_bot (6.4.2)
       activesupport (>= 5.0.0)
+    hashdiff (1.1.1)
     hashery (2.1.2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
@@ -70,6 +76,7 @@ GEM
     pry-byebug (3.10.1)
       byebug (~> 11.0)
       pry (>= 0.13, < 0.15)
+    public_suffix (6.0.1)
     puma (6.4.0)
       nio4r (~> 2.0)
     racc (1.6.2)
@@ -81,6 +88,7 @@ GEM
     rake (13.0.6)
     random-location (0.1.0)
     random_name_generator (2.0.1)
+    rexml (3.3.7)
     roo (2.10.0)
       nokogiri (~> 1)
       rubyzip (>= 1.3.0, < 3.0.0)
@@ -122,6 +130,10 @@ GEM
       bigdecimal (~> 3.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    webmock (3.23.1)
+      addressable (>= 2.8.0)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
 
 PLATFORMS
   arm64-darwin-22
@@ -153,6 +165,7 @@ DEPENDENCIES
   sinatra-contrib
   sinatra-cors
   sinatra-cross_origin
+  webmock
 
 RUBY VERSION
    ruby 3.1.4p223
