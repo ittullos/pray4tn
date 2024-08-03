@@ -1,7 +1,8 @@
 require 'spec_helper'
+require 'active_support/testing/time_helpers'
 
 RSpec.describe Verse, :model do
-  let (:valid_attributes) { attributes_for(:verse) }
+  let(:valid_attributes) { attributes_for(:verse) }
 
   describe 'validations' do
     it 'is valid from the factory' do
