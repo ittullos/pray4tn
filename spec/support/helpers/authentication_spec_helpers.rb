@@ -26,7 +26,7 @@ module AuthenticationSpecHelpers
   def user_token(user)
     # user factory needs a sub now, but you knew that
     # create a key
-    # create a JWK from a key and export it
+    # create a JWK from a key and export it, then save it to the mock client
     # MockJWKClient.add_key(exported_key)
     JWT.encode(user.sub, 'some_jwt_secret', 'RS256') # use the key here
     # like so:
@@ -66,6 +66,7 @@ module AuthenticationSpecHelpers
   end
 
   class MockJWKClient # subclass the real one
+    # this isn't really a Set, it's just an Array.
     @@jwks = JWT::JWK::Set.new # this can go if we subclass
 
     def self.call # this can go if we subclass

@@ -20,9 +20,9 @@ class JsonWebToken
         algorithm: 'RS256', # make sure the spec helper matches this too
         iss: domain_url, # should point to the domain of Cognito or whatever
         verify_iss: true,
-        aud: (ENV['AUTH0_AUDIENCE']).to_s, # P4l-api or something
+        aud: 'P4L-API', # P4l-api or something
         verify_aud: true,
-        jwks: { keys: jwks[:keys] } # maybe this is a lambda?
+        jwks: { keys: JsonWebToken.jwks[:keys] } # maybe this is a lambda?
       }
     )
     @payload
