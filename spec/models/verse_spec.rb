@@ -1,7 +1,8 @@
 require 'spec_helper'
+require 'active_support/testing/time_helpers'
 
 RSpec.describe Verse, :model do
-  let (:valid_attributes) { attributes_for(:verse) }
+  let(:valid_attributes) { attributes_for(:verse) }
 
   describe 'validations' do
     it 'is valid from the factory' do
@@ -56,6 +57,24 @@ RSpec.describe Verse, :model do
       expect(verse.errors.messages).to include(
         { day: ['has already been taken'] }
       )
+    end
+  end
+
+  describe '.verse_of_the_day' do
+    include ActiveSupport::Testing::TimeHelpers
+    it 'returns the correct verse' do
+      # year, month, day, hour, minute, second
+      travel_to Time.local(2024, 4, 9, 1, 0, 0) do
+        verse = create(:verse, day: 1)
+
+        expect(Verse.verse_of_the_day("NIV").scripture).to eq(verse.scripture)
+      end
+
+      travel_to Time.local(2024, 4, 10, 1, 0, 0) do
+        verse = create(:verse, day: 2)
+
+        expect(Verse.verse_of_the_day("NIV")).to eq(verse)
+      end
     end
   end
 end
