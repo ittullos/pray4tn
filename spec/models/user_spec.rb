@@ -50,6 +50,25 @@ RSpec.describe User, :model do
         { email: ['has already been taken'] }
       )
     end
+
+    it 'requires a sub' do
+      user = build(:user, sub: '')
+
+      expect(user).not_to be_valid
+      expect(user.errors.messages).to include(
+        { sub: ['can\'t be blank'] }
+      )
+    end
+
+    it 'requires sub to be unique' do
+      first_user = create(:user)
+      user = build(:user, sub: first_user.sub)
+
+      expect(user).not_to be_valid
+      expect(user.errors.messages).to include(
+        { sub: ['has already been taken'] }
+      )
+    end
   end
 
   describe 'attributes' do
