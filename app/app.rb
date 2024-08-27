@@ -13,7 +13,7 @@ set :database_file, '../config/database.yml'
 set :allow_origin, '*'
 set :allow_methods, 'GET,POST,DELETE,PATCH,OPTIONS'
 set :allow_headers,
-    'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since, HTTP_P4L_EMAIL'
+    'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since, HTTP_AUTHORIZATION'
 set :expose_headers, 'location,link'
 
 puts "RACK_ENV: #{ENV['RACK_ENV']}"

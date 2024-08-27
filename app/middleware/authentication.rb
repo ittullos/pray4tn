@@ -7,28 +7,28 @@ module Authentication
     end
 
     def call(env)
-      # Get the token from the header
-      # verify the token
-      # grab the user from the decoded token
-      #
-      # token = extract_token(Rack::Request.new(env))
-      # payload = (JsonWebToken.new(token).verify!)
-      # user = User.find_by_sub(payload[:sub])
-
-      email = Rack::Request.new(env).fetch_header('HTTP_P4L_EMAIL') { nil }
-      user = User.find_by_email(email)
+      token = extract_token(env)
+      decoded_token = JsonWebToken.new(token).verify!
+      user = User.find_by_sub(decoded_token.dig('data', 'sub'))
 
       if user
         env[:user] = user
         @app.call(env)
       else
-        Rack::Response.new({ data: '', errors: 'Unauthorized' }.to_json, 401, {}).finish
+        unauthorized_response
       end
+    rescue KeyError, JWT::DecodeError
+      unauthorized_response
     end
 
     private
 
-    def extract_token(request)
+    def unauthorized_response
+      Rack::Response.new({ data: '', errors: 'Unauthorized' }.to_json, 401, {}).finish
+    end
+
+    def extract_token(env)
+      Rack::Request.new(env).fetch_header('HTTP_AUTHORIZATION').split(' ').second
     end
   end
 end

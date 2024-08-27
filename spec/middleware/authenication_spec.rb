@@ -10,19 +10,28 @@ RSpec.describe 'Authentication middleware' do
   describe 'Cognito' do
     subject { Authentication::Cognito.new(app) }
 
-    context 'when the request bears a valid email' do
+    context 'when the request bears a valid token' do
+      let(:json_web_token_double) { double(:json_web_token) }
       let(:env) { Rack::MockRequest.env_for }
       let(:user) { create(:user) }
 
       before do
-        env['HTTP_P4L_EMAIL'] = user.email
+        env['HTTP_AUTHORIZATION'] = 'Bearer token'
+        allow(JsonWebToken).to receive(:new).with('token').and_return(json_web_token_double)
+        allow(json_web_token_double).to receive(:verify!).and_return(
+          {
+            'data' => { 'sub' => user.sub },
+            'iss' => jwk[:issuer],
+            'aud' => 'P4L-API'
+          }
+        )
       end
 
       it 'allows access' do
-        allow(app).to receive(:call).and_return([200, {}, "success"])
+        allow(app).to receive(:call).and_return([200, {}, 'success'])
 
         response = subject.call(env)
-        expect(response).to eq([200, {}, "success"])
+        expect(response).to eq([200, {}, 'success'])
       end
 
       it 'sets the user in the request env' do
@@ -31,11 +40,11 @@ RSpec.describe 'Authentication middleware' do
       end
     end
 
-    context 'when the request bears an invalid email' do
+    context 'when the request bears an invalid token' do
       let(:env) { Rack::MockRequest.env_for }
 
       before do
-        env['HTTP_P4L_EMAIL'] = 'nobody_knows@someemail.com'
+        env['HTTP_AUTHORIZATION'] = 'Bearer bad_token'
       end
 
       it 'denies access' do

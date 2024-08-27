@@ -29,7 +29,7 @@ RSpec.describe JsonWebToken do
   describe '#verify!' do
     context 'when the token is valid' do
       before do
-        allow(JsonWebToken).to receive(:jwks).and_return({ keys: [jwk.export] })
+        allow(AuthenticationSpecHelpers::MockJWKClient).to receive(:call).and_return({ keys: [jwk.export] })
       end
 
       it 'returns the payload' do

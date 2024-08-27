@@ -14,15 +14,15 @@ class JsonWebToken
     # expose payload and stuff so we can use it later
     @payload, @headers = JWT.decode(
       @token,
-      nil, # we don't know the key, but we will know it in test, right?
+      nil,
       true, # verify the signature
       {
-        algorithm: 'RS256', # make sure the spec helper matches this too
-        iss: domain_url, # should point to the domain of Cognito or whatever
+        algorithm: 'RS256',
+        iss: domain_url,
         verify_iss: true,
-        aud: 'P4L-API', # P4l-api or something
+        aud: 'P4L-API',
         verify_aud: true,
-        jwks: { keys: JsonWebToken.jwks[:keys] } # maybe this is a lambda?
+        jwks: jwk_loader
       }
     )
     @payload
@@ -34,8 +34,7 @@ class JsonWebToken
 
   # This should be a separate singleton client that will cache the keys for us.
   # https://cognito-idp.us-east-1.amazonaws.com/us-east-1_CbBDA8Y5m/.well-known/jwks.json
-  def jwks
-    # @jwks ||= JWKClient.call?
-
+  def jwk_loader
+    AuthenticationSpecHelpers::MockJWKClient
   end
 end
