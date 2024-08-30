@@ -34,6 +34,17 @@ rescue KeyError
   body {}
 end
 
+get '/devotionals' do
+  devotionals = Devotional.all
+
+  content_type :json
+  devotionals.to_json
+
+rescue StandardError
+  status 400
+  body {}
+end
+
 get '/user' do
   user_from_token.to_json
 end
