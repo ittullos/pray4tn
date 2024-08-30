@@ -21,4 +21,28 @@ describe 'Pastor4Life API -' do
       expect(parsed_response).to eq(data_object_for(verse))
     end
   end
+
+  describe 'GET /devotionals' do
+    context 'when the user is authenticated' do
+      let!(:devotionals) { create_list(:devotional, 6) }
+
+      it 'returns a list of devotionals' do
+        get '/devotionals', {}, headers
+
+        expect(last_response.status).to eq(200)
+        expect(parsed_response).to eq(data_object_for(devotionals))
+      end
+    end
+
+    context 'when the user is not authenticated' do
+      let(:user) { create(:user) }
+
+      it 'returns an unauthorized response' do
+        get '/devotionals', {}, headers
+
+        expect(last_response.status).to eq(401)
+        expect(parsed_response).to eq(unauthorized_response)
+      end
+    end
+  end
 end
