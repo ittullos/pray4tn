@@ -1,20 +1,12 @@
 require 'spec_helper'
+require_relative '../../lib/db_seed_users'
 
 RSpec.describe 'Seeding the database with users', :task do
-  #  let(:valid_attributes) { attributes_for(:user) }
-
-  before(:all) do
-    Rake.application.init
-    Rake.application.load_rakefile
-    Rake::Task.define_task(:environment)
-    Rake::Task['db:seed:users'].invoke
-  end
-
   it 'creates the users' do
-    expect(User.count).to eq(1)
-  end
+    expect { SeedUsers.run }.to output(/Inserted 1 users/).to_stdout
 
-  it 'creates the first user' do
+    expect(User.count).to eq(1)
+
     user = User.first
     expect(user.first_name).to eq 'Isaac'
   end
