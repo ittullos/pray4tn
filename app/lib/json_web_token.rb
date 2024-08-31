@@ -35,6 +35,6 @@ class JsonWebToken
   # This should be a separate singleton client that will cache the keys for us.
   # https://cognito-idp.us-east-1.amazonaws.com/us-east-1_CbBDA8Y5m/.well-known/jwks.json
   def jwk_loader
-    AuthenticationSpecHelpers::MockJWKClient
+    JWKClient.instance
   end
 end

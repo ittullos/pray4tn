@@ -4,6 +4,7 @@ ruby '3.1.4'
 
 gem 'activerecord'
 gem 'acts_as_list'
+gem 'httparty'
 gem 'json'
 gem 'jwt'
 gem 'pg'
@@ -30,4 +31,5 @@ group :test do
   gem 'database_cleaner-active_record'
   gem 'rack-test'
   gem 'rspec'
+  gem 'webmock'
 end

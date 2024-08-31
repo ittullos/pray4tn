@@ -7,6 +7,7 @@ require 'sinatra/cors'
 require_relative './models'
 require_relative './middleware/authentication'
 require_relative './lib/json_web_token'
+require_relative './lib/jwk_client'
 
 set :database_file, '../config/database.yml'
 
