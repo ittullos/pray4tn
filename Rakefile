@@ -12,9 +12,15 @@ namespace :db do
     task :users => :environment do
       SeedUsers.run
     end
+
     desc "Seed verses from /db/seeds/verses.yml"
     task :verses => :environment do
       SeedVerses.run
+    end
+
+    desc "Seed devotionals from /db/seeds/devotionals.yml"
+    task :devotionals => :load_config do
+      SeedDevotionals.run
     end
   end
 end
