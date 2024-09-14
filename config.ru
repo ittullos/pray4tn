@@ -1,5 +1,3 @@
-require "./config/environment"
+require './config/environment'
 
-$app ||= Sinatra::Application
-
-run $app
+run Sinatra::Application
