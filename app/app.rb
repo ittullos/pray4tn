@@ -28,10 +28,13 @@ get '/home' do
 
   content_type :json
   verse.to_json
+end
 
-rescue KeyError
-  status 400
-  body {}
+get '/devotionals' do
+  devotionals = Devotional.all
+
+  content_type :json
+  devotionals.to_json
 end
 
 get '/user' do
@@ -86,6 +89,12 @@ end
 error KeyError do |error|
   status 400
   body [{ errors: ["Missing param: #{error.key}"] }.to_json]
+end
+
+error StandardError do |error|
+  puts "500 - #{error.message}"
+  status 500
+  body [{ data: '', errors: error.message }.to_json]
 end
 
 private

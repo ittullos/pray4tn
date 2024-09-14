@@ -10,8 +10,12 @@ module ApiSpecHelpers
   end
 
   def data_object_for(entity)
-    entity.attributes.tap do |attributes|
-      convert_timestamps(attributes)
+    if entity.is_a?(Array)
+      data_objects_for_multiple(entity)
+    else
+      entity.attributes.tap do |attributes|
+        convert_timestamps(attributes)
+      end
     end
   end
 
