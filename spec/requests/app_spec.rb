@@ -45,4 +45,26 @@ describe 'Pastor4Life API -' do
       end
     end
   end
+
+  describe 'Error Handling' do
+    before do
+      allow(Verse).to receive(:verse_of_the_day).and_raise(StandardError, "blob")
+    end
+
+    it 'logs an error' do
+      expect { get '/home', {}, headers }.to output(/blob/).to_stdout
+    end
+
+    it 'responds with a 500' do
+      get '/home', {}, headers
+
+      expect(last_response.status).to eq(500)
+    end
+
+    it 'returns a message' do
+      get '/home', {}, headers
+
+      expect(parsed_response).to eq({"errors" => "blob", "data" => ""})
+    end
+  end
 end
