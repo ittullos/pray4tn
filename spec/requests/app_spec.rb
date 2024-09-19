@@ -46,6 +46,18 @@ describe 'Pastor4Life API -' do
     end
   end
 
+  describe 'POST /prayer_list' do
+    let(:pdf_file) { Rack::Test::UploadedFile.new('spec/fixtures/sample.pdf', 'application/pdf') }
+
+    it 'processes the uploaded PDF file' do
+      resident_count = Resident.count
+      post '/prayer_list', { file: pdf_file }, headers
+
+      expect(last_response.status).to eq(200)
+      expect(Resident.count).to eq(resident_count + 23)
+    end
+  end
+
   describe 'Error Handling' do
     before do
       allow(Verse).to receive(:verse_of_the_day).and_raise(StandardError, "blob")

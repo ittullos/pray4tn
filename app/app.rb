@@ -37,6 +37,15 @@ get '/devotionals' do
   devotionals.to_json
 end
 
+post '/prayer_list' do
+  file = params.fetch('file')
+  user = user_from_token
+  user.load_residents(file)
+
+  content_type :json
+  user.residents.count.to_json
+end
+
 get '/user' do
   user_from_token.to_json
 end
