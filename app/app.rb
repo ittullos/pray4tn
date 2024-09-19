@@ -37,6 +37,12 @@ get '/devotionals' do
   devotionals.to_json
 end
 
+post '/user/residents' do
+  file = params.fetch('file')
+  user = user_from_token
+  PdfParser.load_residents(file, user)
+end
+
 get '/user' do
   user_from_token.to_json
 end
