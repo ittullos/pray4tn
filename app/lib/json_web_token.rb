@@ -10,8 +10,6 @@ class JsonWebToken
   end
 
   def verify!
-    # Take your token and verify it with the JWKs
-    # expose payload and stuff so we can use it later
     @payload, @headers = JWT.decode(
       @token,
       nil,
@@ -29,11 +27,9 @@ class JsonWebToken
   end
 
   def domain_url
-    'cognito-idp.us-east-1.amazonaws.com'
+    ENV['COGNITO_DOMAIN_URL'] || 'cognito-idp.us-east-1.amazonaws.com'
   end
 
-  # This should be a separate singleton client that will cache the keys for us.
-  # https://cognito-idp.us-east-1.amazonaws.com/us-east-1_CbBDA8Y5m/.well-known/jwks.json
   def jwk_loader
     JWKClient.instance
   end
