@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'httparty'
+require 'net/http'
 require 'singleton'
 
 class JWKClient
@@ -49,9 +49,12 @@ class JWKClient
   end
 
   def fetch_keys
-    response = HTTParty.get(jwk_endpoint)
-    unless response.success?
-      raise JWKClientFetchError, "Error fetching JWKS, status: #{response.code}, message: #{response.body}"
+    uri = URI(jwk_endpoint)
+    response = Net::HTTP.get_response(uri)
+    unless response.code == "200"
+      raise JWKClientFetchError, "Error fetching JWKS, "\
+        "status: #{response.code}, "\
+        "body: #{response.body}"
     end
 
     key_hash = response.body.is_a?(String) ? JSON.parse(response.body) : response.body

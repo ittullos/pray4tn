@@ -112,7 +112,7 @@ RSpec.describe JWKClient do
 
       expect { JWKClient.instance.call }.to raise_error(
         ::JWKClient::JWKClientFetchError,
-        'Error fetching JWKS, status: 500, message: Server is Down'
+        'Error fetching JWKS, status: 500, body: Server is Down'
       )
     end
   end
@@ -129,19 +129,6 @@ RSpec.describe JWKClient do
 
       expect(jwk_fetch_request).to have_been_made.once
       expect(JWKClient.instance.jwks).to eq(JWT::JWK::Set.new(JSON.parse(jwk_response_body)['keys']))
-    end
-  end
-
-  describe 'error handling' do
-    it 'raises an error when the request fails' do
-      stub_request(:get, jwk_endpoint)
-        .to_return(status: 500, body: 'Server is Down')
-        .then.to_return(status: 200, body: jwk_response_body)
-
-      expect { JWKClient.instance.call }.to raise_error(
-        ::JWKClient::JWKClientFetchError,
-        'Error fetching JWKS, status: 500, message: Server is Down'
-      )
     end
   end
 end
