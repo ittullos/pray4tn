@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe JsonWebToken do
+  include AuthenticationSpecHelpers
+
   let(:rsa_key) { OpenSSL::PKey::RSA.generate 1024 }
   let(:jwk) do
     desc_params = {
@@ -30,6 +32,8 @@ RSpec.describe JsonWebToken do
     context 'when the token is valid' do
       before do
         allow(AuthenticationSpecHelpers::MockJWKClient).to receive(:call).and_return({ keys: [jwk.export] })
+        allow(ENV).to receive(:[]).and_call_original
+        allow(ENV).to receive(:[]).with('COGNITO_DOMAIN_URL').and_return('cognito-idp.us-east-1.amazonaws.com')
       end
 
       it 'returns the payload' do

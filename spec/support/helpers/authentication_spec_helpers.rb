@@ -3,6 +3,12 @@
 require 'jwt'
 
 module AuthenticationSpecHelpers
+  def self.included(test)
+    test.before do
+      allow(JWKClient).to receive(:instance).and_return(MockJWKClient)
+    end
+  end
+
   # DOES THIS NEED TO BE PRIVATE??? or is it private by default?
   @@rsa_key ||= OpenSSL::PKey::RSA.generate 1024
 
