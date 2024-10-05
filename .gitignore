@@ -1,6 +1,5 @@
 *.gem
 *.rbc
-*.pdf
 /.config
 .env
 .byebug_history

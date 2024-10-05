@@ -40,7 +40,11 @@ end
 post '/user/residents' do
   file = params.fetch('file')
   user = user_from_token
-  PdfParser.load_residents(file, user)
+  residents = ResidentList::PDF.new(file).load_residents
+
+  residents.each do |resident|
+    Resident.find_or_create_by(name: resident, user_id: user.id)
+  end
 end
 
 get '/user' do
