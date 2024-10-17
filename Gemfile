@@ -5,6 +5,7 @@ ruby '3.1.4'
 gem 'activerecord'
 gem 'acts_as_list'
 gem 'json'
+gem 'jwt'
 gem 'pg'
 gem 'puma', '~> 6.4.0'
 gem 'rack'
@@ -29,4 +30,5 @@ group :test do
   gem 'database_cleaner-active_record'
   gem 'rack-test'
   gem 'rspec'
+  gem 'webmock'
 end

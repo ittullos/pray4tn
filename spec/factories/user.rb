@@ -7,5 +7,8 @@ FactoryBot.define do
     sequence :email do |n|
       "#{first_name}.#{last_name}#{n}@example.com".downcase
     end
+    sequence :sub do |n|
+      "cognito|#{n}"
+    end
   end
 end
