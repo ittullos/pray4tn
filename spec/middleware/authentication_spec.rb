@@ -9,22 +9,29 @@ RSpec.describe 'Authentication middleware' do
 
   describe 'Cognito' do
     subject { Authentication::Cognito.new(app) }
+    let(:user) { create(:user) }
+    let(:env) { Rack::MockRequest.env_for }
+    let(:json_web_token_double) do
+      instance_double(
+        JsonWebToken,
+        verify!: {
+          'data' => { 'sub' => user.sub },
+          'iss' => jwk[:issuer],
+          'aud' => 'P4L-API'
+        }
+      )
+    end
+
+    before do
+      allow(JsonWebToken).to receive(:new).and_call_original
+      allow(JsonWebToken).to receive(:new).with('token').and_return(
+        json_web_token_double
+      )
+    end
 
     context 'when the request bears a valid token' do
-      let(:json_web_token_double) { double(:json_web_token) }
-      let(:env) { Rack::MockRequest.env_for }
-      let(:user) { create(:user) }
-
       before do
         env['HTTP_AUTHORIZATION'] = 'Bearer token'
-        allow(JsonWebToken).to receive(:new).with('token').and_return(json_web_token_double)
-        allow(json_web_token_double).to receive(:verify!).and_return(
-          {
-            'data' => { 'sub' => user.sub },
-            'iss' => jwk[:issuer],
-            'aud' => 'P4L-API'
-          }
-        )
       end
 
       it 'allows access' do
@@ -41,12 +48,45 @@ RSpec.describe 'Authentication middleware' do
     end
 
     context 'when the request bears an invalid token' do
-      let(:env) { Rack::MockRequest.env_for }
-
       before do
         env['HTTP_AUTHORIZATION'] = 'Bearer bad_token'
       end
 
+      it 'denies access' do
+        status, headers, body = subject.call(env)
+        expect(status).to eq(401)
+        expect(headers).to be_empty
+        expect(JSON.parse(body[0])).to eq(unauthorized_response)
+      end
+    end
+
+    context 'when the authorization header is for the wrong scheme' do
+      before do
+        env['HTTP_AUTHORIZATION'] = 'Basic token'
+      end
+
+      it 'denies access' do
+        status, headers, body = subject.call(env)
+        expect(status).to eq(401)
+        expect(headers).to be_empty
+        expect(JSON.parse(body[0])).to eq(unauthorized_response)
+      end
+    end
+
+    context 'when the authorization header is empty' do
+      before do
+        env['HTTP_AUTHORIZATION'] = nil
+      end
+
+      it 'denies access' do
+        status, headers, body = subject.call(env)
+        expect(status).to eq(401)
+        expect(headers).to be_empty
+        expect(JSON.parse(body[0])).to eq(unauthorized_response)
+      end
+    end
+
+    context 'when there is no authorization header' do
       it 'denies access' do
         status, headers, body = subject.call(env)
         expect(status).to eq(401)

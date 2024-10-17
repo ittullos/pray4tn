@@ -40,5 +40,15 @@ RSpec.describe JsonWebToken do
         expect(subject.verify!).to eq(data)
       end
     end
+
+    context 'when the token is invalid' do
+      let(:token) do
+        JWT.encode(data, OpenSSL::PKey::RSA.generate(1024), jwk[:alg], kid: jwk[:kid])
+      end
+
+      it 'raises an error' do
+        expect { subject.verify! }.to raise_error(JWT::DecodeError, 'No keys found in jwks')
+      end
+    end
   end
 end

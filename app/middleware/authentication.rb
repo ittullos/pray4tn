@@ -8,6 +8,8 @@ module Authentication
 
     def call(env)
       token = extract_token(env)
+      return unauthorized_response unless token
+
       decoded_token = JsonWebToken.new(token).verify!
       user = User.find_by_sub(decoded_token.dig('data', 'sub'))
 
@@ -28,7 +30,10 @@ module Authentication
     end
 
     def extract_token(env)
-      Rack::Request.new(env).fetch_header('HTTP_AUTHORIZATION').split(' ').second
+      scheme, token = Rack::Request.new(env).fetch_header('HTTP_AUTHORIZATION')&.split
+      return nil unless scheme&.downcase == 'bearer'
+
+      token
     end
   end
 end
