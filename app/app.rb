@@ -37,6 +37,22 @@ get '/devotionals' do
   devotionals.to_json
 end
 
+post '/user/residents' do
+  # Guard clause to check if the file parameter is present
+  unless params[:file]
+    status 400
+    return { errors: 'File is required', data: '' }.to_json
+  end
+
+  file = params.fetch('file')
+  user = user_from_token
+  residents = ResidentList::PDF.new(file).load_residents
+
+  residents.each do |resident|
+    Resident.find_or_create_by(name: resident, user_id: user.id)
+  end
+end
+
 get '/user' do
   user_from_token.to_json
 end

@@ -13,6 +13,7 @@ gem 'sinatra-activerecord'
 gem 'sinatra-contrib', require: false
 gem 'sinatra-cors'
 gem 'sinatra-cross_origin'
+gem 'pdf-reader'
 
 group :development, :test do
   gem 'activesupport'
