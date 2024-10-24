@@ -15,10 +15,8 @@ RSpec.describe ResidentList::PDF do
     end
 
     it 'filters out unnecessary lines' do
-      skip_words = ['information', 'page', 'Unknown','disciple', 'Neighborhood', 'Powered', 'credit card']
-
       residents = ResidentList::PDF.new(pdf_file).load_residents
-      expect(residents).not_to include(*skip_words)
+      expect(residents).not_to include(*ResidentList::PDF::SKIP_WORDS)
     end
 
     it 'skips over duplicate names' do
@@ -37,6 +35,12 @@ RSpec.describe ResidentList::PDF do
   context 'when the pdf is incorrectly formatted' do
     it "raises an error" do
       expect { ResidentList::PDF.new(bad_pdf).load_residents }.to raise_error(StandardError, "The provided file is incorrectly formatted.")
+    end
+  end
+
+  context 'when no file is passed' do
+    it 'raises an ArgumentError' do
+      expect { ResidentList::PDF.new(nil) }.to raise_error(ArgumentError, 'A file must be provided')
     end
   end
 end

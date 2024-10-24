@@ -72,6 +72,15 @@ describe 'Pastor4Life API -' do
         expect(parsed_response).to eq({"errors" => "The provided file is not a PDF.", "data" => ""})
       end
     end
+
+    context 'when no file is given' do
+      it 'returns an error' do
+        post '/user/residents', {}, headers
+
+        expect(last_response.status).to eq(400)
+        expect(parsed_response).to eq({ "errors" => "File is required", "data" => "" })
+      end
+    end
   end
 
   describe 'Error Handling' do

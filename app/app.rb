@@ -38,6 +38,12 @@ get '/devotionals' do
 end
 
 post '/user/residents' do
+  # Guard clause to check if the file parameter is present
+  unless params[:file]
+    status 400
+    return { errors: 'File is required', data: '' }.to_json
+  end
+
   file = params.fetch('file')
   user = user_from_token
   residents = ResidentList::PDF.new(file).load_residents
