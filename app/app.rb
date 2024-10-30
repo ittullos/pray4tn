@@ -6,6 +6,7 @@ require 'sinatra/activerecord'
 require 'sinatra/cors'
 require_relative './models'
 require_relative './middleware/authentication'
+require_relative './services/resident_list'
 
 set :database_file, '../config/database.yml'
 
@@ -35,6 +36,36 @@ get '/devotionals' do
 
   content_type :json
   devotionals.to_json
+end
+
+post '/user/residents' do
+  unless params[:file] && params[:file]['tempfile']
+    status 400
+    return { errors: 'File is required', data: '' }.to_json
+  end
+
+  file = params[:file]['tempfile']
+  user = user_from_token
+
+  begin
+    residents = ResidentList::PDF.new(file).load_residents
+
+    residents.each do |resident|
+      Resident.find_or_create_by(name: resident, user_id: user.id)
+    end
+
+    status 200
+    { data: residents, errors: '' }.to_json
+  rescue ResidentList::PDF::InvalidFileFormatError => e
+    status 400
+    { errors: e.message, data: '' }.to_json
+  rescue ArgumentError => e
+    status 400
+    { errors: e.message, data: '' }.to_json
+  rescue StandardError => e
+    status 500
+    { errors: e.message, data: '' }.to_json
+  end
 end
 
 get '/user' do
