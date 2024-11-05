@@ -20,6 +20,24 @@ set :expose_headers, 'location,link'
 
 puts "RACK_ENV: #{ENV['RACK_ENV']}"
 
+configure :development, :test do
+  log_dir = File.expand_path('../log', __dir__)
+  FileUtils.mkdir_p(log_dir) unless File.directory?(log_dir)
+
+  log_file_path = File.join(log_dir, "#{settings.environment}.log")
+  log_file = File.new(log_file_path, 'a+')
+  log_file.sync = true
+  use Rack::CommonLogger, log_file
+  set :logging, Logger::DEBUG
+  ActiveRecord::Base.logger = Logger.new(log_file)
+end
+
+configure :production do
+  use Rack::CommonLogger, $stdout
+  set :logging, Logger::INFO
+  ActiveRecord::Base.logger = Logger.new($stdout)
+end
+
 use Authentication::Cognito
 
 before do
