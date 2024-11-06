@@ -51,10 +51,8 @@ describe 'Pastor4Life API -' do
   describe 'POST /user/residents' do
     context 'when the file is valid' do
       it 'creates a resident for each name in the file' do
-        post '/user/residents', { file: pdf_file }, headers
-
+        expect { post '/user/residents', { file: pdf_file }, headers }.to change(Resident, :count).by(23)
         expect(last_response.status).to eq(200)
-        expect(Resident.count).to eq(23)
       end
     end
 
