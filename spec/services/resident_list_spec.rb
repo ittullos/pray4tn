@@ -1,8 +1,6 @@
 require 'spec_helper'
 require_relative '../../app/services/resident_list'
 
-include AuthenticationSpecHelpers
-
 RSpec.describe ResidentList::PDF do
   let(:pdf_file) { Rack::Test::UploadedFile.new('spec/fixtures/sample.pdf', 'application/pdf') }
   let(:bad_pdf) { Rack::Test::UploadedFile.new('spec/fixtures/bad_sample.pdf', 'application/pdf')}
@@ -27,19 +25,28 @@ RSpec.describe ResidentList::PDF do
 
   context 'when the file is not a pdf' do
     it 'raises an error' do
-      expect { ResidentList::PDF.new("cat.gif").load_residents }.to raise_error(StandardError, "The provided file is not a PDF.")
+      expect { ResidentList::PDF.new("cat.gif").load_residents }.to raise_error(
+        StandardError,
+        "The provided file is not a PDF."
+      )
     end
   end
 
   context 'when the pdf is incorrectly formatted' do
     it "raises an error" do
-      expect { ResidentList::PDF.new(bad_pdf).load_residents }.to raise_error(StandardError, "The PDF file should be from Bless Every Home.")
+      expect { ResidentList::PDF.new(bad_pdf).load_residents }.to raise_error(
+        StandardError,
+        "The PDF file should be from Bless Every Home."
+      )
     end
   end
 
   context 'when no file is passed' do
     it 'raises an ArgumentError' do
-      expect { ResidentList::PDF.new(nil) }.to raise_error(ArgumentError, 'A file must be provided')
+      expect { ResidentList::PDF.new(nil) }.to raise_error(
+        ArgumentError,
+        'A file must be provided'
+      )
     end
   end
 end
