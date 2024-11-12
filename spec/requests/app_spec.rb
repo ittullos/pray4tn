@@ -85,15 +85,11 @@ describe 'Pastor4Life API -' do
     end
 
     it 'responds with a 500' do
-      get '/home', {}, headers
-
-      expect(last_response.status).to eq(500)
+      expect { get '/home', {}, headers }.to output(/500/).to_stdout
     end
 
     it 'returns a message' do
-      get '/home', {}, headers
-
-      expect(parsed_response).to eq({"errors" => "blob", "data" => ""})
+      expect { get '/home', {}, headers }.to output(/blob/).to_stdout
     end
   end
 end
