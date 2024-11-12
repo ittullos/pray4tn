@@ -12,6 +12,8 @@ describe 'Pastor4Life API -' do
   let!(:verse) do
     create(:verse, day: (Time.now.yday % 100) + 1, version: 'CSB')
   end
+  let(:pdf_file) { Rack::Test::UploadedFile.new('spec/fixtures/sample.pdf', 'application/pdf') }
+  let(:cat_pic) { Rack::Test::UploadedFile.new('spec/fixtures/cat.jpeg', 'application/pdf') }
 
   describe 'GET /home' do
     it 'returns a verse' do
@@ -42,6 +44,33 @@ describe 'Pastor4Life API -' do
 
         expect(last_response.status).to eq(401)
         expect(parsed_response).to eq(unauthorized_response)
+      end
+    end
+  end
+
+  describe 'POST /user/residents' do
+    context 'when the file is valid' do
+      it 'creates a resident for each name in the file' do
+        expect { post '/user/residents', { file: pdf_file }, headers }.to change(Resident, :count).by(23)
+        expect(last_response.status).to eq(200)
+      end
+    end
+
+    context 'when the file is invalid' do
+      it 'returns an error' do
+        post '/user/residents', { file: cat_pic }, headers
+
+        expect(last_response.status).to eq(400)
+        expect(parsed_response).to eq({"errors" => "The provided file is not a PDF.", "data" => ""})
+      end
+    end
+
+    context 'when no file is given' do
+      it 'returns an error' do
+        post '/user/residents', {}, headers
+
+        expect(last_response.status).to eq(400)
+        expect(parsed_response).to eq({ "errors" => "File is required", "data" => "" })
       end
     end
   end
