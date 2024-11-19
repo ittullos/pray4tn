@@ -29,13 +29,13 @@ RSpec.describe JsonWebToken do
   subject { described_class.new(token) }
 
   describe '#verify!' do
-    context 'when the token is valid' do
-      before do
-        allow(AuthenticationSpecHelpers::MockJWKClient).to receive(:call).and_return({ keys: [jwk.export] })
-        allow(ENV).to receive(:[]).and_call_original
-        allow(ENV).to receive(:[]).with('COGNITO_DOMAIN_URL').and_return('cognito-idp.us-east-1.amazonaws.com')
-      end
+    before do
+      allow(AuthenticationSpecHelpers::MockJWKClient).to receive(:call).and_return({ keys: [jwk.export] })
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('COGNITO_DOMAIN_URL').and_return('cognito-idp.us-east-1.amazonaws.com')
+    end
 
+    context 'when the token is valid' do
       it 'returns the payload' do
         expect(subject.verify!).to eq(data)
       end
@@ -47,7 +47,9 @@ RSpec.describe JsonWebToken do
       end
 
       it 'raises an error' do
-        expect { subject.verify! }.to raise_error(JWT::DecodeError, 'No keys found in jwks')
+        expect { subject.verify! }.to raise_error(
+          JWT::VerificationError, 'Signature verification failed'
+        )
       end
     end
   end
