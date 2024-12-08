@@ -37,7 +37,7 @@ RSpec.describe 'Prayer endpoints', :request do
       expect(last_response.status).to eq(201)
 
       expect(parsed_response).to include(
-        data_object_for(Prayer.last).merge('next_resident_id' => bob.id)
+        data_object_for(Prayer.last).merge('next_resident' => data_object_for(bob))
       )
     end
 

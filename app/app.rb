@@ -110,7 +110,7 @@ post '/prayers' do
 
   status 201
   prayer.attributes.merge(
-    { 'next_resident_id' => next_resident.id }
+    { 'next_resident' => next_resident }
   ).to_json
 end
 
