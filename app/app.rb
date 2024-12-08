@@ -94,6 +94,8 @@ get '/user/residents' do
   residents.to_json
 end
 
+# Step 1, happens at the beginning of a route
+# you get back the Resident information to make a Prayer
 get '/user/residents/next-resident' do
   # TODO: Look at eager loading here. We might be able to grab the resident for
   # the last Prayer at the same time, or use a plain AR query to grab the next
@@ -115,6 +117,9 @@ get '/user/residents/:id' do
   resident.to_json
 end
 
+# Step 2
+# call this for the resident, it creates a Prayer for the Resident based on the
+# resident_id given
 post '/prayers' do
   resident_id = params.fetch('resident_id')
   prayer = Prayer.new(resident_id:, user_id: user_from_token&.id, recorded_at: Time.current)
@@ -126,6 +131,30 @@ post '/prayers' do
   prayer.attributes.merge(
     { 'next_resident' => next_resident }
   ).to_json
+end
+
+post '/user/routes' do
+  user = user_from_token
+
+  route = Route.create!(
+    user: user,
+    commitment: user&.current_commitment,
+    started_at: Time.current)
+
+  content_type :json
+  { data: route }.to_json
+end
+
+patch 'user/routes/:id' do
+  if params.fetch('stop')
+    #set stopped_at
+  end
+  route = Route.find(:id)
+  route.prayers.count # returns a count of the ActiveRecord Collection of Prayers
+  route.mileage = params.fetch('mileage')
+
+  # updates the attributes of the Route with that ID
+  # pass something that tells you to stop the route and it sets the stopped_at timestamp
 end
 
 error ActiveRecord::RecordInvalid do |error|
