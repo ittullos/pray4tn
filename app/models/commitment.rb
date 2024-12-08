@@ -4,6 +4,7 @@ class Commitment < ActiveRecord::Base
   belongs_to :user
   belongs_to :journey
 
+  validates :journey, presence: true
   validates :end_date, comparison: { greater_than: :start_date }
 
   attribute :start_date, default: -> { Date.current }

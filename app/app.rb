@@ -33,6 +33,15 @@ get '/home' do
   verse.to_json
 end
 
+post '/user/commitments' do
+  journey_id = params.fetch('journey_id')
+  commitment = Commitment.new(journey_id:, user_id: user_from_token&.id)
+  commitment.save!
+
+  status 201
+  { data: commitment.to_json }
+end
+
 get '/devotionals' do
   devotionals = Devotional.all
 
