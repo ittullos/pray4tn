@@ -40,6 +40,11 @@ get '/devotionals' do
   devotionals.to_json
 end
 
+get '/journeys' do
+  content_type :json
+  { data: Journey.all }.to_json
+end
+
 post '/user/residents' do
   unless params[:file] && params[:file]['tempfile']
     status 400
