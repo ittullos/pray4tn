@@ -145,16 +145,18 @@ post '/user/routes' do
   { data: route }.to_json
 end
 
-patch 'user/routes/:id' do
-  if params.fetch('stop')
-    #set stopped_at
-  end
-  route = Route.find(:id)
-  route.prayers.count # returns a count of the ActiveRecord Collection of Prayers
-  route.mileage = params.fetch('mileage')
+patch '/user/routes/:id' do
+  route = Route.find(params.fetch('id'))
 
-  # updates the attributes of the Route with that ID
-  # pass something that tells you to stop the route and it sets the stopped_at timestamp
+  if params.fetch('stop')
+    route.stopped_at = Time.current
+  end
+
+  route.mileage = params.fetch('mileage')
+  route.save!
+
+  content_type :json
+  { data: route }.to_json
 end
 
 error ActiveRecord::RecordInvalid do |error|

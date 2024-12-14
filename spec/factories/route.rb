@@ -5,8 +5,8 @@ FactoryBot.define do
     user
     commitment
     started_at { DateTime.current }
-    stopped_at { DateTime.current + 1.year }
-    step_count { 120 }
+    stopped_at { nil }
+    mileage { 120 }
     seconds { 10 }
   end
 end

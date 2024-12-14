@@ -10,7 +10,7 @@ RSpec.describe 'Route endpoints', :request do
 
   describe 'POST /user/routes' do
     it 'requires the auth header' do
-      post '/user/routes', {}, headers
+      post '/user/routes', {}, {}
 
       expect(last_response.status).to eq(401)
       expect(parsed_response['errors']).to include('Unauthorized')
@@ -33,6 +33,37 @@ RSpec.describe 'Route endpoints', :request do
       expect(last_response.status).to eq(200)
       expect(parsed_response['data']['commitment_id']).to be_nil
       expect(parsed_response['data']['user_id']).to eq(user.id)
+    end
+  end
+
+  describe 'PATCH /user/routes/:id' do
+    let(:route) { create(:route, user: user) }
+
+    it 'requires the auth header' do
+      patch "/user/routes/#{route.id}", {}, {}
+
+      expect(last_response.status).to eq(401)
+      expect(parsed_response['errors']).to include('Unauthorized')
+    end
+
+    it 'updates the Route' do
+      patch "/user/routes/#{route.id}", { mileage: 130, stop: false }, user_token_header(user, { 'sub' => user.sub })
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_response).to include(
+        "data" => data_object_for(route.reload)
+      )
+      expect(route.mileage).to eq(130)
+    end
+
+    it 'stops the Route' do
+      patch "/user/routes/#{route.id}", { mileage: 130, stop: true }, user_token_header(user, { 'sub' => user.sub })
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_response).to include(
+        "data" => data_object_for(route.reload)
+      )
+      expect(route.stopped_at).not_to be_nil
     end
   end
 end
