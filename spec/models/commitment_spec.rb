@@ -14,7 +14,7 @@ RSpec.describe Commitment, :model do
     it 'belongs to a journey' do
       expect do
         build(:commitment, journey: nil).save!
-      end.to raise_error(ActiveRecord::NotNullViolation)
+      end.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
