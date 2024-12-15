@@ -33,10 +33,10 @@ module AuthenticationSpecHelpers
   def user_token(user, token_payload)
     jwt_payload =
       {
-        'data' => { 'sub' => user.sub }.merge(token_payload),
+        'sub' => user.sub,
         'iss' => jwk[:issuer],
         'aud' => 'P4L-API'
-      }
+      }.merge(token_payload)
     JWT.encode(jwt_payload, jwk.signing_key, 'RS256', kid: jwk[:kid])
   end
 

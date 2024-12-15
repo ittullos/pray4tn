@@ -11,7 +11,7 @@ module Authentication
       return unauthorized_response unless token
 
       decoded_token = JsonWebToken.new(token).verify!
-      user = User.find_by_sub(decoded_token.dig('data', 'sub'))
+      user = User.find_or_create_by(sub: decoded_token.fetch('sub'))
 
       if user
         env[:user] = user
