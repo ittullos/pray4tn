@@ -15,7 +15,7 @@ RSpec.describe 'Authentication middleware' do
       instance_double(
         JsonWebToken,
         verify!: {
-          'data' => { 'sub' => user.sub },
+          'sub' => user.sub,
           'iss' => jwk[:issuer],
           'aud' => 'P4L-API'
         }
