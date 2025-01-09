@@ -4,6 +4,7 @@ require './app/models/user'
 
 RSpec.describe User, :model do
   let(:valid_attributes) { attributes_for(:user) }
+  let(:user) { User.new(valid_attributes) }
 
   describe 'validations' do
     it 'is valid from the factory' do
@@ -78,4 +79,16 @@ RSpec.describe User, :model do
       expect(subject.attributes).to include('created_at', 'updated_at')
     end
   end
+
+  describe '#current_commitment' do
+  it 'returns the most recent commitment' do
+    create(:commitment, user: user, created_at: 1.day.ago)
+    recent_commitment = create(:commitment, user: user, created_at: 1.hour.ago)
+    expect(user.current_commitment).to eq(recent_commitment)
+  end
+
+  it 'returns nil if there are no commitments' do
+    expect(user.current_commitment).to be_nil
+  end
+end
 end
