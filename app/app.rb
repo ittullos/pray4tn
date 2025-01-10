@@ -159,6 +159,15 @@ patch '/user/routes/:id' do
   { data: route }.to_json
 end
 
+get '/user/stats' do
+  user = user_from_token
+
+  stats = user.stats
+
+  content_type :json
+  { data: stats }.to_json
+end
+
 error ActiveRecord::RecordInvalid do |error|
   status 422
   body [{ errors: error.message.to_s }.to_json]

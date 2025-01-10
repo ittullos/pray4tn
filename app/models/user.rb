@@ -12,4 +12,16 @@ class User < ActiveRecord::Base
   def current_commitment
     commitments.first
   end
+
+  def stats
+    total_distance = routes.sum(:mileage)
+    total_prayers = Prayer.where(user_id: id).count
+    total_duration = routes.sum(:seconds)
+
+    {
+      total_distance: total_distance,
+      total_prayers: total_prayers,
+      total_duration: total_duration
+    }
+  end
 end
