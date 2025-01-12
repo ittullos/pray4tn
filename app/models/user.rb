@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   has_many :residents, -> { order(position: :asc) }
   has_many :routes
   has_many :commitments, -> { order(created_at: :desc) }
+  has_many :prayers
 
   def current_commitment
     commitments.first
@@ -15,13 +16,29 @@ class User < ActiveRecord::Base
 
   def stats
     total_distance = routes.sum(:mileage)
-    total_prayers = Prayer.where(user_id: id).count
+    total_prayers = prayers.count
     total_duration = routes.sum(:seconds)
+
+    current_commitment = self.current_commitment
+    current_journey = current_commitment&.journey
+    if current_commitment
+      commitment_distance = routes.where(commitment_id: current_commitment.id).sum(:mileage)
+      commitment_duration = routes.where(commitment_id: current_commitment.id).sum(:seconds)
+      commitment_prayers = current_commitment.prayers.count
+    else
+      commitment_distance = 0
+      commitment_duration = 0
+      commitment_prayers = 0
+    end
 
     {
       total_distance: total_distance,
       total_prayers: total_prayers,
-      total_duration: total_duration
+      total_duration: total_duration,
+      commitment_distance: commitment_distance,
+      commitment_duration: commitment_duration,
+      commitment_prayers: commitment_prayers,
+      current_journey: current_journey
     }
   end
 end
