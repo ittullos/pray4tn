@@ -3,6 +3,8 @@
 class Commitment < ActiveRecord::Base
   belongs_to :user
   belongs_to :journey
+  has_many :routes
+  has_many :prayers, through: :routes
 
   validates :journey, presence: true
   validates :end_date, comparison: { greater_than: :start_date }
