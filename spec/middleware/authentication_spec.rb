@@ -11,7 +11,7 @@ RSpec.describe 'Authentication middleware' do
     subject { Authentication::Cognito.new(app) }
     let(:user) { create(:user) }
     let(:env) { Rack::MockRequest.env_for }
-    let(:json_web_token_double) do
+    let(:access_token_double) do
       instance_double(
         JsonWebToken,
         verify!: {
@@ -25,7 +25,7 @@ RSpec.describe 'Authentication middleware' do
     before do
       allow(JsonWebToken).to receive(:new).and_call_original
       allow(JsonWebToken).to receive(:new).with('token').and_return(
-        json_web_token_double
+        access_token_double
       )
     end
 
@@ -44,6 +44,30 @@ RSpec.describe 'Authentication middleware' do
       it 'sets the user in the request env' do
         request_env = subject.call(env)
         expect(request_env[:user]).to eq(user)
+      end
+
+      context 'when there is an ID token' do
+        let(:id_token_double) do
+          instance_double(
+            JsonWebToken,
+            verify!: { "email" => "gandalf@gmail.com" }
+          )
+        end
+
+        before do
+          env['X-ID-TOKEN'] = 'Bearer id_token'
+          allow(JsonWebToken).to receive(:new).with('id_token').and_return(
+            id_token_double
+          )
+        end
+
+        it 'sets the email for the user' do
+          allow(app).to receive(:call).and_return([200, {}, 'success'])
+
+          response = subject.call(env)
+          expect(response).to eq([200, {}, 'success'])
+          expect(User.last.email).to include("isaac.tullos")
+        end
       end
     end
 
