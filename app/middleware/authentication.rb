@@ -23,6 +23,13 @@ module Authentication
       end
 
       if user
+        if email
+          if user.email != email
+            user.email = email
+            user.save!
+          end
+        end
+
         env[:user] = user
         @app.call(env)
       else
