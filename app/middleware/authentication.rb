@@ -9,27 +9,20 @@ module Authentication
     def call(env)
       access_token = extract_access_token(env)
       return unauthorized_response unless access_token
+
       decoded_access_token = JsonWebToken.new(access_token).verify!
       id_token = extract_id_token(env)
+      return unauthorized_response unless id_token
 
-      if id_token
-        id_token_json = JSON.parse(id_token)
-        email = id_token_json.dig('payload', 'email')
-      end
+      decoded_id_token = JsonWebToken.new(id_token).verify!
+      email = decoded_id_token.fetch('email')
 
-      user = User.find_or_create_by(sub: decoded_access_token.fetch('sub')) do |u|
+      user = User.find_or_create_by!(sub: decoded_access_token.fetch('sub')) do |u|
         u.email = email
-        u.save!
       end
 
-      if user
-        if email
-          if user.email != email
-            user.email = email
-            user.save!
-          end
-        end
-
+      if user.present?
+        update_user_email_if_needed(user, email)
         env[:user] = user
         @app.call(env)
       else
@@ -40,6 +33,11 @@ module Authentication
     end
 
     private
+
+    def update_user_email_if_needed(user, email)
+      user.email = email
+      user.save! if user.changed?
+    end
 
     def unauthorized_response
       Rack::Response.new({ data: '', errors: 'Unauthorized' }.to_json, 401, {}).finish
