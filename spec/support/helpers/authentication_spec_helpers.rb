@@ -13,6 +13,7 @@ module AuthenticationSpecHelpers
 
   def authenticated(user = FactoryBot.create(:user), token_payload = {})
     headers.merge!(user_token_header(user, token_payload))
+    headers.merge!(id_token_header(user))
     user
   end
 
@@ -23,6 +24,12 @@ module AuthenticationSpecHelpers
   def user_token_header(user, token_payload)
     {
       'HTTP_AUTHORIZATION' => "Bearer #{user_token(user, token_payload)}"
+    }
+  end
+
+  def id_token_header(user)
+    {
+      'HTTP_X_ID_TOKEN' => "Bearer #{id_token(user)}"
     }
   end
 
@@ -37,6 +44,16 @@ module AuthenticationSpecHelpers
         'iss' => jwk[:issuer],
         'aud' => 'P4L-API'
       }.merge(token_payload)
+    JWT.encode(jwt_payload, jwk.signing_key, 'RS256', kid: jwk[:kid])
+  end
+
+  def id_token(user)
+    jwt_payload = {
+      'sub' => user.sub,
+      'email' => user.email,
+      'iss' => jwk[:issuer],
+      'aud' => 'P4L-API'
+    }
     JWT.encode(jwt_payload, jwk.signing_key, 'RS256', kid: jwk[:kid])
   end
 
