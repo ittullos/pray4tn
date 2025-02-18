@@ -6,7 +6,7 @@ RSpec.describe 'Route endpoints', :request do
   include AuthenticationSpecHelpers
 
   let(:app) { Sinatra::Application }
-  let(:user) { authenticated }
+  let!(:user) { authenticated }
 
   describe 'POST /user/routes' do
     it 'requires the auth header' do
@@ -18,7 +18,7 @@ RSpec.describe 'Route endpoints', :request do
 
     it 'creates a Route' do
       expect do
-        post '/user/routes', {}, user_token_header(user, { 'sub' => user.sub })
+        post '/user/routes', {}, headers
       end.to change { Route.count }.by(1)
       expect(last_response.status).to eq(200)
       expect(parsed_response).to include(
@@ -28,7 +28,7 @@ RSpec.describe 'Route endpoints', :request do
 
     it 'creates a Route with a nil commitment' do
       allow_any_instance_of(User).to receive(:current_commitment).and_return(nil)
-      post '/user/routes', {}, user_token_header(user, { 'sub' => user.sub })
+      post '/user/routes', {}, headers
 
       expect(last_response.status).to eq(200)
       expect(parsed_response['data']['commitment_id']).to be_nil
@@ -47,7 +47,7 @@ RSpec.describe 'Route endpoints', :request do
     end
 
     it 'updates the Route' do
-      patch "/user/routes/#{route.id}", { mileage: 130, stop: false }, user_token_header(user, { 'sub' => user.sub })
+      patch "/user/routes/#{route.id}", { mileage: 130, stop: false }, headers
 
       expect(last_response.status).to eq(200)
       expect(parsed_response).to include(
@@ -57,7 +57,7 @@ RSpec.describe 'Route endpoints', :request do
     end
 
     it 'stops the Route' do
-      patch "/user/routes/#{route.id}", { mileage: 130, stop: true }, user_token_header(user, { 'sub' => user.sub })
+      patch "/user/routes/#{route.id}", { mileage: 130, stop: true }, headers
 
       expect(last_response.status).to eq(200)
       expect(parsed_response).to include(

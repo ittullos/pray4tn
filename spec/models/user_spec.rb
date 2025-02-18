@@ -15,22 +15,16 @@ RSpec.describe User, :model do
       expect(create_list(:user, 2).last).to be_valid
     end
 
-    it 'requires a first_name' do
+    it 'does not require a first_name' do
       user = build(:user, first_name: '')
 
-      expect(user).not_to be_valid
-      expect(user.errors.messages).to include(
-        { first_name: ['can\'t be blank'] }
-      )
+      expect(user).to be_valid
     end
 
-    it 'requires a last_name' do
+    it 'does not require a last_name' do
       user = build(:user, last_name: '')
 
-      expect(user).not_to be_valid
-      expect(user.errors.messages).to include(
-        { last_name: ['can\'t be blank'] }
-      )
+      expect(user).to be_valid
     end
 
     it 'requires an email' do
