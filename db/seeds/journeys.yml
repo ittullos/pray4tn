@@ -1,0 +1,41 @@
+---
+- title: I-65 Corridor
+  annual_miles: 120
+  monthly_miles: 10
+  weekly_miles: 2.5
+- title: I-75 Corridor
+  annual_miles: 160
+  monthly_miles: 13
+  weekly_miles: 3
+- title: I-24 Corridor
+  annual_miles: 185
+  monthly_miles: 15
+  weekly_miles: 3.5
+- title: I-65 Corridor, Roundtrip
+  annual_miles: 240
+  monthly_miles: 20
+  weekly_miles: 5
+- title: I-24 corridor, Roundtrip
+  annual_miles: 360
+  monthly_miles: 30
+  weekly_miles: 7.5
+- title: I-40 Corridor
+  annual_miles: 455
+  monthly_miles: 38
+  weekly_miles: 9
+- title: Memphis to Mountain City
+  annual_miles: 520
+  monthly_miles: 43
+  weekly_miles: 10
+- title: Crisscross Tennessee
+  annual_miles: 1040
+  monthly_miles: 85
+  weekly_miles: 20
+- title: Tennessee State Lines (perimeter of the state)
+  annual_miles: 1300
+  monthly_miles: 108
+  weekly_miles: 25
+- title: Courthouses of Tennessee (zigzag across the state)
+  annual_miles: 2400
+  monthly_miles: 200
+  weekly_miles: 48
