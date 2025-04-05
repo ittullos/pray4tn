@@ -25,14 +25,14 @@ RSpec.describe 'Commitments endpoints', :request do
 
     it 'creates a Commitment' do
       expect do
-        post '/user/commitments', valid_params, headers
+        post '/user/commitments', valid_params.to_json, headers
       end.to change { Commitment.count }.by(1)
     end
 
     it 'returns an error response for a malformed request' do
       invalid_params = { burrito_id: journey.id }
 
-      post '/user/commitments', invalid_params, headers
+      post '/user/commitments', invalid_params.to_json, headers
 
       expect(last_response.status).to eq(400)
       expect(parsed_response['errors']).to include('Missing param: journey_id')
@@ -41,7 +41,7 @@ RSpec.describe 'Commitments endpoints', :request do
     it 'returns an error response for invalid data' do
       invalid_params = { journey_id: Journey.maximum(:id) + 1 }
 
-      post '/user/commitments', invalid_params, headers
+      post '/user/commitments', invalid_params.to_json, headers
 
       expect(last_response.status).to eq(422)
       expect(parsed_response['errors']).to include("Validation failed: Journey can't be blank")

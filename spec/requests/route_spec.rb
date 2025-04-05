@@ -20,7 +20,7 @@ RSpec.describe 'Route endpoints', :request do
       expect do
         post '/user/routes', {}, headers
       end.to change { Route.count }.by(1)
-      expect(last_response.status).to eq(200)
+      expect(last_response.status).to eq(201)
       expect(parsed_response).to include(
         "data" => data_object_for(Route.last)
       )
@@ -30,7 +30,7 @@ RSpec.describe 'Route endpoints', :request do
       allow_any_instance_of(User).to receive(:current_commitment).and_return(nil)
       post '/user/routes', {}, headers
 
-      expect(last_response.status).to eq(200)
+      expect(last_response.status).to eq(201)
       expect(parsed_response['data']['commitment_id']).to be_nil
       expect(parsed_response['data']['user_id']).to eq(user.id)
     end
@@ -47,7 +47,7 @@ RSpec.describe 'Route endpoints', :request do
     end
 
     it 'updates the Route' do
-      patch "/user/routes/#{route.id}", { mileage: 130, stop: false }, headers
+      patch "/user/routes", { id: route.id, mileage: 130, stop: false }.to_json, headers
 
       expect(last_response.status).to eq(200)
       expect(parsed_response).to include(
@@ -57,7 +57,7 @@ RSpec.describe 'Route endpoints', :request do
     end
 
     it 'stops the Route' do
-      patch "/user/routes/#{route.id}", { mileage: 130, stop: true }, headers
+      patch "/user/routes", { id: route.id, mileage: 130, stop: true }.to_json, headers
 
       expect(last_response.status).to eq(200)
       expect(parsed_response).to include(

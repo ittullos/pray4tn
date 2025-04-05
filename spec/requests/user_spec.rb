@@ -18,7 +18,7 @@ RSpec.describe 'User endpoints', :request do
 
       expect(last_response.status).to eq(200)
 
-      expect(parsed_response).to match(data_object_for(user))
+      expect(parsed_response['data']).to match(data_object_for(user))
     end
 
     it 'returns an error when the email is not sent' do
@@ -37,7 +37,7 @@ RSpec.describe 'User endpoints', :request do
         get '/user/residents', {}, headers
 
         expect(last_response.status).to eq(200)
-        expect(parsed_response).to match([])
+        expect(parsed_response['data']).to match([])
       end
     end
 
@@ -46,9 +46,9 @@ RSpec.describe 'User endpoints', :request do
         get '/user/residents', {}, headers
 
         expect(last_response.status).to eq(200)
-        expect(parsed_response).to match_array(data_objects_for_multiple(residents))
+        expect(parsed_response['data']).to match_array(data_objects_for_multiple(residents))
 
-        resident_positions = parsed_response.map do |resident|
+        resident_positions = parsed_response['data'].map do |resident|
           resident.fetch('position')
         end
         expect(resident_positions).to eq(residents.map(&:position).sort)
@@ -83,7 +83,7 @@ RSpec.describe 'User endpoints', :request do
       get "/user/residents/#{alice.id}", {}, headers
 
       expect(last_response.status).to eq(200)
-      expect(parsed_response).to match(data_object_for(alice))
+      expect(parsed_response['data']).to match(data_object_for(alice))
     end
   end
 
@@ -92,7 +92,7 @@ RSpec.describe 'User endpoints', :request do
       get '/user/residents/next-resident', {}, headers
 
       expect(last_response.status).to eq(200)
-      expect(parsed_response).to match(data_object_for(alice))
+      expect(parsed_response['data']).to match(data_object_for(alice))
     end
 
     it 'returns the next resident in the list' do
@@ -101,13 +101,13 @@ RSpec.describe 'User endpoints', :request do
       get '/user/residents/next-resident', {}, headers
 
       expect(last_response.status).to eq(200)
-      expect(parsed_response).to match(data_object_for(bob))
+      expect(parsed_response['data']).to match(data_object_for(bob))
 
       create(:prayer, user:, resident: bob)
       get '/user/residents/next-resident', {}, headers
 
       expect(last_response.status).to eq(200)
-      expect(parsed_response).to match(data_object_for(chad))
+      expect(parsed_response['data']).to match(data_object_for(chad))
     end
 
     it 'returns the first resident when there are equal numbers of Prayers' do
@@ -118,7 +118,7 @@ RSpec.describe 'User endpoints', :request do
       get '/user/residents/next-resident', {}, headers
 
       expect(last_response.status).to eq(200)
-      expect(parsed_response).to match(data_object_for(alice))
+      expect(parsed_response['data']).to match(data_object_for(alice))
     end
   end
 end
