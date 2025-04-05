@@ -18,8 +18,6 @@ class JsonWebToken
         algorithm: 'RS256',
         iss: domain_url,
         verify_iss: true,
-        aud: 'P4L-API',
-        verify_aud: true,
         jwks: jwk_loader
       }
     )
