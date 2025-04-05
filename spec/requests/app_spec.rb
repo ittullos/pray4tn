@@ -20,7 +20,7 @@ describe 'Pastor4Life API -' do
       get '/home', {}, headers
 
       expect(last_response.status).to eq(200)
-      expect(parsed_response).to eq(data_object_for(verse))
+      expect(parsed_response['data']).to eq(data_object_for(verse))
     end
   end
 
@@ -32,7 +32,7 @@ describe 'Pastor4Life API -' do
         get '/devotionals', {}, headers
 
         expect(last_response.status).to eq(200)
-        expect(parsed_response).to eq(data_object_for(devotionals))
+        expect(parsed_response['data']).to eq(data_object_for(devotionals))
       end
     end
 

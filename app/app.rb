@@ -28,29 +28,27 @@ end
 
 get '/home' do
   verse = Verse.verse_of_the_day("CSB")
-
-  content_type :json
-  verse.to_json
+  status 200
+  { data: verse }.to_json
 end
 
 post '/user/commitments' do
-  journey_id = params.fetch('journey_id')
-  commitment = Commitment.new(journey_id:, user_id: user_from_token&.id)
+  journey_id = parsed_params.fetch('journey_id')
+  commitment = Commitment.new(journey_id: journey_id, user_id: user_from_token&.id)
   commitment.save!
 
   status 201
-  { data: commitment.to_json }
+  { data: commitment }.to_json
 end
 
 get '/devotionals' do
   devotionals = Devotional.all
-
-  content_type :json
-  devotionals.to_json
+  status 200
+  { data: devotionals }.to_json
 end
 
 get '/journeys' do
-  content_type :json
+  status 200
   { data: Journey.all }.to_json
 end
 
@@ -85,13 +83,14 @@ post '/user/residents' do
 end
 
 get '/user' do
-  user_from_token.to_json
+  status 200
+  { data: user_from_token }.to_json
 end
 
 get '/user/residents' do
   residents = Resident.where(user_id: user_from_token&.id)
-
-  residents.to_json
+  status 200
+  { data: residents }.to_json
 end
 
 # Step 1, happens at the beginning of a route
@@ -107,30 +106,28 @@ get '/user/residents/next-resident' do
                   else
                     last_prayer.resident.next_resident
                   end
-
-  next_resident.to_json
+  status 200
+  { data: next_resident }.to_json
 end
 
 get '/user/residents/:id' do
   resident = Resident.find_by(id: params[:id], user_id: user_from_token&.id)
-
-  resident.to_json
+  status 200
+  { data: resident }.to_json
 end
 
 # Step 2
 # call this for the resident, it creates a Prayer for the Resident based on the
 # resident_id given
 post '/prayers' do
-  resident_id = params.fetch('resident_id')
+  resident_id = parsed_params.fetch('resident_id')
   prayer = Prayer.new(resident_id:, user_id: user_from_token&.id, recorded_at: Time.current)
   prayer.save!
 
   next_resident = prayer.resident.next_resident
 
   status 201
-  prayer.attributes.merge(
-    { 'next_resident' => next_resident }
-  ).to_json
+  { data: prayer.attributes.merge('next_resident' => next_resident) }.to_json
 end
 
 post '/user/routes' do
@@ -141,30 +138,28 @@ post '/user/routes' do
     commitment: user&.current_commitment,
     started_at: Time.current)
 
-  content_type :json
+  status 201
   { data: route }.to_json
 end
 
-patch '/user/routes/:id' do
-  route = Route.find(params.fetch('id'))
+patch '/user/routes' do
+  route = Route.find(parsed_params.fetch('id'))
 
-  if params.fetch('stop')
+  if parsed_params.fetch('stop')
     route.stopped_at = Time.current
   end
 
-  route.mileage = params.fetch('mileage')
+  route.mileage = parsed_params.fetch('mileage')
   route.save!
 
-  content_type :json
+  status 200
   { data: route }.to_json
 end
 
 get '/user/stats' do
   user = user_from_token
-
   stats = user.stats
-
-  content_type :json
+  status 200
   { data: stats }.to_json
 end
 
@@ -182,6 +177,18 @@ error StandardError do |error|
   puts "500 - #{error.message}"
   status 500
   body [{ data: '', errors: error.message }.to_json]
+end
+
+helpers do
+  def parsed_params
+    request.body.rewind  # Ensure the body is readable
+    body = request.body.read
+    return {} if body.empty?
+
+    JSON.parse(body)
+  rescue JSON::ParserError
+    halt 400, { error: 'Invalid JSON' }.to_json
+  end
 end
 
 private
