@@ -27,5 +27,10 @@ namespace :db do
     task :journeys => :environment do
       SeedJourneys.run
     end
+
+    desc "Seed residents from /db/seeds/residents.yml"
+    task :residents => :environment do
+      SeedResidents.run
+    end
   end
 end
