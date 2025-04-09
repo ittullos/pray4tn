@@ -1,4 +1,0 @@
----
-BUNDLE_BUILD__MYSQL: "--with-mysql-config=/usr/mysql/mysql_config"
-BUNDLE_DEPLOYMENT: "false"
-BUNDLE_BUILD__MYSQL2: "--with-mysql-dir=/usr/mysql/"

@@ -1,17 +1,10 @@
-require 'aws-record'
+# frozen_string_literal: true
 
-class JourneyNoIdError < StandardError; end
-class Journey
-  include Aws::Record
-  set_table_name ENV["JOURNEY_TABLE_NAME"]
+class Journey < ActiveRecord::Base
+  validates :annual_miles, presence: true, numericality: true
+  validates :monthly_miles, presence: true, numericality: true
+  validates :weekly_miles, presence: true, numericality: true
+  validates :title, presence: true, uniqueness: true
 
-  string_attr  :title,       hash_key: true       
-  integer_attr :target_miles
-  string_attr  :graphic_url
-
-  def self.new_journey(data)
-    journey = new(data)
-    journey.save!
-    journey
-  end
+  MILEAGE_CONVERSION_FACTOR = 0.01
 end

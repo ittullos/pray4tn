@@ -1,254 +1,216 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'sinatra'
-require "sinatra/cors"
-# require "./spec/dinodb"
+require 'sinatra/activerecord'
+require 'sinatra/cors'
+require_relative './models'
+require_relative './middleware/authentication'
+require_relative './services/resident_list'
+require_relative './lib/json_web_token'
+require_relative './lib/jwk_client'
 
-set :allow_origin, "*"
-set :allow_methods, "GET,POST,DELETE,PATCH,OPTIONS"
-set :allow_headers, "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since"
-set :expose_headers, "location,link"
+set :database_file, '../config/database.yml'
+
+set :allow_origin, '*'
+set :allow_methods, 'GET,POST,DELETE,PATCH,OPTIONS'
+set :allow_headers,
+    'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, if-modified-since, HTTP_AUTHORIZATION'
+set :expose_headers, 'location,link'
 
 puts "RACK_ENV: #{ENV['RACK_ENV']}"
 
+configure :development, :test do
+  log_dir = File.expand_path('../log', __dir__)
+  FileUtils.mkdir_p(log_dir) unless File.directory?(log_dir)
+
+  log_file_path = File.join(log_dir, "#{settings.environment}.log")
+  log_file = File.new(log_file_path, 'a+')
+  log_file.sync = true
+  use Rack::CommonLogger, log_file
+  set :logging, Logger::DEBUG
+  ActiveRecord::Base.logger = Logger.new(log_file)
+end
+
+configure :production do
+  use Rack::CommonLogger, $stdout
+  set :logging, Logger::INFO
+  ActiveRecord::Base.logger = Logger.new($stdout)
+end
+
+use Authentication::Cognito
+
 before do
-  if ENV["RACK_ENV"] == "dev"
-    Aws.config.update(
-      endpoint: 'http://localhost:8000'
-    )
-    
-    require './app/models/verse'
-    require './app/models/user'
-    require './app/models/checkpoint'
-    require './app/models/route'
-    require './app/models/user_resident'
-    require './app/models/devotional'
-    require './app/models/journey'
-    require './app/models/commitment'
-  elsif ENV["RACK_ENV"] == "prod"
-    require './models/verse'
-    require './models/user'
-    require './models/checkpoint'
-    require './models/route'
-    require './models/user_resident'
-    require './models/devotional'
-    require './models/journey'
-    require './models/commitment'
-  end
-end
-
-post '/p4l/home' do
-  user_id = JSON.parse(request.body.read)["userId"]
-  Checkpoint.close_last_route(user_id)
-  
-  verses = Verse.scan if Verse.table_exists?
-  time = Time.new
-  day = time.yday % 100
-  verse = verses.select {|v| v.day == day}
-  
-  verse = verses.select {|v| v.day == 1} if verse.empty?
   content_type :json
-  { 
-    verse:    verse && verse.first.scripture,
-    notation: verse && verse.first.notation,
-    version:  verse && verse.first.version
-  }.to_json
 end
 
-post '/p4l/checkpoint' do
-  checkpoint_data = JSON.parse(request.body.read)["checkpointData"]
-  user_id         = checkpoint_data["user_id"]
+get '/home' do
+  verse = Verse.verse_of_the_day("CSB")
+  status 200
+  { data: verse }.to_json
+end
 
-  if checkpoint_data["type"] == "prayer"
-    resident = UserResident.next_resident(user_id)
-    prayer_name = resident ? resident.name : ""
-    checkpoint_data["match_key"] = resident.match_key if resident
+post '/user/commitments' do
+  journey_id = parsed_params.fetch('journey_id')
+  commitment = Commitment.new(journey_id: journey_id, user_id: user_from_token&.id)
+  commitment.save!
+
+  status 201
+  { data: commitment }.to_json
+end
+
+get '/devotionals' do
+  devotionals = Devotional.all
+  status 200
+  { data: devotionals }.to_json
+end
+
+get '/journeys' do
+  status 200
+  { data: Journey.all }.to_json
+end
+
+post '/user/residents' do
+  unless params[:file] && params[:file]['tempfile']
+    status 400
+    return { errors: 'File is required', data: '' }.to_json
   end
-  checkpoint = Checkpoint.new_checkpoint(checkpoint_data)
 
-  if checkpoint
-    if checkpoint.type == "heartbeat" || checkpoint.type == "stop"
-      distance = checkpoint.distance
+  file = params[:file]['tempfile']
+  user = user_from_token
+
+  begin
+    residents = ResidentList::PDF.new(file).load_residents
+
+    residents.each do |resident|
+      Resident.find_or_create_by(name: resident, user_id: user.id)
     end
-  end
 
-  content_type :json
-  {
-    prayerName: prayer_name,
-    distance:   distance || 0.0
-  }.to_json
-end
-
-post '/p4l/login' do
-  puts "App:login:initial call"
-  login_form_data = JSON.parse(request.body.read)["loginFormData"]
-  email           = login_form_data["email"]
-  password        = login_form_data["password"]
-  
-  if User.find(email: email)
-    puts "App:login:before User.find"
-    user = User.find(email: email)
-    puts "App:login:after User.find"
-    if (user.password == password)
-      response_status = "success"
-    else
-      response_status = "Invalid Password"
-    end
-  else
-    response_status = "Invalid Email"
-  end
-
-  content_type :json
-  { 
-    userId:         email || 0,
-    responseStatus: response_status 
-  }.to_json
-end
-
-post '/p4l/signup' do
-  signup_form_data = JSON.parse(request.body.read)["signupFormData"]
-  email            = signup_form_data["email"]
-  password         = signup_form_data["password"]
-  confirm_password = signup_form_data["confirmPassword"]
-
-  if User.find(email: email)
-    response_status = "Email already in use"
-  elsif password != confirm_password
-    response_status = "Passwords do not match"
-  else
-    User.new_user(email: email, password: password)
-    response_status = "success"
-  end
-
-  content_type :json
-  { 
-    userId:         email || 0,
-    responseStatus: response_status 
-  }.to_json
-end
-
-post '/p4l/password_reset' do
-  password_reset_form_data = JSON.parse(request.body.read)["passwordResetFormData"]
-  user                     = User.find(email: password_reset_form_data["email"])
-  password                 = password_reset_form_data["password"]
-  confirm_password         = password_reset_form_data["confirmPassword"]
-
-  if !user 
-    response_status = "No account with that email address"
-  elsif password != confirm_password
-    response_status = "Passwords do not match"
-  else
-    user.reset_password(password)
-    response_status = "success"
-  end
-
-  content_type :json
-  { 
-    userId:         email || 0,
-    responseStatus: response_status 
-  }.to_json
-end
-
-get '/p4l/settings' do
-  content_type :json
-  { 
-    s3Bucket:         ENV["RESIDENT_NAMES_BUCKET"],
-    region:           ENV["REGION"],
-    accessKeyId:      ENV["ACCESS_KEY_ID"],
-    secretAccessKey:  ENV["SECRET_ACCESS_KEY"]
-  }.to_json
-end
-
-get '/p4l/devotionals' do
-  devotionals_array = []
-  Devotional.scan.each do |item|
-    devotional = {}
-    devotional["id"] = item.id
-    devotional["title"] = item.title
-    devotional["url"] = item.url
-    devotional["img_url"] = item.img_url
-    devotionals_array.push(devotional)
-  end
-  devotionals_array.sort_by! { |devo| devo["id"] }
-  content_type :json
-  {
-    devotionals: devotionals_array
-  }.to_json
-end
-
-post '/p4l/journeys' do
-  user_id = JSON.parse(request.body.read)["userId"]
-  if user_id.include? '"'
-    user_id.delete! '\"'
-  end
-
-  user = User.find(email: user_id)
-  journeys_array = []
-  Journey.scan.each do |item|
-    journey = {}
-    journey["title"] = item.title
-    journey["target_miles"] = item.target_miles
-    journey["graphic_url"] = item.graphic_url
-    journeys_array.push(journey)
-  end
-  journeys_array.sort_by! { |journey| journey["target_miles"] }
-  commitment = "false"
-  if user.commitment_id != 0 
-    commitment = "true"
-  end
-
-  content_type :json
-  {
-    journeys: journeys_array,
-    commitment: commitment
-  }.to_json
-end
-
-post '/p4l/commitment' do
-  commitment_data = JSON.parse(request.body.read)["commitmentData"]
-  user = User.find(email: commitment_data["user_id"])
-  new_commit = Commitment.new_commitment(commitment_data)
-  user.commitment_id = new_commit.commitment_id
-  user.save!
-end
-
-post '/p4l/stats' do
-  user_id = JSON.parse(request.body.read)["userId"]
-  if user_id.include? '"'
-    user_id.delete! '\"'
-  end
-
-  user = User.find(email: user_id)
-
-  if !user.commitment_id || user.commitment_id == 0
-    content_type :json
-    {
-      title: "No commitment"
-    }.to_json
-  else
-    stats = user.get_stats
-    content_type :json
-    {
-      title: stats[:title],
-      targetMiles: stats[:target_miles],
-      progressMiles: stats[:progress_miles],
-      prayers: stats[:prayers],
-      seconds: stats[:seconds],
-      targetDate: stats[:target_date],
-      commitDate: stats[:commit_date]
-    }.to_json
+    status 200
+    { data: residents, errors: '' }.to_json
+  rescue ResidentList::PDF::InvalidFileFormatError => e
+    status 400
+    { errors: e.message, data: '' }.to_json
+  rescue ArgumentError => e
+    status 400
+    { errors: e.message, data: '' }.to_json
+  rescue StandardError => e
+    status 500
+    { errors: e.message, data: '' }.to_json
   end
 end
 
-post '/p4l/add_mileage' do
-  mileage_data = JSON.parse(request.body.read)["addMileageData"]
+get '/user' do
+  status 200
+  { data: user_from_token }.to_json
+end
 
-  if mileage_data["userId"].include? '"'
-    mileage_data["userId"].delete! '\"'
+get '/user/residents' do
+  residents = Resident.where(user_id: user_from_token&.id)
+  status 200
+  { data: residents }.to_json
+end
+
+# Step 1, happens at the beginning of a route
+# you get back the Resident information to make a Prayer
+get '/user/residents/next-resident' do
+  # TODO: Look at eager loading here. We might be able to grab the resident for
+  # the last Prayer at the same time, or use a plain AR query to grab the next
+  # Resident without instantiating the objects in between:
+  # user.residents.where('position > ?', last_prayer.resident.position).limit(1).first
+  last_prayer = Prayer.where(user_id: user_from_token&.id).order(recorded_at: :desc).limit(1).first
+  next_resident = if last_prayer.nil?
+                    user_from_token.residents.limit(1).first
+                  else
+                    last_prayer.resident.next_resident
+                  end
+  status 200
+  { data: next_resident }.to_json
+end
+
+get '/user/residents/:id' do
+  resident = Resident.find_by(id: params[:id], user_id: user_from_token&.id)
+  status 200
+  { data: resident }.to_json
+end
+
+# Step 2
+# call this for the resident, it creates a Prayer for the Resident based on the
+# resident_id given
+post '/prayers' do
+  resident_id = parsed_params.fetch('resident_id')
+  prayer = Prayer.new(resident_id:, user_id: user_from_token&.id, recorded_at: Time.current)
+  prayer.save!
+
+  next_resident = prayer.resident.next_resident
+
+  status 201
+  { data: prayer.attributes.merge('next_resident' => next_resident) }.to_json
+end
+
+post '/user/routes' do
+  user = user_from_token
+
+  route = Route.create!(
+    user: user,
+    commitment: user&.current_commitment,
+    started_at: Time.current)
+
+  status 201
+  { data: route }.to_json
+end
+
+patch '/user/routes' do
+  route = Route.find(parsed_params.fetch('id'))
+
+  if parsed_params.fetch('stop')
+    route.stopped_at = Time.current
   end
 
-  user = User.find(email: mileage_data["userId"])
-  mileage = mileage_data["mileage"]
-  route = Route.find(id: Checkpoint.last_checkpoint(user.email).route_id)
-  route.mileage += (mileage * 1000)
-  route.save
+  route.mileage = parsed_params.fetch('mileage')
+  route.save!
+
+  status 200
+  { data: route }.to_json
+end
+
+get '/user/stats' do
+  user = user_from_token
+  stats = user.stats
+  status 200
+  { data: stats }.to_json
+end
+
+error ActiveRecord::RecordInvalid do |error|
+  status 422
+  body [{ errors: error.message.to_s }.to_json]
+end
+
+error KeyError do |error|
+  status 400
+  body [{ errors: ["Missing param: #{error.key}"] }.to_json]
+end
+
+error StandardError do |error|
+  puts "500 - #{error.message}"
+  status 500
+  body [{ data: '', errors: error.message }.to_json]
+end
+
+helpers do
+  def parsed_params
+    request.body.rewind  # Ensure the body is readable
+    body = request.body.read
+    return {} if body.empty?
+
+    JSON.parse(body)
+  rescue JSON::ParserError
+    halt 400, { error: 'Invalid JSON' }.to_json
+  end
+end
+
+private
+
+def user_from_token
+  @user_from_token ||= env[:user]
 end

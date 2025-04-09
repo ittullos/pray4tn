@@ -1,51 +1,44 @@
-require 'aws-record'
+# frozen_string_literal: true
 
-class UserNoIdError < StandardError; end
-class User
-  include Aws::Record
-  set_table_name ENV['USER_TABLE_NAME']
+class User < ActiveRecord::Base
+  validates_presence_of :email, :sub
+  validates_uniqueness_of :email
+  validates_uniqueness_of :sub
 
-  string_attr  :email,     hash_key: true
-  string_attr  :password
-  integer_attr :commitment_id
+  has_many :residents, -> { order(position: :asc) }
+  has_many :routes
+  has_many :commitments, -> { order(created_at: :desc) }
+  has_many :prayers
 
-  def reset_password(password)
-    self.password = password
-    save
+  def current_commitment
+    commitments.first
   end
 
-  def self.new_user(data)
-    user = new(data)
-    user.save!
-    user
-  end
+  def stats
+    total_distance = routes.sum(:mileage)
+    total_prayers = prayers.count
+    total_duration = routes.sum(:seconds)
 
-  def get_stats
-    commit_mileage = 0
-    commit_seconds = 0
-    commit_prayers = 0
-    commit = Commitment.find(commitment_id: commitment_id)
-    journey = Journey.find(title: commit.journey_id)
-    title = journey.title
-    target_date = commit.target_date
-    commit_date = commit.commit_date
-    target_miles = journey.target_miles
-
-    Route.scan.each do |route|
-      if route.commitment_id == commitment_id
-        commit_mileage += route.mileage
-        commit_seconds += route.seconds
-        commit_prayers += route.prayer_count
-      end
+    current_commitment = self.current_commitment
+    current_journey = current_commitment&.journey
+    if current_commitment
+      commitment_distance = routes.where(commitment_id: current_commitment.id).sum(:mileage)
+      commitment_duration = routes.where(commitment_id: current_commitment.id).sum(:seconds)
+      commitment_prayers = current_commitment.prayers.count
+    else
+      commitment_distance = 0
+      commitment_duration = 0
+      commitment_prayers = 0
     end
+
     {
-      title:          title,
-      target_miles:   target_miles,
-      progress_miles: commit_mileage,
-      prayers:        commit_prayers,
-      seconds:        commit_seconds,
-      target_date:    target_date,
-      commit_date:    commit_date
+      total_distance: total_distance,
+      total_prayers: total_prayers,
+      total_duration: total_duration,
+      commitment_distance: commitment_distance,
+      commitment_duration: commitment_duration,
+      commitment_prayers: commitment_prayers,
+      current_journey: current_journey
     }
   end
 end
