@@ -44,6 +44,11 @@ before do
   content_type :json
 end
 
+get '/' do
+  status 200
+  { data: 'Welcome to Pray4TN API' }.to_json
+end
+
 get '/home' do
   verse = Verse.verse_of_the_day("CSB")
   status 200
