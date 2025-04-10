@@ -15,13 +15,13 @@ gem 'sinatra-contrib', require: false
 gem 'sinatra-cors'
 gem 'sinatra-cross_origin'
 gem 'pdf-reader'
+gem 'rake'
 
 group :development, :test do
   gem 'activesupport'
   gem 'dotenv'
   gem 'factory_bot'
   gem 'pry-byebug'
-  gem 'rake'
   gem 'random-location'
   gem 'random_name_generator'
   gem 'roo', '~> 2.10.0'

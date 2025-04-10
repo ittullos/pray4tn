@@ -10,6 +10,7 @@ samconfig.toml
 samconfig2.toml
 *vendor*
 .bundle/
+/log/
 
 # RSpec state file
 spec/examples.txt
