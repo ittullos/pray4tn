@@ -168,20 +168,38 @@ end
 patch '/user/routes' do
   route = Route.find(parsed_params.fetch('id'))
 
-  if parsed_params.fetch('stop', false)
-    # Stop the route and calculate duration using stopped_at
-    route.stopped_at = Time.current
-    if route.started_at
-      route.seconds = (route.stopped_at - route.started_at).to_i
-    else
-      puts "Error: started_at is missing for route ID #{route.id}"
-    end
+  # Initialize commitment_completed as false
+  commitment_completed = false
+
+  # Calculate duration if `started_at` is present
+  if route.started_at
+    route.seconds = (Time.current - route.started_at).to_i
   else
-    # Update the route and calculate duration using updated_at
-    if route.started_at
-      route.seconds = (Time.current - route.started_at).to_i
-    else
-      puts "Error: started_at is missing for route ID #{route.id}"
+    puts "Error: started_at is missing for route ID #{route.id}"
+  end
+
+  if parsed_params.fetch('stop', false)
+    # Stop the route
+    route.stopped_at = Time.current
+
+    # Check if the user's commitment is completed
+    user = user_from_token
+    commitment = user.current_commitment
+    journey = commitment&.journey
+
+    if journey
+      # Calculate the total distance covered in the commitment
+      total_commitment_distance = Route.where(commitment_id: commitment.id).sum(:mileage)
+
+      if total_commitment_distance >= journey.annual_miles
+        # Check if there's a next journey based on annual_miles
+        next_journey = Journey.where('annual_miles > ?', journey.annual_miles).order(:annual_miles).first
+        if next_journey
+          # Update the commitment to point to the next journey
+          commitment.update!(journey: next_journey)
+          commitment_completed = true
+        end
+      end
     end
   end
 
@@ -190,7 +208,7 @@ patch '/user/routes' do
   route.save!
 
   status 200
-  { data: route }.to_json
+  { data: { route: route, commitment_completed: commitment_completed } }.to_json
 end
 
 get '/user/stats' do
