@@ -168,11 +168,25 @@ end
 patch '/user/routes' do
   route = Route.find(parsed_params.fetch('id'))
 
-  if parsed_params.fetch('stop')
+  if parsed_params.fetch('stop', false)
+    # Stop the route and calculate duration using stopped_at
     route.stopped_at = Time.current
+    if route.started_at
+      route.seconds = (route.stopped_at - route.started_at).to_i
+    else
+      puts "Error: started_at is missing for route ID #{route.id}"
+    end
+  else
+    # Update the route and calculate duration using updated_at
+    if route.started_at
+      route.seconds = (Time.current - route.started_at).to_i
+    else
+      puts "Error: started_at is missing for route ID #{route.id}"
+    end
   end
 
-  route.mileage = parsed_params.fetch('mileage')
+  # Update mileage
+  route.mileage = parsed_params.fetch('mileage', route.mileage)
   route.save!
 
   status 200

@@ -56,6 +56,20 @@ RSpec.describe 'Route endpoints', :request do
       expect(route.mileage).to eq(130)
     end
 
+    it 'updates the Route with correct mileage' do
+      patch "/user/routes", { id: route.id, mileage: 150, stop: false }.to_json, headers
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_response['data']['mileage']).to eq(150)
+    end
+
+    it 'updates the Route with correct seconds' do
+      patch "/user/routes", { id: route.id, mileage: 150, stop: false }.to_json, headers
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_response['data']['seconds']).to eq(0)
+    end
+
     it 'stops the Route' do
       patch "/user/routes", { id: route.id, mileage: 130, stop: true }.to_json, headers
 
