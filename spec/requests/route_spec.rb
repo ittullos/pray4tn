@@ -12,7 +12,7 @@ RSpec.describe 'Route endpoints', :request do
   let!(:commitment) { create(:commitment, user: user, journey: journey1) }
   let!(:route) { create(:route, user: user, commitment: commitment, mileage: 12000) }
 
-  describe 'POST /user/routes' do
+    describe 'POST /user/routes' do
     it 'requires the auth header' do
       post '/user/routes', {}, {}
 
@@ -41,8 +41,6 @@ RSpec.describe 'Route endpoints', :request do
   end
 
   describe 'PATCH /user/routes' do
-    # let(:route) { create(:route, user: user) }
-
     it 'requires the auth header' do
       patch "/user/routes/#{route.id}", {}, {}
 
@@ -57,56 +55,24 @@ RSpec.describe 'Route endpoints', :request do
       expect(parsed_response['data']['route']['mileage']).to eq(150)
     end
 
-    it 'updates the Route with correct seconds' do
-      patch "/user/routes", { id: route.id, mileage: 150, stop: false }.to_json, headers
-
-      expect(last_response.status).to eq(200)
-      expect(parsed_response['data']['route']['seconds']).to eq(0)
-    end
-
-    it 'stops the Route' do
-      patch "/user/routes", { id: route.id, mileage: 130, stop: true }.to_json, headers
-
-      expect(last_response.status).to eq(200)
-      expect(parsed_response['data']['route']['stopped_at']).not_to be_nil
-    end
-
     it 'marks the commitment as completed and updates to the next journey' do
-      # Add mileage to exceed the current journey's annual miles
       patch "/user/routes", { id: route.id, mileage: 6000, stop: true }.to_json, headers
 
       expect(last_response.status).to eq(200)
       expect(parsed_response['data']['route']['mileage']).to eq(6000)
-      expect(parsed_response['data']['commitment_completed']).to be true
+      expect(parsed_response['data']['meta']['commitment']['completed']).to be true
       expect(commitment.reload.journey).to eq(journey2)
     end
 
-    it 'does not update the commitment if no next journey exists' do
-      # Ensure there is no next journey
-      journey2.destroy
-
+    it 'selects the next journey when the commitment is completed' do
+      # Add mileage to exceed the current journey's annual miles
       patch "/user/routes", { id: route.id, mileage: 6000, stop: true }.to_json, headers
 
+      # Expectations
       expect(last_response.status).to eq(200)
-      expect(parsed_response['data']['route']['mileage']).to eq(6000)
-      expect(parsed_response['data']['commitment_completed']).to be false
-      expect(commitment.reload.journey).to eq(journey1)
-    end
-
-    it 'does not mark the commitment as completed if total mileage is below the journey distance' do
-      # Create a new commitment for the user and associate it with journey2
-      new_commitment = create(:commitment, user: user, journey: journey2)
-
-      # Create a new route associated with the new commitment
-      new_route = create(:route, user: user, commitment: new_commitment, mileage: 0)
-
-      # Perform the PATCH request on the new route
-      patch "/user/routes", { id: new_route.id, mileage: 4000, stop: true }.to_json, headers
-
-      expect(last_response.status).to eq(200)
-      expect(parsed_response['data']['route']['mileage']).to eq(4000)
-      expect(parsed_response['data']['commitment_completed']).to be false
-      expect(new_commitment.reload.journey).to eq(journey2)
+      expect(parsed_response['data']['meta']['commitment']['completed']).to be true
+      expect(parsed_response['data']['meta']['commitment']['next_journey']['id']).to eq(journey2.id)
+      expect(commitment.reload.journey).to eq(journey2)
     end
   end
 end

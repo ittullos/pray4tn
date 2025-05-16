@@ -14,12 +14,6 @@ RSpec.describe Route, :model do
   end
 
   describe 'validations' do
-    let(:today) { DateTime.new(2023, 11, 26) }
-    let(:one_year_from_today) { today + 1.year }
-    let(:tomorrow) { today + 1.day }
-    let(:yesterday) { today - 1.day }
-    let(:attributes) { attributes_for(:route).merge!(started_at: today) }
-
     it 'validates mileage is an integer' do
       expect(build(:route, mileage: 'one hundred miles')).not_to be_valid
     end
@@ -30,6 +24,42 @@ RSpec.describe Route, :model do
 
     it 'is valid from the factory' do
       expect(create(:route)).to be_valid
+    end
+  end
+
+  describe 'methods' do
+    let(:route) { create(:route, started_at: Time.current - 1.hour) }
+
+    describe '#stop' do
+      it 'sets stopped_at to the current time' do
+        route.stop
+        expect(route.stopped_at).not_to be_nil
+        expect(route.stopped_at).to be_within(1.second).of(Time.current)
+      end
+    end
+
+    describe '#calculate_route_time' do
+      context 'when the route has not been started' do
+        it 'raises an error' do
+          route.update(started_at: nil)
+          expect { route.calculate_route_time }.to raise_error(StandardError, 'Route has not been started!')
+        end
+      end
+
+      context 'when the route is ongoing (not stopped)' do
+        it 'calculates the time from started_at to the current time' do
+          route.calculate_route_time
+          expect(route.seconds).to eq(3600) # 1 hour in seconds
+        end
+      end
+
+      context 'when the route has been stopped' do
+        it 'calculates the time from started_at to stopped_at' do
+          route.stop
+          route.calculate_route_time
+          expect(route.seconds).to eq((route.stopped_at - route.started_at).to_i)
+        end
+      end
     end
   end
 end
