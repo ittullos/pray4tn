@@ -168,15 +168,49 @@ end
 patch '/user/routes' do
   route = Route.find(parsed_params.fetch('id'))
 
-  if parsed_params.fetch('stop')
-    route.stopped_at = Time.current
+  # Stop the route if requested
+  route.stop if parsed_params.fetch('stop', false)
+
+  # Calculate the route time
+  route.calculate_route_time
+
+  # Update mileage
+  route.mileage = parsed_params.fetch('mileage', route.mileage)
+
+  # Check if the user's commitment is completed
+  user = user_from_token
+  commitment = user.current_commitment
+  journey = commitment&.journey
+  commitment_completed = false
+  next_journey = nil
+
+  if journey && parsed_params.fetch('stop', false)
+    total_commitment_distance = Route.where(commitment_id: commitment.id).sum(:mileage)
+
+    if total_commitment_distance >= journey.annual_miles
+      next_journey = Journey.where('annual_miles > ?', journey.annual_miles).order(:annual_miles).first
+      if next_journey
+        commitment.update!(journey: next_journey)
+        commitment_completed = true
+      end
+    end
   end
 
-  route.mileage = parsed_params.fetch('mileage')
   route.save!
 
   status 200
-  { data: route }.to_json
+  {
+    data: {
+      route: route,
+      meta: {
+        commitment: {
+          completed: commitment_completed,
+          next_journey: next_journey
+        },
+        stats: user.stats
+      }
+    }
+  }.to_json
 end
 
 get '/user/stats' do
