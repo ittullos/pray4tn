@@ -85,4 +85,19 @@ RSpec.describe Journey, :model do
       )
     end
   end
+
+  describe '#next_journey' do
+    let!(:j1) { create(:journey, annual_miles: 1000) }
+    let!(:j2) { create(:journey, annual_miles: 2000) }
+    let!(:j3) { create(:journey, annual_miles: 3000) }
+
+    it 'returns the next journey with higher annual_miles' do
+      expect(j1.next_journey).to eq(j2)
+      expect(j2.next_journey).to eq(j3)
+    end
+
+    it 'returns nil if there is no next journey' do
+      expect(j3.next_journey).to be_nil
+    end
+  end
 end

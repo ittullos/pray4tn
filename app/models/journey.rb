@@ -7,4 +7,8 @@ class Journey < ActiveRecord::Base
   validates :title, presence: true, uniqueness: true
 
   MILEAGE_CONVERSION_FACTOR = 0.01
+
+  def next_journey
+    Journey.where('annual_miles > ?', annual_miles).order(:annual_miles).first
+  end
 end
