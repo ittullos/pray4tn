@@ -25,10 +25,12 @@ class User < ActiveRecord::Base
       commitment_distance = routes.where(commitment_id: current_commitment.id).sum(:mileage)
       commitment_duration = routes.where(commitment_id: current_commitment.id).sum(:seconds)
       commitment_prayers = current_commitment.prayers.count
+      commitment_end_date = current_commitment.end_date
     else
       commitment_distance = 0
       commitment_duration = 0
       commitment_prayers = 0
+      commitment_end_date = nil
     end
 
     {
@@ -38,7 +40,8 @@ class User < ActiveRecord::Base
       commitment_distance: commitment_distance,
       commitment_duration: commitment_duration,
       commitment_prayers: commitment_prayers,
-      current_journey: current_journey
+      current_journey: current_journey,
+      commitment_end_date: commitment_end_date
     }
   end
 end
