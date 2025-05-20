@@ -7,6 +7,10 @@ RSpec.describe 'Route endpoints', :request do
 
   let(:app) { Sinatra::Application }
   let!(:user) { authenticated }
+  let!(:journey1) { create(:journey, annual_miles: 10000) }
+  let!(:journey2) { create(:journey, annual_miles: 20000) }
+  let!(:commitment) { create(:commitment, user: user, journey: journey1) }
+  let!(:route) { create(:route, user: user, commitment: commitment, mileage: 12000) }
 
   describe 'POST /user/routes' do
     it 'requires the auth header' do
@@ -36,9 +40,7 @@ RSpec.describe 'Route endpoints', :request do
     end
   end
 
-  describe 'PATCH /user/routes/:id' do
-    let(:route) { create(:route, user: user) }
-
+  describe 'PATCH /user/routes' do
     it 'requires the auth header' do
       patch "/user/routes/#{route.id}", {}, {}
 
@@ -46,24 +48,37 @@ RSpec.describe 'Route endpoints', :request do
       expect(parsed_response['errors']).to include('Unauthorized')
     end
 
-    it 'updates the Route' do
-      patch "/user/routes", { id: route.id, mileage: 130, stop: false }.to_json, headers
+    context 'when the mileage param is present' do
+      it 'updates the route with correct mileage' do
+        patch "/user/routes", { id: route.id, mileage: 6000, stop: false }.to_json, headers
 
-      expect(last_response.status).to eq(200)
-      expect(parsed_response).to include(
-        "data" => data_object_for(route.reload)
-      )
-      expect(route.mileage).to eq(130)
+        expect(last_response.status).to eq(200)
+        expect(parsed_response['data']['route']['mileage']).to eq(6000)
+      end
     end
 
-    it 'stops the Route' do
-      patch "/user/routes", { id: route.id, mileage: 130, stop: true }.to_json, headers
+    context 'when the route is stopped' do
+      context 'and the route completes the commitment distance' do
+        it 'marks the commitment as completed and updates to the next journey' do
+          route.update!(mileage: 21000)
+          patch "/user/routes", { id: route.id, mileage: 2000, stop: true }.to_json, headers
 
-      expect(last_response.status).to eq(200)
-      expect(parsed_response).to include(
-        "data" => data_object_for(route.reload)
-      )
-      expect(route.stopped_at).not_to be_nil
+          expect(last_response.status).to eq(200)
+          expect(parsed_response['data']['meta']['commitment']['completed']).to be true
+          expect(commitment.reload.journey).to eq(journey2)
+        end
+      end
+
+      context 'and the route does NOT complete the commitment distance' do
+        it 'does NOT mark the commitment as completed' do
+          route.update!(mileage: 5000)
+          patch "/user/routes", { id: route.id, mileage: 1000, stop: true }.to_json, headers
+
+          expect(last_response.status).to eq(200)
+          expect(parsed_response['data']['meta']['commitment']['completed']).to be false
+          expect(commitment.reload.journey).to eq(journey1)
+        end
+      end
     end
   end
 end
