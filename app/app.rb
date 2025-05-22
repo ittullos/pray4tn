@@ -144,7 +144,14 @@ end
 # resident_id given
 post '/prayers' do
   resident_id = parsed_params.fetch('resident_id')
-  prayer = Prayer.new(resident_id:, user_id: user_from_token&.id, recorded_at: Time.current)
+  route_id = parsed_params['route_id']
+
+  prayer = Prayer.new(
+    resident_id: resident_id,
+    user_id: user_from_token&.id,
+    recorded_at: Time.current,
+    route_id: route_id
+  )
   prayer.save!
 
   next_resident = prayer.resident.next_resident
