@@ -110,6 +110,24 @@ get '/user' do
   { data: user_from_token }.to_json
 end
 
+delete '/user' do
+  user = user_from_token
+
+  # Delete in FK-safe order:
+  # prayers reference residents, routes, and users — must go first
+  Prayer.where(user_id: user.id).delete_all
+  # routes reference commitments and users
+  Route.where(user_id: user.id).delete_all
+  # commitments and residents only reference users — safe to delete now
+  Commitment.where(user_id: user.id).delete_all
+  Resident.where(user_id: user.id).delete_all
+
+  user.destroy!
+
+  status 200
+  { data: 'Account deleted successfully' }.to_json
+end
+
 get '/user/residents' do
   residents = Resident.where(user_id: user_from_token&.id)
   status 200
